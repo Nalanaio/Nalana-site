@@ -1182,30 +1182,37 @@ nav a, nav button:not([class*="reserve"]):not([class*="Reserve"]) {
   setInterval(rotateCommand, 3500);
 
   // ── FORMS ──────────────────────────────────────────────────────────
-  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/YOUR_LINK_HERE';
+  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/00w14g6sB5P19uhe5HcjS01';
+  // Replace this with your Google Apps Script Web App URL
   const FORM_ENDPOINT       = ''; 
 
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  async function submitWaitlist(email) {
+  async function submitToSheets(email, source) {
     if (!FORM_ENDPOINT) return true;
     try {
+      // Use no-cors for Google Apps Script to prevent CORS blocking
       await fetch(FORM_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email, source: 'nalana-waitlist' })
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source, timestamp: new Date().toISOString() })
       });
       return true;
     } catch { return false; }
   }
 
-  function handleReserve() {
+  async function handleReserve() {
     const email = document.getElementById('reserveEmail').value;
     if (!isValidEmail(email)) { alert('Please enter a valid email.'); return; }
     document.getElementById('reserveForm').style.display = 'none';
     document.getElementById('reserveSuccess').style.display = 'block';
+    
+    // Send to Google Sheets first
+    await submitToSheets(email, 'reserve');
+    
     setTimeout(() => {
       window.location.href = STRIPE_PAYMENT_LINK + '?prefilled_email=' + encodeURIComponent(email);
     }, 800);
@@ -1214,7 +1221,10 @@ nav a, nav button:not([class*="reserve"]):not([class*="Reserve"]) {
   async function handleWaitlist() {
     const email = document.getElementById('waitlistEmail').value;
     if (!isValidEmail(email)) { alert('Please enter a valid email.'); return; }
-    await submitWaitlist(email);
+    
+    // Send to Google Sheets
+    await submitToSheets(email, 'waitlist');
+    
     document.getElementById('waitlistEmail').value = '';
     document.getElementById('waitlistSuccess').style.display = 'block';
   }
