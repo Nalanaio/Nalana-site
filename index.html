@@ -542,6 +542,14 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    overflow: hidden;
+  }
+  .demo-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
   }
   .video-label {
     position: absolute;
@@ -868,9 +876,10 @@ nav a, nav button:not([class*="reserve"]):not([class*="Reserve"]) {
     <div class="iridescent-glow" style="width: 60vw; height: 60vh; top: 10%; right: -10%;"></div>
     <div class="glass-card video-card fade-up glass-border-light">
       <div class="glass-card video-label glass-border-light">↳ Live Demo</div>
-      <div class="glass-card play-btn glass-border-light">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      </div>
+      <video class="demo-video" controls preload="metadata" playsinline>
+        <source src="nalana-mvp-demo.web.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
     </div>
   </section>
 
