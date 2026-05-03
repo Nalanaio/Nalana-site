@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @font-face {
+    font-family: 'Amulya';
+    src: url('../fonts/Amulya-Variable.woff2') format('woff2'),
+         url('../fonts/Amulya-Variable.woff')  format('woff');
+    font-weight: 100 900; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Amulya';
+    src: url('../fonts/Amulya-VariableItalic.woff2') format('woff2'),
+         url('../fonts/Amulya-VariableItalic.woff')  format('woff');
+    font-weight: 100 900; font-style: italic; font-display: swap;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fafafa; padding: 24px 28px; }
+  .section { display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px; }
+  .section-label { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #c0c0c0; margin-bottom: 6px; }
+  .pair { display: flex; align-items: baseline; gap: 14px; }
+  .sz { font-family: 'Inter', sans-serif; font-size: 10px; color: #d0d0d0; min-width: 80px; }
+
+  /* Amulya specimens */
+  .a-88 { font-family: 'Amulya'; font-size: 42px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; line-height: 1; }
+  .a-40 { font-family: 'Amulya'; font-size: 28px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.015em; line-height: 1.1; }
+  .a-28 { font-family: 'Amulya'; font-size: 22px; font-weight: 600; color: #1a1a1a; line-height: 1.2; }
+  .a-22 { font-family: 'Amulya'; font-size: 18px; font-weight: 600; color: #1a1a1a; }
+  .a-32i{ font-family: 'Amulya'; font-size: 20px; font-weight: 500; color: #343434; font-style: italic; }
+
+  /* Inter specimens */
+  .i-18 { font-family: 'Inter'; font-size: 18px; font-weight: 500; color: #1a1a1a; line-height: 1.5; }
+  .i-16 { font-family: 'Inter'; font-size: 16px; font-weight: 400; color: #2a2a2a; }
+  .i-15 { font-family: 'Inter'; font-size: 15px; font-weight: 400; color: #444; }
+  .i-14 { font-family: 'Inter'; font-size: 14px; font-weight: 500; color: #444; }
+  .i-12 { font-family: 'Inter'; font-size: 12px; font-weight: 600; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .blue { color: #1085EF; }
+  .salmon { color: #FF8C69; }
+  .divider { height: 1px; background: #efefef; margin: 4px 0 12px; }
+</style>
+</head>
+<body>
+  <div class="section">
+    <div class="section-label">Amulya — Display</div>
+    <div class="pair"><span class="sz">88px / 700</span><span class="a-88">Speak it. <span class="blue">Build it.</span></span></div>
+    <div class="pair"><span class="sz">40px / 700</span><span class="a-40">3D creation, <span class="salmon">reimagined.</span></span></div>
+    <div class="pair"><span class="sz">28px / 600</span><span class="a-28">Built on Blender's engine.</span></div>
+    <div class="pair"><span class="sz">22px / 600</span><span class="a-22">Voice-First Interface</span></div>
+    <div class="pair"><span class="sz">20px / 500 italic</span><span class="a-32i">"This changes everything."</span></div>
+  </div>
+  <div class="divider"></div>
+  <div class="section">
+    <div class="section-label">Inter — Body &amp; UI</div>
+    <div class="pair"><span class="sz">18px / 500</span><span class="i-18">The AI voice interface for 3D creation.</span></div>
+    <div class="pair"><span class="sz">16px / 400</span><span class="i-16">Describe what you want in plain language. nalana translates your intent.</span></div>
+    <div class="pair"><span class="sz">15px / 400</span><span class="i-15">Understands geometry, transforms, materials — so commands just work.</span></div>
+    <div class="pair"><span class="sz">14px / 500</span><span class="i-14">Features · How It Works · About · Waitlist</span></div>
+    <div class="pair"><span class="sz">12px / 600 caps</span><span class="i-12">Early Access — Founding Member Spots Open</span></div>
+  </div>
+</body>
+</html>

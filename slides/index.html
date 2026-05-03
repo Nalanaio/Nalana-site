@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nalana — Pitch Deck</title>
+<style>
+@font-face { font-family: 'Amulya'; src: url('../fonts/Amulya-Variable.woff2') format('woff2'), url('../fonts/Amulya-Variable.woff') format('woff'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Amulya'; src: url('../fonts/Amulya-VariableItalic.woff2') format('woff2'), url('../fonts/Amulya-VariableItalic.woff') format('woff'); font-weight: 100 900; font-style: italic; font-display: swap; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="../deck-stage.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── DECK GLOBAL ─── */
+:root {
+  --primary: #1085EF;
+  --salmon: #FF8C69;
+  --lavender: #A78ADE;
+  --sunshine: #F8D06C;
+  --ink: #343434;
+  --ink-deep: #0a0a0a;
+  --ink-light: #E6E6E6;
+  --bg: #F1F1F1;
+  --bg-white: #FAFAFA;
+  --muted: #767676;
+}
+
+section {
+  width: 1920px;
+  height: 1080px;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── LOGO WATERMARK (every slide) ─── */
+.slide-logo {
+  position: absolute;
+  right: 48px;
+  top: 36px;
+  width: 64px;
+  height: 76px;
+  opacity: 0.9;
+}
+
+/* ─── SLIDE FOOTER ─── */
+.slide-footer {
+  position: absolute;
+  bottom: 32px;
+  left: 72px;
+  right: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-name { font-size: 22px; font-weight: 500; color: var(--ink); letter-spacing: -0.01em; }
+.footer-contact { font-size: 22px; font-weight: 400; color: var(--muted); }
+
+/* ─── BODY COLUMN ─── */
+.slide-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 120px 120px;
+}
+
+/* ─── SLIDE LABEL (section header style) ─── */
+.slide-label {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 32px;
+}
+
+/* ─── BIG HEADER (used on section/title slides) ─── */
+.big-header {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 80px;
+  line-height: 1.0;
+  color: var(--ink-light);
+  letter-spacing: -0.02em;
+  position: absolute;
+  left: 120px;
+  right: 120px;
+}
+
+/* ─── DIVIDER ─── */
+.divider { height: 3px; background: var(--ink); border-radius: 2px; margin: 32px 0; }
+.divider-thin { height: 2px; background: rgba(52,52,52,0.2); border-radius: 1px; }
+
+/* ─── DATA TABLE (Validation slide) ─── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { font-size: 20px; font-weight: 600; color: var(--ink); text-align: left; padding: 16px 24px; border-bottom: 3px solid var(--ink); }
+.data-table td { font-size: 20px; font-weight: 400; color: var(--ink); padding: 20px 24px; border-bottom: 1px solid rgba(52,52,52,0.15); vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+
+/* ─── STAT GRID ─── */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.stat-box { display: flex; flex-direction: column; gap: 12px; }
+.stat-num { font-family: 'Inter', sans-serif; font-size: 72px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.stat-label { font-size: 24px; font-weight: 400; color: var(--muted); line-height: 1.4; }
+
+/* ─── COMPARISON GRID ─── */
+.compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.compare-col { padding: 40px 36px; border-radius: 16px; }
+.compare-col.highlight { background: rgba(16,133,239,0.08); border: 2px solid rgba(16,133,239,0.3); }
+.compare-col.dim { background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.1); }
+.compare-title { font-size: 28px; font-weight: 700; color: var(--ink); margin-bottom: 20px; }
+.compare-item { font-size: 20px; color: var(--ink); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.check { color: var(--primary); font-weight: 700; }
+.cross { color: rgba(52,52,52,0.3); }
+
+/* ─── QUOTE SLIDE ─── */
+.quote-mark { font-family: 'Inter', sans-serif; font-size: 120px; font-weight: 700; color: var(--primary); opacity: 0.25; line-height: 0.8; margin-bottom: 0; }
+.quote-text { font-family: 'Inter', sans-serif; font-size: 52px; font-weight: 600; color: var(--ink-deep); line-height: 1.3; letter-spacing: -0.02em; max-width: 1400px; }
+.quote-attr { font-size: 26px; font-weight: 400; color: var(--muted); margin-top: 40px; }
+.quote-attr strong { color: var(--ink); font-weight: 600; }
+
+/* ─── BODY TEXT ─── */
+.body-text { font-size: 30px; font-weight: 300; color: var(--ink); line-height: 1.6; max-width: 1200px; }
+.body-text strong { font-weight: 600; color: var(--ink-deep); }
+
+/* ─── BULLET LIST ─── */
+.bullet-list { display: flex; flex-direction: column; gap: 24px; }
+.bullet-item { display: flex; gap: 20px; align-items: flex-start; }
+.bullet-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 12px; }
+.bullet-text { font-size: 30px; font-weight: 400; color: var(--ink); line-height: 1.5; }
+.bullet-text strong { font-weight: 600; color: var(--ink-deep); }
+
+/* ─── SALMON ACCENT TEXT ─── */
+.accent-salmon { color: var(--salmon); }
+.accent-blue   { color: var(--primary); }
+.accent-sun    { color: var(--sunshine); }
+
+/* ─── SECTION TITLE LAYOUT ─── */
+.section-intro { justify-content: center; }
+.section-intro .big-header { position: relative; left: auto; right: auto; bottom: auto; color: var(--ink-light); font-size: 96px; margin-bottom: 24px; }
+.section-intro .sub { font-size: 36px; font-weight: 300; color: var(--muted); }
+
+/* ─── TITLE SLIDE ─── */
+.title-slide-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+}
+.title-nalana-wordmark {
+  position: absolute;
+  left: 120px;
+  top: 380px;
+}
+.title-tagline {
+  position: absolute;
+  left: 120px;
+  top: 640px;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── N MARK LARGE ─── */
+.n-mark-center {
+  position: absolute;
+  right: 200px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.08;
+  width: 480px;
+  height: auto;
+}
+
+/* ─── FINANCIALS / TIMELINE ─── */
+.timeline { display: flex; gap: 0; align-items: stretch; }
+.timeline-col { flex: 1; padding: 32px 28px; border-right: 2px solid rgba(52,52,52,0.12); }
+.timeline-col:last-child { border-right: none; }
+.timeline-year { font-size: 36px; font-weight: 700; color: var(--primary); margin-bottom: 16px; }
+.timeline-val  { font-size: 48px; font-weight: 700; color: var(--ink-deep); letter-spacing: -0.02em; }
+.timeline-label { font-size: 20px; font-weight: 400; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<deck-stage>
+
+  <!-- ─── SLIDE 01: TITLE ─── -->
+  <section data-screen-label="01 Title">
+    <!-- Large N watermark -->
+    <svg class="n-mark-center" viewBox="0 0 69 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#343434"/>
+    </svg>
+    <!-- Logo mark (top right) -->
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/>
+      <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/>
+    </svg>
+    <!-- Wordmark -->
+    <div style="position:absolute;left:120px;top:340px;">
+      <svg height="100" viewBox="0 0 428 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M93.8477 73H77.3438L102.49 0.246094H122.266L147.363 73H130.908L125.488 56.3984H99.2188L93.8477 73ZM103.125 44.3867H121.582L112.646 16.8477H112.061L103.125 44.3867ZM156.055 73V0.246094H171.387V60.3047H202.588V73H156.055ZM225.391 73H208.887L234.033 0.246094H253.809L278.906 73H262.451L257.031 56.3984H230.762L225.391 73ZM234.668 44.3867H253.125L244.189 16.8477H243.604L234.668 44.3867ZM348.438 0.246094V73H335.107L303.516 27.248H302.93V73H287.598V0.246094H301.074L332.471 45.998H333.105V0.246094H348.438ZM373.633 73H357.129L382.275 0.246094H402.051L427.148 73H410.693L405.273 56.3984H379.004L373.633 73ZM382.91 44.3867H401.367L392.432 16.8477H391.846L382.91 44.3867Z" fill="#1085EF"/>
+        <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/>
+        <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/>
+      </svg>
+    </div>
+    <div class="title-tagline">Speak it. Watch it build.</div>
+    <div class="slide-footer">
+      <span class="footer-name">Clarence Keith — nalana.io</span>
+      <span class="footer-contact">(630)-312-9357</span>
+    </div>
+  </section>
+
+  <!-- ─── SLIDE 02: PROBLEM ─── -->
+  <section data-screen-label="02 Problem">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Problem</div>
+      <div class="big-header" style="position:relative;left:auto;right:auto;color:var(--ink-light);margin-bottom:40px;">3D software is broken.</div>
+      <div class="divider" style="width:120px;background:var(--salmon);height:4px;margin:0 0 48px 0;"></div>
+      <div class="bullet-list">
+        <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-text"><strong>270 hours</strong> to build complex scenes from scratch — just to learn the tool.</div></div>
+        <div class="bullet-item"><div class="bullet-dot" style="background:var(--salmon);"></div><div class="bullet-text"><strong>~70% of creators</strong> know exactly what they want to build. They just don't know the shortcuts.</div></div>
+        <div class="bullet-item"><div class="bullet-dot" style="background:var(--sunshine);"></div><div class="bullet-text">Blender has <strong>thousands of menu items</strong>. Not one of them listens to you.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 03: SOLUTION ─── -->
+  <section data-screen-label="03 Solution">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Solution</div>
+      <div style="font-size:80px;font-weight:700;color:var(--ink-light);line-height:1;margin-bottom:40px;letter-spacing:-0.02em;">Speak It Into Existence.</div>
+      <div class="divider" style="width:120px;background:var(--primary);height:4px;margin:0 0 48px 0;"></div>
+      <div class="body-text">
+        nalana is <strong>standalone 3D creation software</strong> built on Blender's engine — the way Android is built on Linux. Not a plugin. Not a skin. <strong>Its own product.</strong><br><br>
+        You talk to it. It builds.
+      </div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 04: VALIDATION ─── -->
+  <section data-screen-label="04 Validation">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Validation</div>
+      <div class="divider" style="width:100%;margin-bottom:0;"></div>
+      <table class="data-table">
+        <thead><tr><th>Signal</th><th>Source</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td><strong>One demo. Nike's Head of 3D wants in.</strong></td><td>Sr. Director of 3D Excellence, Nike / Jordan Brand</td><td style="color:var(--primary);font-weight:600;">"I'd pay $50/mo without hesitation"</td></tr>
+          <tr><td><strong>330K+ professional Blender users in the US</strong></td><td>Market research</td><td style="color:var(--primary);font-weight:600;">$120M+ TAM at $30/mo</td></tr>
+          <tr><td><strong>Live MVP</strong></td><td>Working prototype — voice to 3D</td><td style="color:var(--primary);font-weight:600;">Sub-600ms response time</td></tr>
+        </tbody>
+      </table>
+      <div class="divider" style="width:100%;margin-top:0;"></div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 05: QUOTE ─── -->
+  <section data-screen-label="05 Signal">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body" style="justify-content:center;padding-top:100px;">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">This is exactly what our 3D teams need. I'd pay $50 a month for this without hesitation.</div>
+      <div class="quote-attr"><strong>Adam Hiler — Sr. Director of 3D Excellence, Nike / Jordan Brand</strong>After one live demo of the MVP.</div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 06: MARKET SIZE ─── -->
+  <section data-screen-label="06 Market">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Market Size</div>
+      <div style="font-size:64px;font-weight:700;color:var(--ink-light);line-height:1;margin-bottom:56px;letter-spacing:-0.02em;">The 3D Market Is Massive. And Underserved.</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--primary);">330K+</div>
+          <div class="stat-label">Professional Blender users in the US alone</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--salmon);">$120M+</div>
+          <div class="stat-label">Serviceable market at $30/mo, US only</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--sunshine);">$50+</div>
+          <div class="stat-label">Willingness to pay per month, validated by Nike</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 07: COMPETITION ─── -->
+  <section data-screen-label="07 Competition">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Competition</div>
+      <div style="font-size:56px;font-weight:700;color:var(--ink-light);line-height:1;margin-bottom:48px;letter-spacing:-0.02em;">nalana Does What No Single Competitor Can.</div>
+      <div class="compare-grid">
+        <div class="compare-col dim">
+          <div class="compare-title" style="color:var(--muted);">Blender Addons</div>
+          <div class="compare-item"><span class="cross">✗</span> Text-to-3D only</div>
+          <div class="compare-item"><span class="cross">✗</span> No scene context</div>
+          <div class="compare-item"><span class="cross">✗</span> Blender required</div>
+          <div class="compare-item"><span class="cross">✗</span> Plugin architecture</div>
+        </div>
+        <div class="compare-col highlight">
+          <div class="compare-title" style="color:var(--primary);">nalana</div>
+          <div class="compare-item"><span class="check">✓</span> Voice + text input</div>
+          <div class="compare-item"><span class="check">✓</span> Full scene awareness</div>
+          <div class="compare-item"><span class="check">✓</span> Standalone software</div>
+          <div class="compare-item"><span class="check">✓</span> Sub-600ms response</div>
+        </div>
+        <div class="compare-col dim">
+          <div class="compare-title" style="color:var(--muted);">Text-to-3D AI</div>
+          <div class="compare-item"><span class="cross">✗</span> Output only, no edit</div>
+          <div class="compare-item"><span class="cross">✗</span> No workflow integration</div>
+          <div class="compare-item"><span class="cross">✗</span> No voice</div>
+          <div class="compare-item"><span class="cross">✗</span> No real-time feedback</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 08: BUSINESS MODEL ─── -->
+  <section data-screen-label="08 Business Model">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Business Model</div>
+      <div style="font-size:64px;font-weight:700;color:var(--ink-light);line-height:1;margin-bottom:56px;letter-spacing:-0.02em;">Simple. Scalable. Sticky.</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div style="font-size:28px;font-weight:700;color:var(--primary);margin-bottom:8px;">Individual</div>
+          <div class="stat-num" style="font-size:56px;color:var(--ink-deep);">$30/mo</div>
+          <div class="stat-label">Pro creator tier — full voice + AI access</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:28px;font-weight:700;color:var(--salmon);margin-bottom:8px;">Team</div>
+          <div class="stat-num" style="font-size:56px;color:var(--ink-deep);">$50/seat</div>
+          <div class="stat-label">Studio teams — 10 seat minimum</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:28px;font-weight:700;color:var(--sunshine);margin-bottom:8px;">Enterprise</div>
+          <div class="stat-num" style="font-size:56px;color:var(--ink-deep);">Custom</div>
+          <div class="stat-label">Nike-tier contracts — volume + SLA</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 09: TEAM ─── -->
+  <section data-screen-label="09 Team">
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div class="slide-body">
+      <div class="slide-label">Team</div>
+      <div style="font-size:64px;font-weight:700;color:var(--ink-light);line-height:1;margin-bottom:56px;letter-spacing:-0.02em;">Built by a creator. For creators.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:16px;">
+        <div>
+          <div style="font-size:36px;font-weight:700;color:var(--ink-deep);margin-bottom:8px;">Clarence Keith</div>
+          <div style="font-size:24px;font-weight:500;color:var(--primary);margin-bottom:24px;">Founder &amp; CEO</div>
+          <div class="bullet-list">
+            <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-text" style="font-size:24px;">6+ years Blender experience</div></div>
+            <div class="bullet-item"><div class="bullet-dot" style="background:var(--salmon);"></div><div class="bullet-text" style="font-size:24px;">Taught 120+ students at USC Iovine and Young Academy</div></div>
+            <div class="bullet-item"><div class="bullet-dot" style="background:var(--sunshine);"></div><div class="bullet-text" style="font-size:24px;">NeurIPS 2025 — VideoCAD paper</div></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <div style="text-align:center;">
+            <div style="font-size:96px;font-weight:700;color:var(--primary);opacity:0.12;line-height:1;">USC</div>
+            <div style="font-size:22px;color:var(--muted);font-weight:400;">Iovine and Young Academy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+  <!-- ─── SLIDE 10: CONTACT ─── -->
+  <section data-screen-label="10 Contact">
+    <svg class="n-mark-center" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#343434"/></svg>
+    <svg class="slide-logo" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/><path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/></svg>
+    <div style="position:absolute;left:120px;top:320px;">
+      <svg height="80" viewBox="0 0 428 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M93.8477 73H77.3438L102.49 0.246094H122.266L147.363 73H130.908L125.488 56.3984H99.2188L93.8477 73ZM103.125 44.3867H121.582L112.646 16.8477H112.061L103.125 44.3867ZM156.055 73V0.246094H171.387V60.3047H202.588V73H156.055ZM225.391 73H208.887L234.033 0.246094H253.809L278.906 73H262.451L257.031 56.3984H230.762L225.391 73ZM234.668 44.3867H253.125L244.189 16.8477H243.604L234.668 44.3867ZM348.438 0.246094V73H335.107L303.516 27.248H302.93V73H287.598V0.246094H301.074L332.471 45.998H333.105V0.246094H348.438ZM373.633 73H357.129L382.275 0.246094H402.051L427.148 73H410.693L405.273 56.3984H379.004L373.633 73ZM382.91 44.3867H401.367L392.432 16.8477H391.846L382.91 44.3867Z" fill="#1085EF"/>
+        <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/>
+        <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/>
+      </svg>
+    </div>
+    <div style="position:absolute;left:120px;top:440px;font-size:30px;font-weight:400;color:var(--muted);">Speak it. Watch it build.</div>
+    <div style="position:absolute;left:120px;bottom:160px;display:flex;flex-direction:column;gap:20px;">
+      <div style="font-size:26px;color:var(--ink);font-weight:500;">Clarence Keith — <span style="color:var(--primary);">clarence@nalana.io</span></div>
+      <div style="font-size:26px;color:var(--ink);font-weight:500;">(630)-312-9357 — <span style="color:var(--primary);">nalana.io</span></div>
+    </div>
+    <div class="slide-footer"><span class="footer-name">nalana</span><span class="footer-contact">nalana.io</span></div>
+  </section>
+
+</deck-stage>
+</body>
+</html>

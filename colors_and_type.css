@@ -1,0 +1,529 @@
+/*
+ * NALANA DESIGN SYSTEM
+ * colors_and_type.css
+ * ─────────────────────────────────────────────
+ * CSS custom properties for the full Nalana brand.
+ * Import this file in any HTML artifact to get
+ * brand-accurate colors, typography, spacing, etc.
+ *
+ * Fonts loaded via:
+ *   Amulya    → https://api.fontshare.com/v2/css?f[]=amulya@400,500,600,700&display=swap
+ *   Inter     → https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap
+ *   DM Sans   → https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap
+ */
+
+/* ─────────────────────────────────────────────
+   KONKHMER SLEOKCHHER — nalana wordmark font
+   ───────────────────────────────────────────── */
+@font-face {
+  font-family: 'KonkhmerSleokchher';
+  src: url('fonts/KonkhmerSleokchher-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────
+   AMULYA — local font files (preferred)
+   ───────────────────────────────────────────── */
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-Variable.woff2') format('woff2'),
+       url('fonts/Amulya-Variable.woff')  format('woff'),
+       url('fonts/Amulya-Variable.ttf')   format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-VariableItalic.woff2') format('woff2'),
+       url('fonts/Amulya-VariableItalic.woff')  format('woff'),
+       url('fonts/Amulya-VariableItalic.ttf')   format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Static weights as fallbacks */
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-Light.woff2') format('woff2'),
+       url('fonts/Amulya-Light.woff')  format('woff'),
+       url('fonts/Amulya-Light.ttf')   format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-Regular.woff2') format('woff2'),
+       url('fonts/Amulya-Regular.woff')  format('woff'),
+       url('fonts/Amulya-Regular.ttf')   format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-Medium.woff2') format('woff2'),
+       url('fonts/Amulya-Medium.woff')  format('woff'),
+       url('fonts/Amulya-Medium.ttf')   format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-Bold.woff2') format('woff2'),
+       url('fonts/Amulya-Bold.woff')  format('woff'),
+       url('fonts/Amulya-Bold.ttf')   format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amulya';
+  src: url('fonts/Amulya-BoldItalic.woff2') format('woff2'),
+       url('fonts/Amulya-BoldItalic.woff')  format('woff'),
+       url('fonts/Amulya-BoldItalic.ttf')   format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap');
+
+/* ─────────────────────────────────────────────
+   BASE COLOR TOKENS
+   ───────────────────────────────────────────── */
+:root {
+  /* Brand Core */
+  --nalana-primary:        #1085EF;   /* Blue — CTAs, links, logo, highlights */
+  --nalana-primary-dark:   #0A6FCC;   /* Darker blue — hover states */
+  --nalana-primary-light:  #60A5FA;   /* Light blue — glow/iridescent accents */
+  --nalana-salmon:         #FF8C69;   /* Salmon — logo depth layer, accents */
+  --nalana-salmon-dark:    #EE481E;   /* Burnt orange/red — strong accent */
+  --nalana-lavender:       #A78ADE;   /* Lavender — shadow glows, tertiary */
+  --nalana-sunshine:       #F8D06C;   /* Sunshine yellow — data callouts */
+
+  /* Backgrounds */
+  --nalana-bg:             #FAFAFA;   /* Primary surface — almost white */
+  --nalana-bg-off-white:   #F1F1F1;   /* Secondary surface — slide bg */
+  --nalana-bg-dark:        #1A1A1A;   /* Dark surface — IDE/app bg */
+  --nalana-bg-card:        rgba(255,255,255,0.4);  /* Glass card bg */
+
+  /* Text */
+  --nalana-ink-deep:       #0A0A0A;   /* Deepest text — headings */
+  --nalana-ink:            #1A1A1A;   /* Primary body text */
+  --nalana-ink-deck:       #343434;   /* Deck text color */
+  --nalana-ink-muted:      #767676;   /* Muted/secondary text */
+  --nalana-ink-light:      #E6E6E6;   /* Light text on dark bg (deck large headers) */
+
+  /* Borders */
+  --nalana-border:         rgba(228,228,231,0.5);   /* Standard UI border */
+  --nalana-border-glass:   rgba(255,255,255,0.4);   /* Glass card border */
+  --nalana-border-glass-top: rgba(255,255,255,0.9); /* Glass top highlight */
+
+  /* Neutral Scale */
+  --nalana-neutral-100:    #F4F4F5;
+  --nalana-neutral-200:    #E4E4E7;
+  --nalana-neutral-300:    #D4D4D8;
+  --nalana-neutral-400:    #A1A1AA;
+  --nalana-neutral-500:    #767676;
+  --nalana-neutral-600:    #444444;
+  --nalana-neutral-700:    #2C2C2C;
+  --nalana-neutral-800:    #1A1A1A;
+  --nalana-neutral-900:    #0A0A0A;
+
+  /* ─────────────────────────────────────────────
+     SEMANTIC COLOR TOKENS
+     ───────────────────────────────────────────── */
+
+  /* Foreground */
+  --fg1:  var(--nalana-ink-deep);   /* Headings */
+  --fg2:  var(--nalana-ink);         /* Body */
+  --fg3:  var(--nalana-ink-muted);   /* Muted/captions */
+  --fg-on-dark: #FFFFFF;
+
+  /* Surfaces */
+  --surface-1: var(--nalana-bg);           /* Page */
+  --surface-2: var(--nalana-bg-off-white); /* Cards/slides */
+  --surface-3: var(--nalana-bg-dark);      /* Dark/IDE */
+
+  /* Interactive */
+  --interactive-primary:        var(--nalana-primary);
+  --interactive-primary-hover:  var(--nalana-primary-dark);
+  --interactive-accent:         var(--nalana-salmon);
+
+  /* ─────────────────────────────────────────────
+     TYPOGRAPHY TOKENS
+     ───────────────────────────────────────────── */
+
+  /* Font families */
+  --font-display:   'Amulya', sans-serif;        /* Headings, display, section titles */
+  --font-body:      'Inter', sans-serif;          /* Body, UI, captions */
+  --font-deck:      'Helvetica Neue', Helvetica, Arial, sans-serif; /* Pitch deck */
+  --font-secondary: 'DM Sans', sans-serif;        /* Deck secondary body */
+  --font-mono:      'SF Mono', 'Fira Code', 'Cascadia Code', monospace; /* Code/commands */
+
+  /* Semantic type roles */
+  --type-h1:        700 clamp(48px, 7vw, 88px)/1.05 var(--font-display);   /* Hero */
+  --type-h2:        700 40px/1.2 var(--font-display);                       /* Section title */
+  --type-h3:        600 28px/1.3 var(--font-display);                       /* Card title */
+  --type-h4:        600 22px/1.4 var(--font-display);                       /* Feature title */
+  --type-quote:     600 32px/1.4 var(--font-display);                       /* Pull quote */
+  --type-body-lg:   500 18px/1.6 var(--font-body);                          /* Hero subtitle */
+  --type-body:      400 16px/1.6 var(--font-body);                          /* Default body */
+  --type-body-sm:   400 15px/1.6 var(--font-body);                          /* Feature desc */
+  --type-label:     600 12px/1 var(--font-body);                            /* Eyebrow/caps */
+  --type-nav:       500 14px/1 var(--font-body);                            /* Nav links */
+  --type-mono:      400 14px/1.5 var(--font-mono);                          /* Code/commands */
+
+  /* Letter spacing */
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.05em;
+  --tracking-wider:  0.1em;
+
+  /* ─────────────────────────────────────────────
+     SPACING SCALE
+     ───────────────────────────────────────────── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   24px;
+  --space-6:   32px;
+  --space-7:   40px;
+  --space-8:   48px;
+  --space-9:   64px;
+  --space-10:  80px;
+  --space-11:  100px;
+  --space-12:  120px;
+
+  /* Component padding */
+  --pad-xs:    var(--space-2) var(--space-4);    /* 8px 16px — tags, pills */
+  --pad-sm:    var(--space-3) var(--space-6);    /* 12px 32px — small btns */
+  --pad-md:    var(--space-4) var(--space-6);    /* 16px 32px — main CTAs */
+  --pad-lg:    var(--space-7) var(--space-8);    /* 40px 48px — feature cards */
+  --pad-xl:    var(--space-9) var(--space-9);    /* 64px 64px — quote cards */
+
+  /* Section padding */
+  --section-padding: var(--space-11) 0;  /* 100px 0 */
+  --content-max-width: 1200px;
+  --content-padding: 0 5%;
+
+  /* ─────────────────────────────────────────────
+     BORDER RADIUS SCALE
+     ───────────────────────────────────────────── */
+  --radius-sm:     8px;    /* Small chips, tags */
+  --radius-md:     16px;   /* Small cards */
+  --radius-lg:     28px;   /* Glass cards (small) */
+  --radius-xl:     40px;   /* Feature cards */
+  --radius-2xl:    50px;   /* Large content cards, stats bar */
+  --radius-pill:   100px;  /* Pills, nav, CTAs, inputs */
+
+  /* ─────────────────────────────────────────────
+     SHADOW SYSTEM
+     ───────────────────────────────────────────── */
+
+  /* Glass card layered shadow */
+  --shadow-glass:
+    inset 0px 6px 12px rgba(255,255,255,0.8),
+    inset 0px -6px 15px rgba(0,0,0,0.08),
+    0px 15px 35px rgba(0,0,0,0.1);
+
+  /* Glass card hover shadow */
+  --shadow-glass-hover:
+    inset 0px 6px 12px rgba(255,255,255,0.8),
+    inset 0px -6px 15px rgba(0,0,0,0.12),
+    0px 20px 45px rgba(0,0,0,0.14);
+
+  /* Blue CTA glow */
+  --shadow-cta:
+    inset 0px 5px 10px rgba(255,255,255,0.45),
+    inset 0px -5px 12px rgba(0,0,80,0.12),
+    0px 8px 24px rgba(16,133,239,0.3);
+
+  --shadow-cta-hover:
+    inset 0px 5px 10px rgba(255,255,255,0.35),
+    inset 0px -5px 12px rgba(0,0,80,0.18),
+    0px 12px 32px rgba(16,133,239,0.45);
+
+  /* Nav/small component shadow */
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 15px 35px rgba(0,0,0,0.1);
+
+  /* Lavender logo shadow */
+  --shadow-logo: drop-shadow(3px 4px 4px rgba(167,138,222,1));
+
+  /* ─────────────────────────────────────────────
+     ANIMATION / EASING
+     ───────────────────────────────────────────── */
+  --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:       cubic-bezier(0, 0, 0.2, 1);
+  --ease-in:        cubic-bezier(0.4, 0, 1, 1);
+  --duration-fast:  0.15s;
+  --duration-base:  0.2s;
+  --duration-slow:  0.4s;
+  --duration-reveal: 0.8s;
+
+  /* ─────────────────────────────────────────────
+     GLASS SYSTEM (reusable shorthand)
+     ───────────────────────────────────────────── */
+  --glass-bg:       rgba(255,255,255,0.4);
+  --glass-blur:     blur(16px);
+  --glass-border:   1px solid rgba(255,255,255,0.4);
+  --glass-border-top: 1px solid rgba(255,255,255,0.9);
+}
+
+/* ─────────────────────────────────────────────
+   SEMANTIC TYPE CLASSES
+   ───────────────────────────────────────────── */
+
+/* Use these directly in markup */
+.nalana-h1 {
+  font: var(--type-h1);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+
+.nalana-h2 {
+  font: var(--type-h2);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+
+.nalana-h3 {
+  font: var(--type-h3);
+  color: var(--fg1);
+}
+
+.nalana-h4 {
+  font: var(--type-h4);
+  color: var(--fg1);
+}
+
+.nalana-quote {
+  font: var(--type-quote);
+  color: var(--fg1);
+}
+
+.nalana-body-lg {
+  font: var(--type-body-lg);
+  color: var(--fg2);
+}
+
+.nalana-body {
+  font: var(--type-body);
+  color: var(--fg2);
+}
+
+.nalana-body-sm {
+  font: var(--type-body-sm);
+  color: var(--fg2);
+}
+
+.nalana-label {
+  font: var(--type-label);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg3);
+}
+
+.nalana-nav {
+  font: var(--type-nav);
+  color: var(--nalana-neutral-600);
+}
+
+.nalana-mono {
+  font: var(--type-mono);
+  color: var(--nalana-primary);
+}
+
+/* ─────────────────────────────────────────────
+   BASE GLASS CARD COMPONENT
+   ───────────────────────────────────────────── */
+.nalana-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  border: var(--glass-border);
+  border-top: var(--glass-border-top);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--duration-base) var(--ease-smooth),
+              box-shadow var(--duration-base) var(--ease-smooth);
+}
+
+.nalana-glass::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 10%;
+  width: 80%;
+  height: 35%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.nalana-glass:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+}
+
+/* ─────────────────────────────────────────────
+   PRIMARY CTA BUTTON
+   ───────────────────────────────────────────── */
+.nalana-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pad-md);
+  font: var(--type-nav);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg,
+    rgba(96,165,250,0.7) 0%,
+    rgba(16,133,239,0.8) 30%,
+    rgba(99,102,241,0.7) 70%,
+    rgba(16,133,239,0.75) 100%
+  );
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-top: 1px solid rgba(255,255,255,0.85);
+  box-shadow: var(--shadow-cta);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--duration-base) var(--ease-smooth);
+}
+
+.nalana-btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 2px; left: 15%;
+  width: 70%; height: 45%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.nalana-btn-primary:hover {
+  box-shadow: var(--shadow-cta-hover);
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* ─────────────────────────────────────────────
+   SECONDARY CTA BUTTON
+   ───────────────────────────────────────────── */
+.nalana-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pad-md);
+  font: var(--type-nav);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: var(--nalana-neutral-800);
+  transition: all var(--duration-base) var(--ease-smooth);
+}
+
+.nalana-btn-secondary:hover {
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(0,0,0,0.2);
+  color: var(--nalana-neutral-900);
+}
+
+/* ─────────────────────────────────────────────
+   EYEBROW / PILL TAG
+   ───────────────────────────────────────────── */
+.nalana-eyebrow {
+  display: inline-block;
+  padding: var(--pad-xs);
+  border-radius: var(--radius-pill);
+  font: var(--type-label);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--nalana-neutral-800);
+  border: 1.5px solid rgba(0,0,0,0.15);
+}
+
+/* ─────────────────────────────────────────────
+   IRIDESCENT GLOW BLOB
+   ───────────────────────────────────────────── */
+.nalana-glow {
+  position: absolute;
+  background: linear-gradient(to right,
+    rgba(191,219,254,0.5),
+    rgba(233,213,255,0.4),
+    rgba(251,207,232,0.5)
+  );
+  filter: blur(40px);
+  border-radius: 100px;
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────
+   VOICE BUBBLE
+   ───────────────────────────────────────────── */
+.nalana-voice-bubble {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 50px;
+  padding: 18px 48px;
+  box-shadow:
+    inset 0px 5px 10px rgba(255,255,255,0.85),
+    inset 0px -5px 12px rgba(0,0,0,0.06),
+    0px 12px 30px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-top: 1px solid rgba(255,255,255,0.95);
+  position: relative;
+  overflow: hidden;
+}
+
+.nalana-voice-bubble::before {
+  content: '';
+  position: absolute;
+  top: 2px; left: 10%;
+  width: 80%; height: 40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────────── */
+.nalana-primary-text { color: var(--nalana-primary); }
+.nalana-salmon-text  { color: var(--nalana-salmon); }
+.nalana-muted-text   { color: var(--fg3); }
+
+.nalana-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity var(--duration-reveal) var(--ease-out),
+              transform var(--duration-reveal) var(--ease-out);
+}
+.nalana-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

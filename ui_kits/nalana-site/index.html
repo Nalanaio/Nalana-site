@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nalana — UI Kit: Marketing Site</title>
+<style>
+@font-face { font-family: 'Amulya'; src: url('../../fonts/Amulya-Variable.woff2') format('woff2'), url('../../fonts/Amulya-Variable.woff') format('woff'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Amulya'; src: url('../../fonts/Amulya-VariableItalic.woff2') format('woff2'), url('../../fonts/Amulya-VariableItalic.woff') format('woff'); font-weight: 100 900; font-style: italic; font-display: swap; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #1085EF;
+  --primary-dark: #0A6FCC;
+  --salmon: #FF8C69;
+  --lavender: #A78ADE;
+  --sunshine: #F8D06C;
+  --bg: #fafafa;
+  --bg2: #f1f1f1;
+  --ink: #1a1a1a;
+  --ink-deep: #0a0a0a;
+  --ink-muted: #767676;
+  --border: rgba(228,228,231,0.5);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+h1,h2,h3,h4,h5,h6 { font-family: 'Amulya', sans-serif; }
+
+/* ── CURSOR ── */
+.cursor { position: fixed; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s; }
+.cursor-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(16,133,239,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .25s, height .25s; }
+
+/* ── DOT GRID ── */
+.dot-grid-container { position: fixed; inset: 0; perspective: 1000px; pointer-events: none; z-index: 2; }
+.dot-grid {
+  position: absolute; width: 300vw; height: 300vh; left: -100vw; top: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='4' fill='%2360a5fa'/%3E%3Ccircle cx='90' cy='30' r='4' fill='%23f87171'/%3E%3Ccircle cx='60' cy='60' r='4' fill='%23facc15'/%3E%3Ccircle cx='120' cy='60' r='4' fill='%23c084fc'/%3E%3Ccircle cx='30' cy='90' r='4' fill='%234ade80'/%3E%3Ccircle cx='90' cy='90' r='4' fill='%23f472b6'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  transform: rotateX(80deg) translateY(-20%) translateZ(-150px);
+  -webkit-mask-image: radial-gradient(ellipse 40% 40% at center, black 10%, transparent 60%);
+  mask-image: radial-gradient(ellipse 40% 40% at center, black 10%, transparent 60%);
+  opacity: 0.85;
+}
+
+/* ── GLASS ── */
+.glass {
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 28px;
+  box-shadow: inset 0px 6px 12px rgba(255,255,255,0.8), inset 0px -6px 15px rgba(0,0,0,0.08), 0px 15px 35px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-top: 1px solid rgba(255,255,255,0.9);
+  position: relative; overflow: hidden;
+}
+.glass::before { content:''; position:absolute; top:2px; left:10%; width:80%; height:35%; background:linear-gradient(to bottom,rgba(255,255,255,0.9),transparent); border-radius:50%; pointer-events:none; }
+
+/* ── IRIDESCENT GLOW ── */
+.glow { position:absolute; background:linear-gradient(to right, rgba(191,219,254,0.5),rgba(233,213,255,0.4),rgba(251,207,232,0.5)); filter:blur(40px); border-radius:100px; mix-blend-mode:multiply; opacity:0.8; pointer-events:none; }
+
+/* ── CONTENT ── */
+.content { position:relative; z-index:10; padding:0 5%; max-width:1200px; margin:0 auto; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 100; display: flex; align-items: center; gap: 16px;
+  width: 90%; max-width: 1200px; pointer-events: none;
+}
+.nav-pill {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
+  padding: 6px;
+  border-radius: 100px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin: 0 auto;
+}
+.nav-logo { display:flex; align-items:center; text-decoration:none; padding:0 8px; flex-shrink:0; }
+.nav-link { font-family:'Inter',sans-serif; font-size:14px; font-weight:500; color:#444; text-decoration:none; padding:8px 16px; border-radius:100px; transition:background .2s; cursor:pointer; }
+.nav-link:hover { background:rgba(244,244,245,0.8); }
+.nav-divider { width:1px; height:16px; background:rgba(0,0,0,0.12); }
+.nav-btn {
+  background:linear-gradient(135deg,rgba(96,165,250,0.7) 0%,rgba(16,133,239,0.8) 30%,rgba(99,102,241,0.7) 70%,rgba(16,133,239,0.75) 100%);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.5);
+  border-top:1px solid rgba(255,255,255,0.85);
+  box-shadow:inset 0 5px 10px rgba(255,255,255,0.45),inset 0 -5px 12px rgba(0,0,80,0.12),0 8px 24px rgba(16,133,239,0.3);
+  color:#fff !important;
+  padding:8px 20px; border-radius:100px; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .2s; position:relative; overflow:hidden; text-decoration:none;
+}
+.nav-btn::before { content:''; position:absolute; top:2px; left:15%; width:70%; height:45%; background:linear-gradient(to bottom,rgba(255,255,255,0.6),transparent); border-radius:50%; }
+.nav-btn:hover { transform:translateY(-1px); box-shadow:inset 0 5px 10px rgba(255,255,255,0.35),0 12px 32px rgba(16,133,239,0.45); }
+
+/* ── HERO ── */
+.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-top:120px; position:relative; }
+.hero-eyebrow { display:inline-block; padding:8px 16px; border-radius:100px; font-size:12px; font-weight:600; letter-spacing:0.05em; color:#1a1a1a; text-transform:uppercase; margin-bottom:32px; border:1.5px solid rgba(0,0,0,0.15); }
+.hero-headline { font-size:clamp(48px,7vw,88px); font-weight:700; line-height:1.05; letter-spacing:-0.02em; color:var(--ink-deep); max-width:900px; margin-bottom:24px; }
+.hero-sub { font-size:18px; color:var(--ink); font-weight:500; max-width:580px; margin-bottom:48px; }
+.hero-ctas { display:flex; gap:16px; align-items:center; justify-content:center; margin-bottom:56px; flex-wrap:wrap; }
+
+/* ── CTAs ── */
+.cta { display:inline-flex; align-items:center; justify-content:center; padding:16px 32px; font-size:15px; font-weight:600; text-decoration:none; cursor:pointer; border-radius:50px; transition:all .2s; border:none; font-family:'Inter',sans-serif; }
+.cta-blue {
+  background:linear-gradient(135deg,rgba(96,165,250,0.7) 0%,rgba(16,133,239,0.8) 30%,rgba(99,102,241,0.7) 70%,rgba(16,133,239,0.75) 100%);
+  backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.5);
+  border-top:1px solid rgba(255,255,255,0.85);
+  box-shadow:inset 0 5px 10px rgba(255,255,255,0.45),inset 0 -5px 12px rgba(0,0,80,0.12),0 8px 24px rgba(16,133,239,0.3);
+  color:#fff; position:relative; overflow:hidden;
+}
+.cta-blue::before { content:''; position:absolute; top:2px; left:15%; width:70%; height:45%; background:linear-gradient(to bottom,rgba(255,255,255,0.6),transparent); border-radius:50%; }
+.cta-blue:hover { transform:translateY(-1px) scale(1.02); box-shadow:inset 0 5px 10px rgba(255,255,255,0.35),0 12px 32px rgba(16,133,239,0.45); }
+.cta-neutral { color:var(--ink-deep); border:1.5px solid transparent; background:transparent; }
+.cta-neutral:hover { background:rgba(255,255,255,0.85); border-color:rgba(0,0,0,0.2); }
+
+/* ── VOICE BUBBLE ── */
+@keyframes bubbleWarp { 0%,100%{border-radius:50px 48px 52px 50px/50px 52px 48px 50px} 33%{border-radius:52px 46px 50px 54px/48px 54px 46px 52px} 66%{border-radius:48px 54px 46px 52px/52px 46px 54px 48px} }
+@keyframes glowPulse { 0%,100%{opacity:.65} 50%{opacity:.85} }
+@keyframes fadeOut { to{opacity:0;transform:translateY(-8px)} }
+@keyframes fadeIn  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.bubble-wrapper { position:relative; display:inline-block; }
+.bubble-glow { position:absolute; inset:0; background:linear-gradient(90deg,rgba(96,165,250,.5),rgba(192,132,252,.4),rgba(244,114,182,.4),rgba(250,204,21,.3),rgba(96,165,250,.5)); background-size:200% 200%; border-radius:50px; filter:blur(10px); mix-blend-mode:multiply; animation:glowPulse 5s ease-in-out infinite alternate; }
+.bubble { position:relative; background:rgba(255,255,255,.55); backdrop-filter:blur(20px); padding:18px 48px; text-align:center; min-width:420px; box-shadow:inset 0 5px 10px rgba(255,255,255,.85),inset 0 -5px 12px rgba(0,0,0,.06),0 12px 30px rgba(0,0,0,.08); border:1px solid rgba(255,255,255,.5); border-top:1px solid rgba(255,255,255,.95); overflow:hidden; animation:bubbleWarp 5s ease-in-out infinite; }
+.bubble::before { content:''; position:absolute; top:2px; left:10%; width:80%; height:40%; background:linear-gradient(to bottom,rgba(255,255,255,.9),transparent); border-radius:50%; }
+.try-label { font-size:.85rem; color:#666; font-weight:500; margin-bottom:6px; }
+.voice-cmd { font-size:1.2rem; font-weight:600; color:var(--ink-deep); letter-spacing:-.01em; }
+.voice-cmd.fade-out { animation:fadeOut .4s ease forwards; }
+.voice-cmd.fade-in  { animation:fadeIn  .4s ease forwards; }
+
+/* ── STATS BAR ── */
+.stats-bar { margin:-20px auto 100px; max-width:900px; display:flex; justify-content:space-around; padding:24px 48px; border-radius:50px; }
+.stat-val { font-family:'Amulya',sans-serif; font-size:32px; font-weight:600; color:var(--primary); }
+.stat-lbl { font-size:11px; font-weight:600; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.1em; }
+
+/* ── SECTIONS ── */
+section { padding:100px 0; position:relative; }
+.section-title { font-size:40px; font-weight:700; color:var(--ink-deep); text-align:center; margin-bottom:64px; }
+
+/* ── FEATURES ── */
+.features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+.feature-card { padding:40px 32px; border-radius:40px; }
+.feature-title { font-family:'Amulya',sans-serif; font-size:22px; font-weight:600; margin-bottom:12px; color:var(--ink-deep); }
+.feature-desc  { color:#444; font-size:15px; line-height:1.6; }
+.feature-icon  { margin-bottom:20px; width:28px; height:28px; color:var(--primary); }
+
+/* ── SOCIAL PROOF ── */
+.split { display:grid; grid-template-columns:3fr 2fr; gap:40px; align-items:stretch; }
+.quote-card { padding:64px; border-radius:50px; display:flex; flex-direction:column; justify-content:center; }
+.quote-mark { font-family:'Amulya',sans-serif; font-size:80px; color:var(--primary); opacity:.3; line-height:.5; }
+.quote-text { font-family:'Amulya',sans-serif; font-size:28px; font-weight:600; line-height:1.4; margin-bottom:24px; color:var(--ink-deep); }
+.quote-attr { font-size:14px; color:var(--ink-muted); }
+.quote-attr strong { color:var(--ink-deep); display:block; font-weight:600; font-size:15px; }
+.metrics-col { display:flex; flex-direction:column; gap:20px; }
+.metric-card { padding:28px 32px; border-radius:40px; display:flex; align-items:center; justify-content:space-between; flex:1; }
+
+/* ── FORM ── */
+.form-section { max-width:600px; margin:0 auto; text-align:center; }
+.form-card { padding:48px; border-radius:50px; }
+.form-title  { font-size:24px; font-weight:700; color:var(--ink-deep); margin-bottom:6px; }
+.form-sub    { font-size:13px; color:var(--ink-muted); margin-bottom:28px; }
+.form-row    { display:flex; gap:10px; }
+.form-input  { flex:1; background:rgba(255,255,255,.65); border:1px solid rgba(255,255,255,.8); padding:14px 20px; border-radius:100px; font-family:'Inter',sans-serif; font-size:14px; outline:none; }
+.form-input::placeholder { color:#a1a1aa; }
+.form-btn    { padding:14px 22px; border-radius:100px; border:none; cursor:pointer; font-size:14px; font-weight:600; font-family:'Inter',sans-serif; color:#fff; background:linear-gradient(135deg,rgba(16,133,239,.85),rgba(99,102,241,.8)); box-shadow:inset 0 4px 8px rgba(255,255,255,.4),0 6px 16px rgba(16,133,239,.3); white-space:nowrap; position:relative; overflow:hidden; }
+.form-btn::before { content:''; position:absolute; top:2px; left:15%; width:70%; height:50%; background:linear-gradient(to bottom,rgba(255,255,255,.5),transparent); border-radius:50%; }
+
+/* ── FOOTER ── */
+footer { padding:64px 0 40px; }
+.footer-card { padding:20px 40px; border-radius:100px; display:flex; align-items:center; justify-content:space-between; }
+.footer-links { display:flex; gap:20px; }
+.footer-links a { color:var(--ink-muted); text-decoration:none; font-size:14px; font-weight:500; }
+
+/* ── FADE UP ── */
+.fade-up { opacity:0; transform:translateY(30px); transition:opacity .8s ease,transform .8s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+
+@media(max-width:768px){
+  .features-grid,.split { grid-template-columns:1fr; }
+  .bubble { min-width:300px; padding:16px 28px; }
+  .stats-bar { flex-direction:column; gap:16px; border-radius:30px; padding:24px; }
+  .form-row { flex-direction:column; }
+  .footer-card { flex-direction:column; gap:16px; border-radius:40px; padding:24px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="dot-grid-container"><div class="dot-grid"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-pill">
+    <a href="#" class="nav-logo">
+      <svg height="22" viewBox="0 0 428 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M93.8477 73H77.3438L102.49 0.246094H122.266L147.363 73H130.908L125.488 56.3984H99.2188L93.8477 73ZM103.125 44.3867H121.582L112.646 16.8477H112.061L103.125 44.3867ZM156.055 73V0.246094H171.387V60.3047H202.588V73H156.055ZM225.391 73H208.887L234.033 0.246094H253.809L278.906 73H262.451L257.031 56.3984H230.762L225.391 73ZM234.668 44.3867H253.125L244.189 16.8477H243.604L234.668 44.3867ZM348.438 0.246094V73H335.107L303.516 27.248H302.93V73H287.598V0.246094H301.074L332.471 45.998H333.105V0.246094H348.438ZM373.633 73H357.129L382.275 0.246094H402.051L427.148 73H410.693L405.273 56.3984H379.004L373.633 73ZM382.91 44.3867H401.367L392.432 16.8477H391.846L382.91 44.3867Z" fill="#1085EF"/>
+        <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/>
+        <g filter="url(#f0)">
+          <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/>
+        </g>
+        <defs><filter id="f0" x="0" y="0" width="68.75" height="81.2861" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dx="3" dy="4"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0.654902 0 0 0 0 0.541176 0 0 0 0 0.870588 0 0 0 1 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dx="3" dy="4"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0"/><feBlend mode="normal" in2="shape" result="effect2_innerShadow"/></filter></defs>
+      </svg>
+    </a>
+    <div class="nav-divider"></div>
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#how-it-works" class="nav-link">How It Works</a>
+    <a href="#about" class="nav-link">About</a>
+    <a href="#waitlist" class="nav-link">Waitlist</a>
+    <div class="nav-divider"></div>
+    <a href="#reserve" class="nav-btn">Reserve $1 →</a>
+  </div>
+</nav>
+
+<div class="content">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="glow" style="width:50vw;height:50vh;top:20%;left:25%;"></div>
+    <div class="glass hero-eyebrow fade-up" style="border-radius:100px;">
+      Early Access — Founding Member Spots Open
+    </div>
+    <h1 class="hero-headline fade-up" style="transition-delay:.1s;">
+      Speak your imagination<br>into reality.
+    </h1>
+    <p class="hero-sub fade-up" style="transition-delay:.2s;">
+      The AI voice interface for 3D creation. No menus. No shortcuts. Just your voice.
+    </p>
+    <div class="hero-ctas fade-up" style="transition-delay:.3s;">
+      <a href="#reserve" class="glass cta cta-blue" style="border-radius:50px;">Reserve Founding Spot — $1 →</a>
+      <a href="#waitlist" class="cta cta-neutral">Join Free Waitlist</a>
+    </div>
+    <div class="bubble-wrapper fade-up" style="transition-delay:.4s;">
+      <div class="bubble-glow"></div>
+      <div class="bubble">
+        <p class="try-label">try saying</p>
+        <p class="voice-cmd" id="voiceCmd">"add a metallic sphere"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="glass stats-bar fade-up">
+    <div style="text-align:center;"><div class="stat-val">6+</div><div class="stat-lbl">Years Blender Exp</div></div>
+    <div style="text-align:center;"><div class="stat-val">120+</div><div class="stat-lbl">Students Taught</div></div>
+    <div style="text-align:center;"><div class="stat-val">Live</div><div class="stat-lbl">MVP Status</div></div>
+    <div style="text-align:center;"><div class="stat-val">$50+</div><div class="stat-lbl">Willingness to Pay</div></div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="glow" style="width:60vw;height:50vh;top:-10%;right:-15%;"></div>
+    <h2 class="section-title fade-up">3D creation, reimagined.</h2>
+    <div class="features-grid">
+      <div class="glass feature-card fade-up">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+        <h3 class="feature-title">Voice-First Interface</h3>
+        <p class="feature-desc">Describe what you want in plain language. nalana translates intent into precise 3D operations.</p>
+      </div>
+      <div class="glass feature-card fade-up" style="transition-delay:.1s;">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        <h3 class="feature-title">Scene-Aware AI</h3>
+        <p class="feature-desc">Understands geometry, transforms, and materials so every command just works.</p>
+      </div>
+      <div class="glass feature-card fade-up" style="transition-delay:.2s;">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <h3 class="feature-title">Real-Time Execution</h3>
+        <p class="feature-desc">Local processing. Responses under 600ms. Common commands in ~5ms.</p>
+      </div>
+      <div class="glass feature-card fade-up">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 13 9 20 9"/><path d="M20 14.5V6l-6-4H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"/><circle cx="18" cy="18" r="3"/></svg>
+        <h3 class="feature-title">Built on Blender</h3>
+        <p class="feature-desc">All the power of Blender's engine with a UI rebuilt around how people actually think.</p>
+      </div>
+      <div class="glass feature-card fade-up" style="transition-delay:.1s;">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <h3 class="feature-title">Cursor for Blender</h3>
+        <p class="feature-desc">What Cursor is to coding, nalana is to 3D. An AI-native interface for the way creators think.</p>
+      </div>
+      <div class="glass feature-card fade-up" style="transition-delay:.2s;">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <h3 class="feature-title">Learns Your Workflow</h3>
+        <p class="feature-desc">Adapts to how you work, learning your vocabulary and style over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF -->
+  <section>
+    <div class="split">
+      <div class="glass quote-card fade-up">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">This is exactly what our 3D teams need. I'd pay $50 a month for this without hesitation.</p>
+        <div class="quote-attr">
+          <strong>Senior Director of 3D Excellence</strong>
+          Nike / Jordan Brand
+        </div>
+      </div>
+      <div class="metrics-col">
+        <div class="glass metric-card fade-up" style="transition-delay:.1s;">
+          <span style="font-size:11px;font-weight:600;color:#767676;text-transform:uppercase;letter-spacing:.08em;">Industry Validation</span>
+          <span style="font-family:'Amulya',sans-serif;font-size:22px;font-weight:600;color:#1085EF;">Nike ✦</span>
+        </div>
+        <div class="glass metric-card fade-up" style="transition-delay:.2s;">
+          <span style="font-size:11px;font-weight:600;color:#767676;text-transform:uppercase;letter-spacing:.08em;">Willingness to Pay</span>
+          <span style="font-family:'Amulya',sans-serif;font-size:22px;font-weight:600;color:#1085EF;">$50+/mo</span>
+        </div>
+        <div class="glass metric-card fade-up" style="transition-delay:.3s;">
+          <span style="font-size:11px;font-weight:600;color:#767676;text-transform:uppercase;letter-spacing:.08em;">Built With</span>
+          <span style="font-family:'Amulya',sans-serif;font-size:22px;font-weight:600;color:#1085EF;">Blender</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="glow" style="width:40vw;height:40vh;bottom:0;left:0;"></div>
+    <div class="glass form-card fade-up" style="text-align:center;max-width:760px;margin:0 auto;">
+      <h2 style="font-family:'Amulya',sans-serif;font-size:24px;font-weight:700;color:#0a0a0a;margin-bottom:16px;">Built by a creator, for creators.</h2>
+      <p style="font-size:15px;color:#444;max-width:580px;margin:0 auto;line-height:1.7;">
+        Founded by Clarence Keith. After 6+ years of Blender experience and teaching 120+ students at the USC Iovine and Young Academy, the friction of 3D software was obvious. ~70% of people know what they want to build — they just don't know the shortcuts. nalana bridges that gap.
+      </p>
+    </div>
+  </section>
+
+  <!-- RESERVE -->
+  <section id="reserve" class="form-section">
+    <div class="glow" style="inset:-20px;border-radius:60px;position:absolute;"></div>
+    <div class="glass form-card fade-up" style="position:relative;">
+      <h2 class="form-title">Claim Your Founding Spot</h2>
+      <p class="form-sub">$1 holds your spot, credited toward your first month.</p>
+      <div class="form-row">
+        <input type="email" class="form-input" placeholder="your@email.com" />
+        <button class="form-btn">Reserve — $1 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section id="waitlist" class="form-section" style="padding-top:20px;">
+    <div class="glass form-card fade-up" style="padding:32px;">
+      <h2 class="form-title" style="font-size:20px;">Or Join Free Waitlist</h2>
+      <p class="form-sub" style="margin-bottom:16px;">Get notified when we open to the public.</p>
+      <div class="form-row">
+        <input type="email" class="form-input" placeholder="your@email.com" />
+        <button class="form-btn" style="background:rgba(0,0,0,0.07);color:#1a1a1a;box-shadow:none;">Join Free →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="glass footer-card">
+      <div style="font-family:'Amulya',sans-serif;font-size:18px;font-weight:700;color:#1085EF;">nalana</div>
+      <div class="footer-links">
+        <a href="#">Twitter</a>
+        <a href="#">LinkedIn</a>
+        <a href="mailto:hello@nalana.io">Contact</a>
+      </div>
+      <div style="font-size:13px;color:#767676;">© 2026 Nalana.</div>
+    </div>
+  </footer>
+
+</div><!-- /content -->
+
+<!-- Fixed N mark -->
+<div style="position:fixed;bottom:24px;right:24px;z-index:50;width:28px;height:34px;opacity:.75;pointer-events:none;filter:drop-shadow(0 2px 8px rgba(16,133,239,.25));">
+  <svg width="28" height="34" viewBox="0 0 69 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/>
+    <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/>
+  </svg>
+</div>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+(function animRing(){ rx+=(mx-rx)*.15; ry+=(my-ry)*.15; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+
+// Fade-up observer
+const obs = new IntersectionObserver(entries=>{entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });},{threshold:.1});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// Voice command rotation
+const cmds = ['"add a metallic sphere"','"rotate it 45 degrees"','"make the lighting warmer"','"duplicate and mirror the mesh"','"smooth shade the object"','"scale it up by 2x"','"apply a glass material"','"add a point light above"'];
+let idx = 0;
+const el = document.getElementById('voiceCmd');
+setInterval(()=>{
+  el.classList.add('fade-out');
+  setTimeout(()=>{ idx=(idx+1)%cmds.length; el.textContent=cmds[idx]; el.classList.remove('fade-out'); el.classList.add('fade-in'); setTimeout(()=>el.classList.remove('fade-in'),400); },400);
+}, 3500);
+</script>
+</body>
+</html>

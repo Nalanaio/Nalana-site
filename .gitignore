@@ -1,0 +1,5 @@
+# FigJam files (too large for GitHub)
+*.jam
+
+# Claude worktrees
+.claude/

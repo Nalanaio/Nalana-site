@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nalana — UI Kit: IDE Chat Panel</title>
+<style>
+@font-face { font-family: 'Amulya'; src: url('../../fonts/Amulya-Variable.woff2') format('woff2'), url('../../fonts/Amulya-Variable.woff') format('woff'); font-weight: 100 900; font-style: normal; font-display: swap; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #1085EF;
+  --salmon: #FF8C69;
+  --lavender: #A78ADE;
+  --bg-app: #111111;
+  --bg-panel: #1a1a1a;
+  --bg-surface: #222222;
+  --bg-hover: #2a2a2a;
+  --bg-input: #1f1f1f;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --ink: #e8e8e8;
+  --ink-muted: #888;
+  --ink-dim: #555;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg-app);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  height: 40px;
+  background: #0d0d0d;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.topbar-dots { display:flex; gap:6px; }
+.topbar-dot  { width:10px; height:10px; border-radius:50%; }
+.topbar-title { font-size:12px; color: var(--ink-muted); font-weight:500; margin-left:auto; margin-right:auto; letter-spacing:0.02em; }
+.topbar-logo { display:flex; align-items:center; gap:6px; }
+.topbar-logo-text { font-family:'Amulya', sans-serif; font-size:14px; font-weight:700; color:var(--primary); }
+
+/* ── LAYOUT ── */
+.app-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── VIEWPORT (3D) ── */
+.viewport {
+  flex: 1;
+  background: #0e0e0e;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.viewport-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.viewport-axes {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  opacity: 0.5;
+}
+.viewport-label {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.scene-object {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(16,133,239,0.6), rgba(16,133,239,0.15) 60%, transparent);
+  box-shadow: 0 0 80px rgba(16,133,239,0.2), inset 0 0 40px rgba(255,140,105,0.1);
+  border: 1px solid rgba(16,133,239,0.3);
+  animation: floatObj 4s ease-in-out infinite;
+}
+@keyframes floatObj { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(4deg)} }
+
+.viewport-toolbar {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.vt-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.vt-btn:hover { background: rgba(255,255,255,0.1); }
+.vt-btn svg { width:14px; height:14px; color: var(--ink-muted); }
+
+/* ── CHAT PANEL ── */
+.chat-panel {
+  width: 360px;
+  min-width: 360px;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.panel-pills { display: flex; gap: 6px; }
+.panel-pill {
+  font-size: 11px; font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.panel-pill.active {
+  background: rgba(16,133,239,0.15);
+  color: var(--primary);
+  border: 1px solid rgba(16,133,239,0.3);
+}
+.panel-pill.inactive {
+  background: rgba(255,255,255,0.04);
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+}
+
+/* ── MESSAGES ── */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.msg { display: flex; flex-direction: column; gap: 6px; }
+.msg-meta { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.msg-meta.user  { color: var(--primary); text-align: right; }
+.msg-meta.nalana { color: var(--salmon); }
+
+.msg-bubble {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  max-width: 90%;
+}
+.msg-bubble.user {
+  background: rgba(16,133,239,0.15);
+  border: 1px solid rgba(16,133,239,0.25);
+  color: #dde8ff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.msg-bubble.nalana {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--ink);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+/* Command output chip */
+.cmd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(16,133,239,0.08);
+  border: 1px solid rgba(16,133,239,0.2);
+  font-family: 'SF Mono','Fira Code',monospace;
+  font-size: 11px;
+  color: var(--primary);
+  margin-top: 8px;
+}
+.cmd-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+/* Step list */
+.step-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.step-check {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-check.done { background: rgba(16,133,239,0.2); }
+.step-check.done svg { width:10px; height:10px; color:var(--primary); }
+.step-check.pending { background: rgba(255,255,255,0.06); border: 1px solid var(--border); }
+
+/* Thinking animation */
+@keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+.thinking { display:flex; gap:4px; align-items:center; }
+.thinking span { width:6px; height:6px; border-radius:50%; background:var(--salmon); animation:blink 1.4s infinite; }
+.thinking span:nth-child(2){animation-delay:.2s;}
+.thinking span:nth-child(3){animation-delay:.4s;}
+
+/* ── INPUT ── */
+.input-area {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 10px 14px;
+  transition: border-color 0.15s;
+}
+.input-row:focus-within { border-color: rgba(16,133,239,0.4); }
+.input-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  resize: none;
+  line-height: 1.5;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.input-field::placeholder { color: var(--ink-dim); }
+.input-actions { display:flex; gap:6px; align-items:flex-end; }
+.input-btn {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.input-btn.send {
+  background: var(--primary);
+  box-shadow: 0 2px 8px rgba(16,133,239,0.3);
+}
+.input-btn.send svg { width:14px; height:14px; color:#fff; }
+.input-btn.mic {
+  background: rgba(255,140,105,0.12);
+  border: 1px solid rgba(255,140,105,0.25);
+}
+.input-btn.mic svg { width:14px; height:14px; color:var(--salmon); }
+.input-btn.mic.active { background:rgba(255,140,105,0.25); animation:pulseMic 1s ease-in-out infinite; }
+@keyframes pulseMic { 0%,100%{box-shadow:0 0 0 0 rgba(255,140,105,0.3)} 50%{box-shadow:0 0 0 6px rgba(255,140,105,0)} }
+
+/* Input hints */
+.input-hints {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.hint-chip {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.hint-chip:hover { background: rgba(16,133,239,0.08); border-color: rgba(16,133,239,0.2); color:var(--primary); }
+
+/* ── CONTEXT BAR ── */
+.context-bar {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.ctx-label { font-size: 11px; color: var(--ink-dim); font-weight: 500; }
+.ctx-chip {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--ink-muted);
+}
+.ctx-chip-dot { width:5px; height:5px; border-radius:50%; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-dots">
+    <div class="topbar-dot" style="background:#FF5F57;"></div>
+    <div class="topbar-dot" style="background:#FFBD2E;"></div>
+    <div class="topbar-dot" style="background:#28C840;"></div>
+  </div>
+  <div class="topbar-logo">
+    <svg width="14" height="17" viewBox="0 0 69 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="#FF8C69"/>
+      <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="#1085EF"/>
+    </svg>
+    <span class="topbar-logo-text">nalana</span>
+  </div>
+  <span class="topbar-title">Untitled Scene — nalana IDE</span>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <div style="font-size:11px;color:#555;font-weight:500;">v0.4.1-alpha</div>
+  </div>
+</div>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- 3D VIEWPORT -->
+  <div class="viewport">
+    <div class="viewport-grid"></div>
+    <span class="viewport-label">Perspective</span>
+    <!-- Floating 3D object placeholder -->
+    <div class="scene-object"></div>
+    <!-- Toolbar -->
+    <div class="viewport-toolbar">
+      <div class="vt-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3"/></svg>
+      </div>
+      <div class="vt-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+      </div>
+      <div class="vt-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3"/></svg>
+      </div>
+      <div class="vt-btn" style="margin-top:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </div>
+    </div>
+    <!-- Axes indicator -->
+    <svg class="viewport-axes" viewBox="0 0 60 60">
+      <line x1="30" y1="30" x2="54" y2="30" stroke="#1085EF" stroke-width="2"/>
+      <line x1="30" y1="30" x2="30" y2="6"  stroke="#28C840" stroke-width="2"/>
+      <line x1="30" y1="30" x2="10" y2="48" stroke="#FF5F57" stroke-width="2"/>
+      <text x="56" y="34" fill="#1085EF" font-size="8" font-family="Inter">X</text>
+      <text x="28" y="4"  fill="#28C840" font-size="8" font-family="Inter">Y</text>
+      <text x="4"  y="52" fill="#FF5F57" font-size="8" font-family="Inter">Z</text>
+    </svg>
+  </div>
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel">
+
+    <!-- Panel header -->
+    <div class="panel-header">
+      <span class="panel-title">nalana</span>
+      <div class="panel-pills">
+        <span class="panel-pill active">Chat</span>
+        <span class="panel-pill inactive">History</span>
+        <span class="panel-pill inactive">Settings</span>
+      </div>
+    </div>
+
+    <!-- Context bar -->
+    <div class="context-bar">
+      <span class="ctx-label">Context:</span>
+      <span class="ctx-chip"><span class="ctx-chip-dot" style="background:#28C840;"></span>1 object selected</span>
+      <span class="ctx-chip"><span class="ctx-chip-dot" style="background:#1085EF;"></span>Object mode</span>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages" id="messages">
+
+      <!-- System welcome -->
+      <div class="msg">
+        <div class="msg-meta nalana">nalana</div>
+        <div class="msg-bubble nalana">
+          Ready. I can see your scene. What do you want to build?
+          <div class="step-list">
+            <div class="step-item"><div class="step-check done"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,5 4,7 8,3"/></svg></div>Scene context loaded</div>
+            <div class="step-item"><div class="step-check done"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,5 4,7 8,3"/></svg></div>Voice input enabled</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User message -->
+      <div class="msg">
+        <div class="msg-meta user">You</div>
+        <div class="msg-bubble user">add a metallic sphere and position it above the plane</div>
+      </div>
+
+      <!-- nalana response -->
+      <div class="msg">
+        <div class="msg-meta nalana">nalana</div>
+        <div class="msg-bubble nalana">
+          Done. Added a sphere with a metallic PBR material.
+          <div class="cmd-chip"><div class="cmd-dot"></div>bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(0, 0, 2))</div>
+          <div class="step-list" style="margin-top:10px;">
+            <div class="step-item"><div class="step-check done"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,5 4,7 8,3"/></svg></div>Sphere created (32 segments)</div>
+            <div class="step-item"><div class="step-check done"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,5 4,7 8,3"/></svg></div>Metallic material applied</div>
+            <div class="step-item"><div class="step-check done"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,5 4,7 8,3"/></svg></div>Positioned at Z+2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User -->
+      <div class="msg">
+        <div class="msg-meta user">You</div>
+        <div class="msg-bubble user">make it blue and slightly reflective</div>
+      </div>
+
+      <!-- nalana thinking -->
+      <div class="msg" id="thinking-msg">
+        <div class="msg-meta nalana">nalana</div>
+        <div class="msg-bubble nalana">
+          <div class="thinking"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <div class="input-hints">
+        <span class="hint-chip">rotate 45°</span>
+        <span class="hint-chip">duplicate</span>
+        <span class="hint-chip">add light above</span>
+        <span class="hint-chip">smooth shade</span>
+      </div>
+      <div class="input-row">
+        <textarea class="input-field" rows="1" placeholder="Describe what to build…" id="inputField"></textarea>
+        <div class="input-actions">
+          <button class="input-btn mic" id="micBtn" title="Voice input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+          <button class="input-btn send" id="sendBtn" title="Send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /chat-panel -->
+</div><!-- /app-layout -->
+
+<script>
+// Resolve thinking message after delay
+setTimeout(() => {
+  const thinkingMsg = document.getElementById('thinking-msg');
+  if (thinkingMsg) {
+    thinkingMsg.querySelector('.msg-bubble').innerHTML = `
+      Updated the material — metallic blue with high reflectivity.
+      <div class="cmd-chip"><div class="cmd-dot"></div>mat.roughness = 0.1 · mat.metallic = 0.9 · base_color = (0.15, 0.45, 1.0, 1)</div>
+    `;
+  }
+}, 2000);
+
+// Mic toggle
+const micBtn = document.getElementById('micBtn');
+let micActive = false;
+micBtn.addEventListener('click', () => {
+  micActive = !micActive;
+  micBtn.classList.toggle('active', micActive);
+});
+
+// Send button
+const sendBtn = document.getElementById('sendBtn');
+const inputField = document.getElementById('inputField');
+const messages = document.getElementById('messages');
+
+function addMessage(text, who) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-meta ${who}">${who === 'user' ? 'You' : 'nalana'}</div>
+    <div class="msg-bubble ${who}">${text}</div>
+  `;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function sendMessage() {
+  const text = inputField.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  inputField.value = '';
+  // nalana thinking
+  setTimeout(() => {
+    addMessage('<div class="thinking"><span></span><span></span><span></span></div>', 'nalana');
+    messages.scrollTop = messages.scrollHeight;
+    setTimeout(() => {
+      const bubbles = messages.querySelectorAll('.msg-bubble.nalana');
+      const last = bubbles[bubbles.length - 1];
+      if (last) last.innerHTML = `Done. I've applied that change to the scene.`;
+    }, 1800);
+  }, 400);
+}
+
+sendBtn.addEventListener('click', sendMessage);
+inputField.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+// Auto-resize textarea
+inputField.addEventListener('input', () => {
+  inputField.style.height = 'auto';
+  inputField.style.height = Math.min(inputField.scrollHeight, 120) + 'px';
+});
+
+// Hint chips
+document.querySelectorAll('.hint-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    inputField.value = chip.textContent;
+    inputField.focus();
+  });
+});
+</script>
+</body>
+</html>

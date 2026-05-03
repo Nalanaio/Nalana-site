@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f1f1f1; font-family: 'Inter', sans-serif; padding: 28px; }
+  .row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .card { width: 100px; height: 64px; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+  .label { font-size: 10px; font-weight: 600; color: #767676; text-align: center; margin-top: 8px; }
+  .val   { font-size: 9px; color: #a1a1aa; text-align: center; font-family: monospace; }
+  .block { display: flex; flex-direction: column; align-items: center; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="block">
+    <div class="card" style="box-shadow:0 4px 12px rgba(0,0,0,0.05);"></div>
+    <div class="label">sm</div><div class="val">4px 12px 0.05</div>
+  </div>
+  <div class="block">
+    <div class="card" style="box-shadow:0 8px 24px rgba(0,0,0,0.08);"></div>
+    <div class="label">md</div><div class="val">8px 24px 0.08</div>
+  </div>
+  <div class="block">
+    <div class="card" style="box-shadow:0 15px 35px rgba(0,0,0,0.10);"></div>
+    <div class="label">lg</div><div class="val">15px 35px 0.10</div>
+  </div>
+  <div class="block">
+    <div class="card" style="background:rgba(255,255,255,0.4);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.4);border-top:1px solid rgba(255,255,255,0.9);box-shadow:inset 0px 6px 12px rgba(255,255,255,0.8),inset 0px -6px 15px rgba(0,0,0,0.08),0px 15px 35px rgba(0,0,0,0.1);"></div>
+    <div class="label">glass</div><div class="val">inset + drop</div>
+  </div>
+  <div class="block">
+    <div class="card" style="background:linear-gradient(135deg,rgba(96,165,250,0.7) 0%,rgba(16,133,239,0.8) 30%,rgba(99,102,241,0.7) 70%,rgba(16,133,239,0.75) 100%);box-shadow:inset 0px 5px 10px rgba(255,255,255,0.45),inset 0px -5px 12px rgba(0,0,80,0.12),0px 8px 24px rgba(16,133,239,0.3);border:1px solid rgba(255,255,255,0.5);border-top:1px solid rgba(255,255,255,0.85);"></div>
+    <div class="label">CTA glow</div><div class="val">blue shadow</div>
+  </div>
+  <div class="block">
+    <div class="card" style="background:#fff;filter:drop-shadow(3px 4px 4px rgba(167,138,222,1));border-radius:16px;"></div>
+    <div class="label">logo glow</div><div class="val">lavender</div>
+  </div>
+</div>
+</body>
+</html>

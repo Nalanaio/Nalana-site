@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @font-face {
+    font-family: 'Amulya';
+    src: url('../fonts/Amulya-Variable.woff2') format('woff2'),
+         url('../fonts/Amulya-Variable.woff')  format('woff');
+    font-weight: 100 900; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Amulya';
+    src: url('../fonts/Amulya-VariableItalic.woff2') format('woff2'),
+         url('../fonts/Amulya-VariableItalic.woff')  format('woff');
+    font-weight: 100 900; font-style: italic; font-display: swap;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fafafa; font-family: 'Amulya', sans-serif; padding: 28px 32px; }
+  .specimens { display: flex; flex-direction: column; gap: 6px; }
+  .row { display: flex; align-items: baseline; gap: 16px; }
+  .label { font-size: 10px; font-weight: 600; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.08em; min-width: 56px; font-family: sans-serif; }
+  .meta  { font-size: 10px; color: #d0d0d0; min-width: 110px; font-family: sans-serif; }
+  .h1 { font-family: 'Amulya'; font-size: 52px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; line-height: 1; }
+  .h2 { font-family: 'Amulya'; font-size: 36px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.015em; line-height: 1.05; }
+  .h3 { font-family: 'Amulya'; font-size: 26px; font-weight: 600; color: #0a0a0a; line-height: 1.2; }
+  .h4 { font-family: 'Amulya'; font-size: 22px; font-weight: 600; color: #0a0a0a; line-height: 1.2; }
+  .quote { font-family: 'Amulya'; font-size: 20px; font-weight: 500; color: #343434; font-style: italic; line-height: 1.4; }
+  .accent { color: #1085EF; }
+  .salmon { color: #FF8C69; }
+</style>
+</head>
+<body>
+<div class="specimens">
+  <div class="row"><span class="label">H1</span><span class="meta">Amulya 700 / 52px</span><span class="h1">Speak it. <span class="accent">Build it.</span></span></div>
+  <div class="row"><span class="label">H2</span><span class="meta">Amulya 700 / 36px</span><span class="h2">3D creation, <span class="salmon">reimagined.</span></span></div>
+  <div class="row"><span class="label">H3</span><span class="meta">Amulya 600 / 26px</span><span class="h3">Built on Blender's engine. Not a plugin.</span></div>
+  <div class="row"><span class="label">H4</span><span class="meta">Amulya 600 / 22px</span><span class="h4">Voice-First Interface · Scene-Aware AI</span></div>
+  <div class="row"><span class="label">Quote</span><span class="meta">Amulya 500 italic / 20px</span><span class="quote">"I'd pay $50 a month for this without hesitation."</span></div>
+</div>
+</body>
+</html>

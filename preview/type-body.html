@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fafafa; font-family: 'Inter', sans-serif; padding: 22px 28px; }
+  .specimens { display: flex; flex-direction: column; gap: 8px; }
+  .row { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+  .row:last-child { border-bottom: none; padding-bottom: 0; }
+  .label { font-size: 10px; font-weight: 600; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.06em; min-width: 72px; }
+  .meta  { font-size: 10px; color: #d0d0d0; min-width: 104px; font-family: monospace; }
+  .s-body-lg { font-family: 'Inter'; font-size: 18px; font-weight: 500; color: #1a1a1a; line-height: 1.6; }
+  .s-body    { font-family: 'Inter'; font-size: 16px; font-weight: 400; color: #1a1a1a; line-height: 1.6; }
+  .s-body-sm { font-family: 'Inter'; font-size: 15px; font-weight: 400; color: #444; line-height: 1.6; }
+  .s-label   { font-family: 'Inter'; font-size: 12px; font-weight: 600; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.05em; }
+  .s-nav     { font-family: 'Inter'; font-size: 14px; font-weight: 500; color: #444; }
+  .s-dm      { font-family: 'DM Sans'; font-size: 16px; font-weight: 400; color: #343434; }
+  .s-mono    { font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; color: #1085EF; }
+</style>
+</head>
+<body>
+<div class="specimens">
+  <div class="row"><span class="label">Body LG</span><span class="meta">Inter 18/500</span><span class="s-body-lg">The AI voice interface for 3D creation.</span></div>
+  <div class="row"><span class="label">Body</span><span class="meta">Inter 16/400</span><span class="s-body">Describe what you want in plain language. nalana translates your intent.</span></div>
+  <div class="row"><span class="label">Body SM</span><span class="meta">Inter 15/400</span><span class="s-body-sm">Understands geometry, transforms, and materials — so commands just work.</span></div>
+  <div class="row"><span class="label">Label</span><span class="meta">Inter 12/600 caps</span><span class="s-label">Early Access — Founding Member Spots Open</span></div>
+  <div class="row"><span class="label">Nav</span><span class="meta">Inter 14/500</span><span class="s-nav">Features · How It Works · About · Waitlist</span></div>
+  <div class="row"><span class="label">DM Sans</span><span class="meta">DM Sans 16/400</span><span class="s-dm">Deck secondary body — clear and legible at 30px+</span></div>
+  <div class="row"><span class="label">Mono/CMD</span><span class="meta">SF Mono 13</span><span class="s-mono">"add a metallic sphere above the plane"</span></div>
+</div>
+</body>
+</html>

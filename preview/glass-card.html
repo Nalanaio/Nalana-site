@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>@font-face{font-family:'Amulya';src:url('../fonts/Amulya-Variable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(135deg, rgba(191,219,254,0.4), rgba(233,213,255,0.3), rgba(251,207,232,0.3));
+    background-color: #f1f1f1;
+    font-family: 'Inter', sans-serif;
+    padding: 28px;
+    min-height: 200px;
+  }
+  .row { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; }
+
+  .glass {
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 28px;
+    box-shadow:
+      inset 0px 6px 12px rgba(255,255,255,0.8),
+      inset 0px -6px 15px rgba(0,0,0,0.08),
+      0px 15px 35px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-top: 1px solid rgba(255,255,255,0.9);
+    position: relative;
+    overflow: hidden;
+    padding: 24px 28px;
+    flex: 1;
+    min-width: 180px;
+  }
+  .glass::before {
+    content: '';
+    position: absolute;
+    top: 2px; left: 10%; width: 80%; height: 35%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .glass-title { font-family: 'Amulya', sans-serif; font-size: 18px; font-weight: 600; color: #0a0a0a; margin-bottom: 6px; }
+  .glass-body  { font-size: 13px; color: #444; line-height: 1.5; }
+
+  .glass-sm {
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    box-shadow:
+      inset 0px 4px 8px rgba(255,255,255,0.9),
+      inset 0px -4px 10px rgba(0,0,0,0.05),
+      0px 8px 20px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.5);
+    border-top: 1px solid rgba(255,255,255,0.95);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .metric-label { font-size: 10px; font-weight: 600; color: #767676; text-transform: uppercase; letter-spacing: 0.08em; }
+  .metric-val   { font-family: 'Amulya', sans-serif; font-size: 22px; font-weight: 600; color: #1085EF; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="glass">
+    <div class="glass-title">Voice-First Interface</div>
+    <div class="glass-body">Describe what you want in plain language. nalana translates your intent into precise operations.</div>
+  </div>
+  <div class="glass">
+    <div class="glass-title">Scene-Aware AI</div>
+    <div class="glass-body">Understands geometry, transforms, materials — so commands just work.</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;min-width:160px;">
+    <div class="glass-sm">
+      <span class="metric-label">Willingness to Pay</span>
+      <span class="metric-val">$50+/mo</span>
+    </div>
+    <div class="glass-sm">
+      <span class="metric-label">Industry</span>
+      <span class="metric-val">Nike ✦</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
