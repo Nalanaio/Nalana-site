@@ -565,8 +565,21 @@ footer { padding:48px 0 36px; }
   font-weight: 500;
   margin-top: 10px;
 }
+/* Mobile: show email form, hide desktop download UI */
+.cta-mobile-email { display: none; }
+.cta-mobile-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
 @media (max-width: 768px) {
   .send-desktop { display: block; }
+  .cta-desktop-only { display: none !important; }
+  .cta-mobile-email { display: block; }
+  .cta-mobile-email .send-desktop-row { max-width: 360px; margin: 0 auto; }
 }
 
 /* ── SCROLL REVEAL ── */
@@ -620,11 +633,11 @@ footer { padding:48px 0 36px; }
   </div>
 
   <div class="nav-downloads">
-    <a href="/api/download?platform=mac" class="dl-btn dl-btn-mac" onclick="va('event',{name:'Download',data:{platform:'mac',location:'nav'}})">
+    <a href="/api/download?platform=mac" class="dl-btn dl-btn-mac" onclick="handleDownloadClick(event,'mac','nav')">
       <svg class="dl-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       Mac
     </a>
-    <a href="/api/download?platform=windows" class="dl-btn dl-btn-win" onclick="va('event',{name:'Download',data:{platform:'windows',location:'nav'}})">
+    <a href="/api/download?platform=windows" class="dl-btn dl-btn-win" onclick="handleDownloadClick(event,'windows','nav')">
       <svg class="dl-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
       Windows
     </a>
@@ -659,29 +672,14 @@ footer { padding:48px 0 36px; }
   </div>
 
   <div class="hero-ctas fade-up">
-    <a href="/api/download?platform=mac" class="hero-dl-mac" onclick="va('event',{name:'Download',data:{platform:'mac',location:'hero'}})">
+    <a href="/api/download?platform=mac" class="hero-dl-mac" onclick="handleDownloadClick(event,'mac','hero')">
       <svg class="dl-icon-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       Download for Mac
     </a>
-    <a href="/api/download?platform=windows" class="hero-dl-win" onclick="va('event',{name:'Download',data:{platform:'windows',location:'hero'}})">
+    <a href="/api/download?platform=windows" class="hero-dl-win" onclick="handleDownloadClick(event,'windows','hero')">
       <svg class="dl-icon-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
       Download for Windows
     </a>
-  </div>
-
-  <!-- Send to desktop (mobile only) -->
-  <div class="glass send-desktop fade-up">
-    <div class="send-desktop-label">On your phone? Get it on your computer.</div>
-    <button class="send-share-btn" id="shareBtn" onclick="handleShare()" style="display:none;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-      Share this page
-    </button>
-    <div class="send-desktop-divider" id="shareDivider" style="display:none;">or</div>
-    <div class="send-desktop-row">
-      <input type="email" class="send-desktop-input" id="sendEmail" placeholder="your@email.com" />
-      <button class="send-desktop-btn" onclick="handleSendLink()">Send link →</button>
-    </div>
-    <div class="send-desktop-success" id="sendSuccess">✦ Link sent — check your inbox.</div>
   </div>
 
   <!-- Voice bubble -->
@@ -849,23 +847,34 @@ footer { padding:48px 0 36px; }
       <div class="glow" style="width:80%;height:100%;top:-20%;left:10%;z-index:-1;opacity:0.5;"></div>
       <h2 class="cta-title">Build the world.</h2>
       <p class="cta-sub">Free to try. No account. No setup. Just open it and speak.</p>
-      <div class="cta-btns">
-        <a href="/api/download?platform=mac" class="cta-big-mac" onclick="va('event',{name:'Download',data:{platform:'mac',location:'cta'}})">
+      <!-- Desktop: download buttons -->
+      <div class="cta-btns cta-desktop-only">
+        <a href="/api/download?platform=mac" class="cta-big-mac" onclick="handleDownloadClick(event,'mac','cta')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
           Download for Mac
         </a>
-        <a href="/api/download?platform=windows" class="cta-big-win" onclick="va('event',{name:'Download',data:{platform:'windows',location:'cta'}})">
+        <a href="/api/download?platform=windows" class="cta-big-win" onclick="handleDownloadClick(event,'windows','cta')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
           Download for Windows
         </a>
       </div>
-      <div class="waitlist-label">Not ready? Get notified when we ship new versions.</div>
-      <div class="waitlist-row" id="waitlistForm">
+      <div class="waitlist-label cta-desktop-only">Not ready? Get notified when we ship new versions.</div>
+      <div class="waitlist-row cta-desktop-only" id="waitlistForm">
         <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="your@email.com" />
         <button class="waitlist-btn" onclick="handleWaitlist()">Notify me →</button>
       </div>
-      <div class="success-msg" id="waitlistSuccess">✦ You're on the list.</div>
-      <p style="margin-top:20px;font-size:12px;color:#bbb;">macOS 12+ · Windows 10/11 · Apple Silicon &amp; Intel</p>
+      <div class="success-msg cta-desktop-only" id="waitlistSuccess">✦ You're on the list.</div>
+      <p class="cta-desktop-only" style="margin-top:20px;font-size:12px;color:#bbb;">macOS 12+ · Windows 10/11 · Apple Silicon &amp; Intel</p>
+
+      <!-- Mobile: email me the link -->
+      <div class="cta-mobile-email">
+        <p class="cta-mobile-label">Email me the download link</p>
+        <div class="send-desktop-row">
+          <input type="email" class="send-desktop-input" id="mobileEmailInput" placeholder="your@email.com" />
+          <button class="send-desktop-btn" onclick="handleSendLink()">Send →</button>
+        </div>
+        <div class="send-desktop-success" id="sendSuccess">✦ Check your inbox — link is on its way.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1348,28 +1357,29 @@ function handleWaitlist(){
   document.getElementById('waitlistSuccess').style.display='block';
 }
 
-// ── SEND TO DESKTOP ──
-// Show share button only if Web Share API is available (mobile browsers)
-if (navigator.share) {
-  document.getElementById('shareBtn').style.display = 'flex';
-  document.getElementById('shareDivider').style.display = 'block';
+// ── DOWNLOAD CLICK — share on mobile, download on desktop ──
+function handleDownloadClick(e, platform, location) {
+  va('event', { name: 'Download', data: { platform, location } });
+  if (navigator.share) {
+    e.preventDefault();
+    navigator.share({
+      title: 'Nalana — 3D creation. Just say it.',
+      text: 'Download Nalana — AI-powered 3D creation for Mac and Windows.',
+      url: 'https://nalana.io'
+    }).catch(() => {});
+  }
+  // desktop: href follows normally
 }
 
-function handleShare() {
-  navigator.share({
-    title: 'Nalana — 3D creation. Just say it.',
-    text: 'Check out Nalana — AI-powered 3D creation for Mac and Windows.',
-    url: 'https://nalana.io'
-  }).catch(() => {});
-}
-
+// ── EMAIL ME THE LINK ──
 async function handleSendLink() {
-  const email = document.getElementById('sendEmail').value;
+  const input = document.getElementById('mobileEmailInput');
+  const email = input.value;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     alert('Please enter a valid email address.');
     return;
   }
-  const btn = document.querySelector('.send-desktop-btn');
+  const btn = document.querySelector('.cta-mobile-email .send-desktop-btn');
   btn.textContent = 'Sending…';
   btn.disabled = true;
   try {
@@ -1379,7 +1389,7 @@ async function handleSendLink() {
       body: JSON.stringify({ email })
     });
     if (res.ok) {
-      document.getElementById('sendEmail').style.display = 'none';
+      input.style.display = 'none';
       btn.style.display = 'none';
       document.getElementById('sendSuccess').style.display = 'block';
     } else {
