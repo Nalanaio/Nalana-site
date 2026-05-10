@@ -484,6 +484,91 @@ footer { padding:48px 0 36px; }
 .nb-strip-text strong { color:var(--ink-deep); }
 .nb-strip-text em { color:var(--primary); font-style:normal; font-weight:600; }
 
+/* ── SEND TO DESKTOP (mobile only) ── */
+.send-desktop {
+  display: none;
+  margin: 0 auto 32px;
+  max-width: 420px;
+  width: 100%;
+  padding: 18px 20px;
+  border-radius: 20px;
+  text-align: center;
+}
+.send-desktop-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.send-desktop-row {
+  display: flex;
+  gap: 8px;
+}
+.send-desktop-input {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.7);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  color: var(--ink);
+}
+.send-desktop-input::placeholder { color: #b0b0b0; }
+.send-desktop-input:focus { border-color: rgba(16,133,239,.4); }
+.send-desktop-btn {
+  padding: 11px 18px;
+  border-radius: 100px;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s;
+}
+.send-desktop-btn:hover { opacity: .88; }
+.send-share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 11px;
+  margin-bottom: 10px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.7);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s;
+}
+.send-share-btn:hover { background: rgba(255,255,255,.95); }
+.send-desktop-divider {
+  font-size: 11px;
+  color: #ccc;
+  margin-bottom: 10px;
+  letter-spacing: .05em;
+}
+.send-desktop-success {
+  display: none;
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 500;
+  margin-top: 10px;
+}
+@media (max-width: 768px) {
+  .send-desktop { display: block; }
+}
+
 /* ── SCROLL REVEAL ── */
 .fade-up { opacity:1 !important; transform:none !important; }
 .fade-up.animated { opacity:0 !important; transform:translateY(28px) !important; transition:opacity .7s var(--ease), transform .7s var(--ease); }
@@ -582,6 +667,21 @@ footer { padding:48px 0 36px; }
       <svg class="dl-icon-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
       Download for Windows
     </a>
+  </div>
+
+  <!-- Send to desktop (mobile only) -->
+  <div class="glass send-desktop fade-up">
+    <div class="send-desktop-label">On your phone? Get it on your computer.</div>
+    <button class="send-share-btn" id="shareBtn" onclick="handleShare()" style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Share this page
+    </button>
+    <div class="send-desktop-divider" id="shareDivider" style="display:none;">or</div>
+    <div class="send-desktop-row">
+      <input type="email" class="send-desktop-input" id="sendEmail" placeholder="your@email.com" />
+      <button class="send-desktop-btn" onclick="handleSendLink()">Send link →</button>
+    </div>
+    <div class="send-desktop-success" id="sendSuccess">✦ Link sent — check your inbox.</div>
   </div>
 
   <!-- Voice bubble -->
@@ -1246,6 +1346,50 @@ function handleWaitlist(){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alert('Please enter a valid email.'); return; }
   document.getElementById('waitlistForm').style.display='none';
   document.getElementById('waitlistSuccess').style.display='block';
+}
+
+// ── SEND TO DESKTOP ──
+// Show share button only if Web Share API is available (mobile browsers)
+if (navigator.share) {
+  document.getElementById('shareBtn').style.display = 'flex';
+  document.getElementById('shareDivider').style.display = 'block';
+}
+
+function handleShare() {
+  navigator.share({
+    title: 'Nalana — 3D creation. Just say it.',
+    text: 'Check out Nalana — AI-powered 3D creation for Mac and Windows.',
+    url: 'https://nalana.io'
+  }).catch(() => {});
+}
+
+async function handleSendLink() {
+  const email = document.getElementById('sendEmail').value;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+  const btn = document.querySelector('.send-desktop-btn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/send-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (res.ok) {
+      document.getElementById('sendEmail').style.display = 'none';
+      btn.style.display = 'none';
+      document.getElementById('sendSuccess').style.display = 'block';
+    } else {
+      btn.textContent = 'Try again';
+      btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'Try again';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
