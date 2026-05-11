@@ -531,7 +531,9 @@ footer { padding:48px 0 36px; }
 .modal-card {
   width: 100%; max-width: 360px;
   padding: 36px 28px 32px;
-  border-radius: 28px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
   text-align: center;
   position: relative;
   transform: translateY(12px);
@@ -1462,7 +1464,7 @@ async function submitModalEmail() {
 </script>
 <!-- ── EMAIL MODAL ── -->
 <div class="modal-overlay" id="emailModal" onclick="handleModalOverlayClick(event)">
-  <div class="glass modal-card">
+  <div class="modal-card">
     <button class="modal-close" onclick="closeModal()">×</button>
 
     <div id="modalForm">
