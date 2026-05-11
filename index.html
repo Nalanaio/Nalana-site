@@ -1362,6 +1362,23 @@ function handleWaitlist(){
   document.getElementById('waitlistSuccess').style.display='block';
 }
 
+// ── SCROLL DEPTH TRACKING ──
+(function() {
+  const milestones = [25, 50, 75, 90];
+  const fired = new Set();
+  window.addEventListener('scroll', function() {
+    const scrolled = window.scrollY + window.innerHeight;
+    const total = document.documentElement.scrollHeight;
+    const pct = Math.round((scrolled / total) * 100);
+    milestones.forEach(function(m) {
+      if (pct >= m && !fired.has(m)) {
+        fired.add(m);
+        gtag('event', 'scroll_depth', { depth: m + '%' });
+      }
+    });
+  }, { passive: true });
+})();
+
 // ── DOWNLOAD CLICK — share on mobile, download on desktop ──
 function handleDownloadClick(e, platform, location) {
   gtag('event', 'download', { platform, location });
