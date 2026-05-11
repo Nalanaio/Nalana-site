@@ -1408,7 +1408,7 @@ let _modalPlatform = 'mac';
 function openEmailModal(platform) {
   _modalPlatform = platform;
   const isMac = platform === 'mac';
-  document.getElementById('modalIcon').textContent = isMac ? '' : '🖥️';
+  document.getElementById('modalIcon').textContent = isMac ? '' : '';
   document.getElementById('modalTitle').textContent = isMac ? 'Send Nalana to your Mac' : 'Send Nalana to your Windows PC';
   document.getElementById('modalEmail').value = '';
   document.getElementById('modalForm').style.display = 'block';
