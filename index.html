@@ -489,103 +489,104 @@ footer { padding:48px 0 36px; }
 .nb-strip-text strong { color:var(--ink-deep); }
 .nb-strip-text em { color:var(--primary); font-style:normal; font-weight:600; }
 
-/* ── SEND TO DESKTOP (mobile only) ── */
-.send-desktop {
-  display: none;
-  margin: 0 auto 32px;
-  max-width: 420px;
-  width: 100%;
-  padding: 18px 20px;
-  border-radius: 20px;
-  text-align: center;
+/* ── MOBILE SEND BUTTONS ── */
+.mobile-send-btns { display: none; }
+.mobile-send-mac, .mobile-send-win {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 16px 24px; border-radius: 100px;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; border: none; transition: transform .15s, box-shadow .15s;
 }
-.send-desktop-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
+.mobile-send-mac {
+  background: var(--primary); color: #fff;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,.3), 0 6px 20px rgba(16,133,239,.35);
 }
-.send-desktop-row {
-  display: flex;
-  gap: 8px;
+.mobile-send-mac:hover { transform: translateY(-1px); box-shadow: inset 0 2px 4px rgba(255,255,255,.3), 0 10px 28px rgba(16,133,239,.45); }
+.mobile-send-win {
+  background: rgba(255,255,255,.85); color: var(--ink);
+  border: 1px solid rgba(0,0,0,.12);
 }
-.send-desktop-input {
-  flex: 1;
-  padding: 11px 16px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,.7);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  outline: none;
-  color: var(--ink);
-}
-.send-desktop-input::placeholder { color: #b0b0b0; }
-.send-desktop-input:focus { border-color: rgba(16,133,239,.4); }
-.send-desktop-btn {
-  padding: 11px 18px;
-  border-radius: 100px;
-  border: none;
-  background: var(--primary);
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity .15s;
-}
-.send-desktop-btn:hover { opacity: .88; }
-.send-share-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  width: 100%;
-  padding: 11px;
-  margin-bottom: 10px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,.7);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink);
-  cursor: pointer;
-  transition: background .15s;
-}
-.send-share-btn:hover { background: rgba(255,255,255,.95); }
-.send-desktop-divider {
-  font-size: 11px;
-  color: #ccc;
-  margin-bottom: 10px;
-  letter-spacing: .05em;
-}
-.send-desktop-success {
-  display: none;
-  font-size: 13px;
-  color: var(--primary);
-  font-weight: 500;
-  margin-top: 10px;
-}
-/* Mobile: show email form, hide desktop download UI */
+.mobile-send-win:hover { background: rgba(255,255,255,.98); }
+/* Mobile: show send buttons, hide desktop download links */
 .cta-mobile-email { display: none; }
-.cta-mobile-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
 @media (max-width: 768px) {
-  .send-desktop { display: block; }
+  .mobile-send-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; margin: 0 auto; }
+  .hero-dl-mac, .hero-dl-win { display: none !important; }
   .cta-desktop-only { display: none !important; }
   .cta-mobile-email { display: block; }
-  .cta-mobile-email .send-desktop-row { max-width: 360px; margin: 0 auto; }
 }
+
+/* ── EMAIL MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(10,10,10,.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s var(--ease);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-card {
+  width: 100%; max-width: 360px;
+  padding: 36px 28px 32px;
+  border-radius: 28px;
+  text-align: center;
+  position: relative;
+  transform: translateY(12px);
+  transition: transform .25s var(--ease);
+}
+.modal-overlay.open .modal-card { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; font-size: 22px;
+  color: var(--muted); cursor: pointer; line-height: 1;
+  padding: 4px 8px; border-radius: 8px;
+  transition: color .15s;
+}
+.modal-close:hover { color: var(--ink); }
+.modal-platform-icon { font-size: 32px; margin-bottom: 12px; }
+.modal-title {
+  font-family: 'Amulya', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--ink-deep); letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.modal-sub {
+  font-size: 14px; color: var(--muted);
+  line-height: 1.55; margin-bottom: 24px;
+}
+.modal-input {
+  width: 100%; padding: 13px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.8);
+  font-family: 'Inter', sans-serif; font-size: 15px;
+  outline: none; color: var(--ink);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.modal-input::placeholder { color: #b0b0b0; }
+.modal-input:focus { border-color: rgba(16,133,239,.45); }
+.modal-submit {
+  width: 100%; padding: 14px;
+  border-radius: 100px; border: none;
+  background: var(--primary); color: #fff;
+  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.modal-submit:hover { opacity: .88; }
+.modal-submit:disabled { opacity: .5; cursor: not-allowed; }
+.modal-thanks { display: none; }
+.modal-thanks-icon { font-size: 36px; margin-bottom: 12px; }
+.modal-thanks-title {
+  font-family: 'Amulya', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--ink-deep); letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.modal-thanks-sub { font-size: 14px; color: var(--muted); line-height: 1.55; }
 
 /* ── SCROLL REVEAL ── */
 .fade-up { opacity:1 !important; transform:none !important; }
@@ -685,6 +686,17 @@ footer { padding:48px 0 36px; }
       <svg class="dl-icon-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
       Download for Windows
     </a>
+    <!-- Mobile replacements -->
+    <div class="mobile-send-btns">
+      <button class="mobile-send-mac" onclick="openEmailModal('mac')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Send to my Mac
+      </button>
+      <button class="mobile-send-win" onclick="openEmailModal('windows')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
+        Send to my Windows PC
+      </button>
+    </div>
   </div>
 
   <!-- Voice bubble -->
@@ -871,14 +883,18 @@ footer { padding:48px 0 36px; }
       <div class="success-msg cta-desktop-only" id="waitlistSuccess">✦ You're on the list.</div>
       <p class="cta-desktop-only" style="margin-top:20px;font-size:12px;color:#bbb;">macOS 12+ · Windows 10/11 · Apple Silicon &amp; Intel</p>
 
-      <!-- Mobile: email me the link -->
+      <!-- Mobile: send to computer buttons -->
       <div class="cta-mobile-email">
-        <p class="cta-mobile-label">Email me the download link</p>
-        <div class="send-desktop-row">
-          <input type="email" class="send-desktop-input" id="mobileEmailInput" placeholder="your@email.com" />
-          <button class="send-desktop-btn" onclick="handleSendLink()">Send →</button>
+        <div class="mobile-send-btns" style="margin-bottom:0;">
+          <button class="mobile-send-mac" onclick="openEmailModal('mac')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Send to my Mac
+          </button>
+          <button class="mobile-send-win" onclick="openEmailModal('windows')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
+            Send to my Windows PC
+          </button>
         </div>
-        <div class="send-desktop-success" id="sendSuccess">✦ Check your inbox — link is on its way.</div>
       </div>
     </div>
   </div>
@@ -1379,41 +1395,61 @@ function handleWaitlist(){
   }, { passive: true });
 })();
 
-// ── DOWNLOAD CLICK — share on mobile, download on desktop ──
+// ── DOWNLOAD CLICK — desktop only (mobile shows send buttons instead) ──
 function handleDownloadClick(e, platform, location) {
   gtag('event', 'download', { platform, location });
-  if (navigator.share) {
-    e.preventDefault();
-    navigator.share({
-      title: 'Nalana — 3D creation. Just say it.',
-      text: 'Download Nalana — AI-powered 3D creation for Mac and Windows.',
-      url: 'https://nalana.io'
-    }).catch(() => {});
-  }
-  // desktop: href follows normally
 }
 
-// ── EMAIL ME THE LINK ──
-async function handleSendLink() {
-  const input = document.getElementById('mobileEmailInput');
-  const email = input.value;
+// ── EMAIL MODAL ──
+let _modalPlatform = 'mac';
+
+function openEmailModal(platform) {
+  _modalPlatform = platform;
+  const isMac = platform === 'mac';
+  document.getElementById('modalIcon').textContent = isMac ? '' : '🖥️';
+  document.getElementById('modalTitle').textContent = isMac ? 'Send Nalana to your Mac' : 'Send Nalana to your Windows PC';
+  document.getElementById('modalEmail').value = '';
+  document.getElementById('modalForm').style.display = 'block';
+  document.getElementById('modalThanks').style.display = 'none';
+  document.getElementById('modalSubmit').textContent = 'Send it →';
+  document.getElementById('modalSubmit').disabled = false;
+  document.getElementById('emailModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('modalEmail').focus(), 250);
+}
+
+function closeModal() {
+  document.getElementById('emailModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleModalOverlayClick(e) {
+  if (e.target === document.getElementById('emailModal')) closeModal();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+async function submitModalEmail() {
+  const email = document.getElementById('modalEmail').value;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid email address.');
+    document.getElementById('modalEmail').focus();
     return;
   }
-  const btn = document.querySelector('.cta-mobile-email .send-desktop-btn');
+  const btn = document.getElementById('modalSubmit');
   btn.textContent = 'Sending…';
   btn.disabled = true;
+  gtag('event', 'email_capture', { platform: _modalPlatform });
   try {
     const res = await fetch('/api/send-link', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, platform: _modalPlatform })
     });
     if (res.ok) {
-      input.style.display = 'none';
-      btn.style.display = 'none';
-      document.getElementById('sendSuccess').style.display = 'block';
+      document.getElementById('modalForm').style.display = 'none';
+      document.getElementById('modalThanks').style.display = 'block';
     } else {
       btn.textContent = 'Try again';
       btn.disabled = false;
@@ -1424,5 +1460,26 @@ async function handleSendLink() {
   }
 }
 </script>
+<!-- ── EMAIL MODAL ── -->
+<div class="modal-overlay" id="emailModal" onclick="handleModalOverlayClick(event)">
+  <div class="glass modal-card">
+    <button class="modal-close" onclick="closeModal()">×</button>
+
+    <div id="modalForm">
+      <div class="modal-platform-icon" id="modalIcon"></div>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <p class="modal-sub">Enter your email and we'll send the download link straight to your inbox.</p>
+      <input type="email" class="modal-input" id="modalEmail" placeholder="your@email.com" />
+      <button class="modal-submit" id="modalSubmit" onclick="submitModalEmail()">Send it →</button>
+    </div>
+
+    <div class="modal-thanks" id="modalThanks">
+      <div class="modal-thanks-icon">✦</div>
+      <h3 class="modal-thanks-title">Link is on its way.</h3>
+      <p class="modal-thanks-sub">Check your inbox — open it on your computer to download Nalana.</p>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
