@@ -317,10 +317,6 @@ section { padding:100px 0; position:relative; }
   display: flex; align-items: center; justify-content: center;
   gap: 28px; flex-wrap: wrap;
 }
-.proof-stat { display: flex; flex-direction: column; align-items: center; line-height: 1; }
-.proof-stat-number { font-family: 'Amulya', sans-serif; font-size: 28px; font-weight: 700; color: var(--ink-deep); letter-spacing: -0.03em; }
-.proof-stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
-.proof-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
 .proof-used-by { font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
 .proof-logos { display: flex; align-items: center; gap: 28px; }
 .proof-logo { display: flex; align-items: center; color: #aaa; transition: color .2s; }
@@ -328,7 +324,6 @@ section { padding:100px 0; position:relative; }
 .proof-logo-usc { font-family: Georgia, serif; font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
 .proof-logo-gdav { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 @media (max-width: 600px) {
-  .proof-divider { display: none; }
   .proof-strip-inner { gap: 20px; }
 }
 

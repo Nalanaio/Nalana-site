@@ -278,11 +278,6 @@
   <section class="proof-strip fade-up">
     <div class="container">
       <div class="proof-strip-inner">
-        <div class="proof-stat">
-          <span class="proof-stat-number">200+</span>
-          <span class="proof-stat-label">downloads</span>
-        </div>
-        <div class="proof-divider"></div>
         <span class="proof-used-by">Used by creators from</span>
         <div class="proof-logos">
           <span class="proof-logo proof-logo-usc">USC</span>
