@@ -274,6 +274,25 @@
   </section>
 
 
+  <!-- ══ SOCIAL PROOF STRIP ══ -->
+  <section class="proof-strip fade-up">
+    <div class="container">
+      <div class="proof-strip-inner">
+        <div class="proof-stat">
+          <span class="proof-stat-number">200+</span>
+          <span class="proof-stat-label">downloads</span>
+        </div>
+        <div class="proof-divider"></div>
+        <span class="proof-used-by">Used by creators from</span>
+        <div class="proof-logos">
+          <span class="proof-logo proof-logo-usc">USC</span>
+          <span class="proof-logo proof-logo-gdav">GDA·V</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- ══ VIDEO / DEMO ══ -->
   <section id="demo" class="video-section">
     <div class="container">

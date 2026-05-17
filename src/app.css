@@ -311,6 +311,27 @@ section { padding:100px 0; position:relative; }
 .waitlist-btn::before { content:''; position:absolute; top:2px; left:15%; width:70%; height:52%; background:linear-gradient(to bottom,rgba(255,255,255,.52),transparent); border-radius:50%; }
 .waitlist-btn:hover { transform:translateY(-1px); box-shadow:inset 0 4px 8px rgba(255,255,255,.35),0 10px 26px rgba(16,133,239,.42); }
 
+/* ── SOCIAL PROOF STRIP ── */
+.proof-strip { padding: 0 0 64px; }
+.proof-strip-inner {
+  display: flex; align-items: center; justify-content: center;
+  gap: 28px; flex-wrap: wrap;
+}
+.proof-stat { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.proof-stat-number { font-family: 'Amulya', sans-serif; font-size: 28px; font-weight: 700; color: var(--ink-deep); letter-spacing: -0.03em; }
+.proof-stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
+.proof-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+.proof-used-by { font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.proof-logos { display: flex; align-items: center; gap: 28px; }
+.proof-logo { display: flex; align-items: center; color: #aaa; transition: color .2s; }
+.proof-logo:hover { color: var(--ink); }
+.proof-logo-usc { font-family: Georgia, serif; font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+.proof-logo-gdav { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+@media (max-width: 600px) {
+  .proof-divider { display: none; }
+  .proof-strip-inner { gap: 20px; }
+}
+
 /* ── FOOTER ── */
 footer { padding:48px 0 36px; }
 .footer-inner { display:flex; align-items:center; justify-content:space-between; padding:18px 36px; border-radius:100px; }
