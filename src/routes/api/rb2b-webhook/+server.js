@@ -2,6 +2,10 @@ import { json } from '@sveltejs/kit';
 
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
+export async function GET() {
+  return json({ ok: true });
+}
+
 export async function POST({ request }) {
   let payload;
   try {
