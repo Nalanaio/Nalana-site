@@ -22,10 +22,10 @@
     <div class="divider"></div>
 
     <h2>1. Acceptance of Terms</h2>
-    <p>By downloading, installing, or using Nalana software, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. These Terms apply to all visitors, users, and others who access or use the Service.</p>
+    <p>By downloading, installing, or using Nalana software, you acknowledge that you have read, understood, and agree to be bound by these Terms, our <a href="/privacy">Privacy Policy</a>, our <a href="/eula">End User License Agreement (EULA)</a>, and our <a href="/cookies">Cookie Policy</a>. These Terms apply to all visitors, users, and others who access or use the Service.</p>
 
     <h2>2. Description of Service</h2>
-    <p>Nalana is an AI-powered 3D creation tool that enables users to create, modify, and render 3D content using natural language commands. The Service is built on top of Blender and provides a distinct interface and experience from Blender itself.</p>
+    <p>Nalana is an AI-powered 3D creation tool that enables users to create, modify, and render 3D content using natural language commands. The Service runs as a native desktop application on macOS and Windows. It is built on a fork of Blender, which is licensed under the GNU General Public License v3.0 (GPL). Attribution and open source notices are available at <a href="/open-source">nalana.io/open-source</a>.</p>
 
     <h2>3. Account Registration</h2>
     <p>To access certain features of the Service, you may be required to create an account. You agree to:</p>
@@ -38,17 +38,17 @@
     </ul>
 
     <h2>4. License Grant</h2>
-    <p>Subject to these Terms, we grant you a limited, non-exclusive, non-transferable, revocable license to download and use the Nalana software on devices you own or control, solely for your personal or internal business purposes.</p>
+    <p>Your use of the Nalana desktop application is governed by the <a href="/eula">End User License Agreement</a>, which is incorporated into these Terms by reference. Subject to those terms, we grant you a limited, non-exclusive, non-transferable, revocable license to download and use the Nalana software on devices you own or control, solely for your personal or internal business purposes.</p>
     <p>You may not:</p>
     <ul>
-      <li>Copy, modify, or distribute the software</li>
-      <li>Reverse engineer or attempt to extract the source code</li>
+      <li>Copy, modify, or distribute the software (except as permitted by applicable open source licenses)</li>
+      <li>Reverse engineer or attempt to extract the proprietary source code</li>
       <li>Sublicense, sell, or transfer the software or your rights to it</li>
       <li>Use the software to develop competing products</li>
     </ul>
 
     <h2>5. User Content</h2>
-    <p>You retain ownership of any 3D content, models, or outputs you create using Nalana ("User Content"). By using the Service, you grant us a limited license to process your inputs to provide the Service to you.</p>
+    <p>You retain full ownership of any 3D content, models, scenes, or outputs you create using Nalana ("User Content"). Your project files remain on your device — we do not upload or store them. By using the Service, you grant us a limited license to process your inputs solely to provide the Service to you.</p>
     <p>We do not claim ownership of your User Content. However, you represent and warrant that:</p>
     <ul>
       <li>You own or have the right to use the content</li>
@@ -68,16 +68,17 @@
     </ul>
 
     <h2>7. Subscription and Payments</h2>
-    <p>Certain features of Nalana may require a paid subscription. Subscription fees are billed in advance on a monthly or annual basis and are non-refundable except as required by law. We reserve the right to change pricing with 30 days' notice.</p>
+    <p>Certain features of Nalana require a paid subscription or credit purchase. Subscription fees are billed in advance on a monthly or annual basis. Refunds are handled in accordance with our <a href="/refund">Refund Policy</a>. We reserve the right to change pricing with 30 days' notice to existing subscribers.</p>
+    <p>Credits are digital tokens consumed when using AI-powered features. Unused credits have no cash value and are not transferable. Credits are non-refundable once delivered, except as described in the Refund Policy.</p>
 
     <h2>8. Intellectual Property</h2>
-    <p>The Service and its original content (excluding User Content), features, and functionality are and will remain the exclusive property of Nalana, Inc. and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without prior written consent.</p>
+    <p>The Service and its original content (excluding User Content and GPL-licensed open source components), features, and functionality are and will remain the exclusive property of Nalana, Inc. and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without prior written consent.</p>
 
     <h2>9. Disclaimers</h2>
     <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis without any warranties of any kind, either express or implied. We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components.</p>
 
     <h2>10. Limitation of Liability</h2>
-    <p>To the maximum extent permitted by applicable law, Nalana, Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the Service.</p>
+    <p>To the maximum extent permitted by applicable law, Nalana, Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the Service. Our total liability shall not exceed the amounts you have paid to us in the twelve months preceding the event giving rise to liability.</p>
 
     <h2>11. Governing Law</h2>
     <p>These Terms shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of law provisions. Any disputes shall be resolved in the courts located in Delaware.</p>
@@ -101,6 +102,9 @@
         <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>
         <a href="/terms">Terms</a>
         <a href="/privacy">Privacy</a>
+        <a href="/eula">EULA</a>
+        <a href="/refund">Refund</a>
+        <a href="/cookies">Cookies</a>
       </div>
       <span class="footer-copy">© 2026 Nalana.</span>
     </div>
@@ -170,12 +174,13 @@
     padding: 20px 32px; border-radius: 24px; gap: 16px; flex-wrap: wrap;
   }
   .footer-wordmark { font-family: 'KonkhmerSleokchher', sans-serif; font-size: 18px; color: var(--primary); }
-  .footer-links { display: flex; gap: 24px; }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
   .footer-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .15s; }
   .footer-links a:hover { color: var(--ink-deep); }
   .footer-copy { font-size: 12px; color: #bbb; }
 
   @media (max-width: 600px) {
     .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+    .footer-links { justify-content: center; }
   }
 </style>

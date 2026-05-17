@@ -17,7 +17,7 @@
 
   <div class="legal-body">
 
-    <p>This Privacy Policy describes how Nalana, Inc. ("Nalana," "we," "us," or "our") collects and uses information when you use our software ("Service"). We built Nalana with a minimal data footprint by design. <strong>We do not collect personal information through the application.</strong></p>
+    <p>This Privacy Policy describes how Nalana, Inc. ("Nalana," "we," "us," or "our") collects and uses information when you use our software ("Service"). We built Nalana with a minimal data footprint by design. <strong>We do not collect personal information through the application.</strong> For information about cookies used on this website, see our <a href="/cookies">Cookie Policy</a>.</p>
 
     <div class="divider"></div>
 
@@ -34,7 +34,7 @@
     <p>This data is <strong>not linked to your identity</strong>. We do not collect your name, email, IP address, or any other personal identifier through the application itself.</p>
 
     <h3>Website and contact</h3>
-    <p>If you contact us via email, we retain that correspondence to respond to your inquiry. Our website uses standard server logs and anonymous analytics to understand traffic patterns.</p>
+    <p>If you contact us via email, we retain that correspondence to respond to your inquiry. Our website uses Google Analytics 4 and standard server logs to understand traffic patterns. Analytics data is anonymized and not linked to your identity. For full details on what cookies are set, see our <a href="/cookies">Cookie Policy</a>.</p>
 
     <h2>2. What We Do Not Collect</h2>
     <ul>
@@ -72,10 +72,19 @@
     <h2>7. Children</h2>
     <p>Nalana is not directed at children under 13. We do not knowingly collect any data from children under 13.</p>
 
-    <h2>8. Changes to This Policy</h2>
+    <h2>8. Related Policies</h2>
+    <p>This Privacy Policy works alongside our other legal documents:</p>
+    <ul>
+      <li><a href="/terms">Terms of Service</a> — governing your use of the Service</li>
+      <li><a href="/eula">End User License Agreement</a> — governing the desktop application specifically</li>
+      <li><a href="/cookies">Cookie Policy</a> — describing cookies and analytics on nalana.io</a></li>
+      <li><a href="/refund">Refund Policy</a> — describing how refunds are handled</li>
+    </ul>
+
+    <h2>9. Changes to This Policy</h2>
     <p>We may update this policy as the product evolves. We'll update the "Last updated" date at the top when we do. If we ever begin collecting personal information, we will update this policy significantly and notify users.</p>
 
-    <h2>9. Contact</h2>
+    <h2>10. Contact</h2>
     <p>Questions about our data practices? Reach us at <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>.</p>
 
   </div>
@@ -91,6 +100,9 @@
         <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>
         <a href="/terms">Terms</a>
         <a href="/privacy">Privacy</a>
+        <a href="/eula">EULA</a>
+        <a href="/refund">Refund</a>
+        <a href="/cookies">Cookies</a>
       </div>
       <span class="footer-copy">© 2026 Nalana.</span>
     </div>
@@ -160,12 +172,13 @@
     padding: 20px 32px; border-radius: 24px; gap: 16px; flex-wrap: wrap;
   }
   .footer-wordmark { font-family: 'KonkhmerSleokchher', sans-serif; font-size: 18px; color: var(--primary); }
-  .footer-links { display: flex; gap: 24px; }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
   .footer-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .15s; }
   .footer-links a:hover { color: var(--ink-deep); }
   .footer-copy { font-size: 12px; color: #bbb; }
 
   @media (max-width: 600px) {
     .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+    .footer-links { justify-content: center; }
   }
 </style>
