@@ -77,7 +77,7 @@
     <ul>
       <li><a href="/terms">Terms of Service</a> — governing your use of the Service</li>
       <li><a href="/eula">End User License Agreement</a> — governing the desktop application specifically</li>
-      <li><a href="/cookies">Cookie Policy</a> — describing cookies and analytics on nalana.io</a></li>
+      <li><a href="/cookies">Cookie Policy</a> — describing cookies and analytics on nalana.io</li>
       <li><a href="/refund">Refund Policy</a> — describing how refunds are handled</li>
     </ul>
 

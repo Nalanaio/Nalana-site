@@ -146,7 +146,7 @@
   }
   .legal-body h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin: 24px 0 8px; }
   .legal-body p { margin-bottom: 16px; }
-  .legal-body ul, .legal-body ol { padding-left: 24px; margin-bottom: 16px; }
+  .legal-body ul { padding-left: 24px; margin-bottom: 16px; }
   .legal-body li { margin-bottom: 8px; }
   .legal-body a { color: var(--primary); text-decoration: none; }
   .legal-body a:hover { text-decoration: underline; }
