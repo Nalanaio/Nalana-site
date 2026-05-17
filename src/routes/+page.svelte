@@ -137,6 +137,49 @@
     emailError = '';
   }
 
+  // ── Interactive demo ──
+  let demoMessages = [
+    { role: 'assistant', text: 'Hey — what do you want to build?', steps: [] },
+    { role: 'user', text: 'add a metallic sphere to the scene', steps: [] },
+    { role: 'assistant', text: 'Done. Metallic sphere placed at origin — reflectivity 0.92, roughness 0.04.', steps: ['Parsing intent', 'Creating IcosphereGeometry', 'Applying PBR material'] },
+  ];
+  let demoInput = '';
+  let demoTyping = false;
+  let demoScrollEl;
+
+  const _demoR = {
+    sphere: { steps: ['Parsing intent', 'Creating geometry', 'Applying PBR material'], text: 'Done. Metallic sphere placed at origin — reflectivity 0.92, roughness 0.04.' },
+    light:  { steps: ['Parsing intent', 'Creating PointLight', 'Setting intensity'], text: 'Done. Point light placed at (2, 3, 2) — 500W, warm 3200K.' },
+    glass:  { steps: ['Parsing intent', 'Loading shader preset', 'Assigning to mesh'], text: 'Done. Glass material applied — IOR 1.45, transmission 1.0.' },
+    floor:  { steps: ['Parsing intent', 'Creating PlaneGeometry', 'Applying material'], text: 'Done. Ground plane added — 10×10 units, centered at origin.' },
+    rotate: { steps: ['Parsing intent', 'Selecting active object', 'Applying rotation'], text: 'Done. Rotated 45° on the Z axis.' },
+    default:{ steps: ['Parsing intent', 'Building scene graph', 'Executing'], text: 'Done. Scene updated.' },
+  };
+
+  function _getDemoResp(msg) {
+    const m = msg.toLowerCase();
+    if (/sphere|ball|orb/.test(m)) return _demoR.sphere;
+    if (/light|lamp|sun|glow|emit/.test(m)) return _demoR.light;
+    if (/glass|transparent|crystal|refract/.test(m)) return _demoR.glass;
+    if (/floor|plane|ground/.test(m)) return _demoR.floor;
+    if (/rotat|spin|turn|scale|resize|move|translat/.test(m)) return _demoR.rotate;
+    return _demoR.default;
+  }
+
+  async function sendDemoMessage() {
+    if (!demoInput.trim() || demoTyping) return;
+    const text = demoInput.trim();
+    demoInput = '';
+    demoMessages = [...demoMessages, { role: 'user', text, steps: [] }];
+    demoTyping = true;
+    setTimeout(() => { if (demoScrollEl) demoScrollEl.scrollTop = demoScrollEl.scrollHeight; }, 30);
+    await new Promise(r => setTimeout(r, 1100 + Math.random() * 700));
+    const resp = _getDemoResp(text);
+    demoMessages = [...demoMessages, { role: 'assistant', text: resp.text, steps: resp.steps }];
+    demoTyping = false;
+    setTimeout(() => { if (demoScrollEl) demoScrollEl.scrollTop = demoScrollEl.scrollHeight; }, 30);
+  }
+
   onMount(() => {
     // ── OS detection ──
     const ua = navigator.userAgent;
@@ -402,6 +445,208 @@
   </div>
 
 
+  <!-- ══ INTERACTIVE DEMO ══ -->
+  <section class="demo-section">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:40px;" class="fade-up">
+        <div class="section-label">Interface Preview</div>
+        <h2 class="section-title">The interface. Try it.</h2>
+        <p class="section-sub" style="margin:0 auto;">Type a command below. This is exactly what using Nalana feels like.</p>
+      </div>
+
+      <div class="demo-window fade-up" style="transition-delay:.1s;">
+        <!-- macOS window chrome -->
+        <div class="demo-window-bar">
+          <div class="demo-traffic-lights">
+            <div class="demo-tl demo-tl-red"></div>
+            <div class="demo-tl demo-tl-yellow"></div>
+            <div class="demo-tl demo-tl-green"></div>
+          </div>
+          <span class="demo-window-title">Nalana</span>
+          <div style="width:52px;"></div>
+        </div>
+
+        <div class="demo-split">
+          <!-- Left: Blender viewport mockup -->
+          <div class="demo-viewport">
+            <svg class="demo-vp-svg" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="dSphereGrad" cx="35%" cy="30%" r="65%">
+                  <stop offset="0%" stop-color="#d8d8d8"/>
+                  <stop offset="45%" stop-color="#9a9a9a"/>
+                  <stop offset="100%" stop-color="#2a2a2a"/>
+                </radialGradient>
+                <radialGradient id="dGroundGrad" cx="50%" cy="0%" r="100%">
+                  <stop offset="0%" stop-color="#272727"/>
+                  <stop offset="100%" stop-color="#1c1c1c"/>
+                </radialGradient>
+              </defs>
+              <!-- Background -->
+              <rect width="600" height="420" fill="#1d1d1d"/>
+              <!-- Ground plane -->
+              <polygon points="0,230 600,230 600,420 0,420" fill="url(#dGroundGrad)"/>
+              <!-- Grid radial lines -->
+              <g stroke="#2d2d2d" stroke-width="0.9">
+                <line x1="300" y1="230" x2="0" y2="420"/>
+                <line x1="300" y1="230" x2="60" y2="420"/>
+                <line x1="300" y1="230" x2="120" y2="420"/>
+                <line x1="300" y1="230" x2="180" y2="420"/>
+                <line x1="300" y1="230" x2="240" y2="420"/>
+                <line x1="300" y1="230" x2="300" y2="420"/>
+                <line x1="300" y1="230" x2="360" y2="420"/>
+                <line x1="300" y1="230" x2="420" y2="420"/>
+                <line x1="300" y1="230" x2="480" y2="420"/>
+                <line x1="300" y1="230" x2="540" y2="420"/>
+                <line x1="300" y1="230" x2="600" y2="420"/>
+              </g>
+              <!-- Grid horizontal lines -->
+              <g stroke="#2d2d2d" stroke-width="0.9">
+                <line x1="247" y1="262" x2="353" y2="262"/>
+                <line x1="210" y1="284" x2="390" y2="284"/>
+                <line x1="148" y1="316" x2="452" y2="316"/>
+                <line x1="96" y1="346" x2="504" y2="346"/>
+                <line x1="40" y1="378" x2="560" y2="378"/>
+              </g>
+              <!-- Horizon line -->
+              <line x1="0" y1="230" x2="600" y2="230" stroke="#353535" stroke-width="1"/>
+              <!-- Sphere shadow -->
+              <ellipse cx="300" cy="356" rx="64" ry="11" fill="rgba(0,0,0,0.5)"/>
+              <!-- Sphere -->
+              <circle cx="300" cy="292" r="72" fill="url(#dSphereGrad)"/>
+              <!-- Specular highlight -->
+              <ellipse cx="273" cy="264" rx="22" ry="14" fill="rgba(255,255,255,0.13)" transform="rotate(-20,273,264)"/>
+              <!-- Orange selection ring (Blender style) -->
+              <circle cx="300" cy="292" r="73.5" fill="none" stroke="#e88000" stroke-width="1.6"/>
+              <!-- Selection handles -->
+              <circle cx="300" cy="218" r="3.5" fill="#e88000"/>
+              <circle cx="374" cy="292" r="3.5" fill="#e88000"/>
+              <circle cx="300" cy="366" r="3.5" fill="#e88000"/>
+              <circle cx="226" cy="292" r="3.5" fill="#e88000"/>
+              <!-- Object name label -->
+              <rect x="262" y="202" width="76" height="14" rx="2" fill="rgba(0,0,0,0.65)"/>
+              <text x="300" y="212" text-anchor="middle" fill="#e88000" font-size="9" font-family="monospace">Sphere.001</text>
+
+              <!-- TOP TOOLBAR -->
+              <rect x="0" y="0" width="600" height="28" fill="#252525"/>
+              <line x1="0" y1="28" x2="600" y2="28" stroke="#181818" stroke-width="1"/>
+              <rect x="8" y="5" width="92" height="18" rx="3" fill="#3a3a3a"/>
+              <text x="54" y="17" text-anchor="middle" fill="#ccc" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">Object Mode ▾</text>
+              <text x="110" y="17" fill="#999" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">View</text>
+              <text x="140" y="17" fill="#999" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">Select</text>
+              <text x="178" y="17" fill="#999" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">Add</text>
+              <text x="206" y="17" fill="#999" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">Object</text>
+              <!-- Shading icons -->
+              <g transform="translate(500,5)">
+                <rect x="0" y="0" width="18" height="18" rx="3" fill="#3a3a3a"/>
+                <circle cx="9" cy="9" r="5.5" fill="none" stroke="#777" stroke-width="1"/>
+                <line x1="9" y1="3.5" x2="9" y2="14.5" stroke="#777" stroke-width="0.8"/>
+                <line x1="3.5" y1="9" x2="14.5" y2="9" stroke="#777" stroke-width="0.8"/>
+                <rect x="22" y="0" width="18" height="18" rx="3" fill="#5a5a5a"/>
+                <circle cx="31" cy="9" r="5.5" fill="#a0a0a0"/>
+                <rect x="44" y="0" width="18" height="18" rx="3" fill="#3a3a3a"/>
+                <circle cx="53" cy="9" r="5.5" fill="#9090cc"/>
+                <rect x="66" y="0" width="18" height="18" rx="3" fill="#3a3a3a"/>
+                <circle cx="75" cy="9" r="5.5" fill="url(#dSphereGrad)"/>
+              </g>
+              <!-- Nav gizmo -->
+              <g transform="translate(530,48)">
+                <circle cx="25" cy="25" r="23" fill="rgba(35,35,35,0.85)"/>
+                <line x1="25" y1="25" x2="25" y2="5" stroke="#5580ff" stroke-width="2.2"/>
+                <circle cx="25" cy="5" r="4" fill="#5580ff"/>
+                <text x="25" y="3" text-anchor="middle" fill="#7090ff" font-size="7" font-family="monospace">Z</text>
+                <line x1="25" y1="25" x2="45" y2="36" stroke="#e05555" stroke-width="2.2"/>
+                <circle cx="45" cy="36" r="4" fill="#e05555"/>
+                <text x="51" y="39" fill="#e07070" font-size="7" font-family="monospace">X</text>
+                <line x1="25" y1="25" x2="5" y2="36" stroke="#50c055" stroke-width="2.2"/>
+                <circle cx="5" cy="36" r="4" fill="#50c055"/>
+                <text x="-1" y="39" fill="#70d075" font-size="7" font-family="monospace">Y</text>
+              </g>
+              <!-- BOTTOM STATUS BAR -->
+              <rect x="0" y="400" width="600" height="20" fill="#1a1a1a"/>
+              <line x1="0" y1="400" x2="600" y2="400" stroke="#111" stroke-width="1"/>
+              <text x="8" y="413" fill="#555" font-size="9" font-family="monospace">Verts:532  Faces:272  Tris:1040</text>
+              <text x="300" y="413" text-anchor="middle" fill="#555" font-size="9" font-family="monospace">Sphere.001</text>
+              <text x="592" y="413" text-anchor="end" fill="#444" font-size="9" font-family="monospace">Blender 4.x</text>
+            </svg>
+          </div>
+
+          <!-- Right: Nalana chat panel -->
+          <div class="demo-chat">
+            <div class="demo-aurora" aria-hidden="true">
+              <div class="demo-blob demo-blob-1"></div>
+              <div class="demo-blob demo-blob-2"></div>
+              <div class="demo-blob demo-blob-3"></div>
+            </div>
+
+            <!-- Header -->
+            <div class="demo-chat-header">
+              <div class="demo-chat-logo">
+                <svg width="14" height="17" viewBox="0 0 69 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M68.5 69.3278C68.5 71.5139 66.7278 73.2861 64.5416 73.2861C62.6686 73.2861 61.07 71.9671 60.5184 70.177C59.0003 65.2496 56.2489 59.8111 52.3994 54.5664C42.7884 41.472 29.9768 34.5417 23.7842 39.0869C17.5915 43.6321 20.3627 57.9319 29.9736 71.0264C30.6518 71.9503 30.0071 73.2861 28.8611 73.2861H11.75C9.54086 73.2861 7.75 71.4953 7.75 69.2861V4C7.75 1.79086 9.54086 0 11.75 0H15.1428C17.0007 0 18.5961 1.28563 19.1747 3.05109C20.7305 7.79868 23.4053 12.9832 27.0811 17.9912C36.692 31.0856 49.5037 38.0159 55.6963 33.4707C61.8888 28.9254 59.1177 14.6256 49.5068 1.53125C49.0448 0.901696 49.4862 0 50.2671 0H64.5C66.7091 0 68.5 1.79086 68.5 4V69.3278Z" fill="rgba(255,255,255,0.7)"/>
+                  <path d="M61.75 69.3283C61.75 71.5142 59.978 73.2861 57.7922 73.2861C55.9194 73.2861 54.321 71.9672 53.7695 70.1774C52.2511 65.25 49.499 59.8113 45.6494 54.5664C36.0384 41.4721 23.2268 34.5417 17.0342 39.0869C10.8418 43.6323 13.6129 57.932 23.2236 71.0264C23.9019 71.9505 23.2577 73.2861 22.1114 73.2861H5C2.79086 73.2861 1 71.4953 1 69.2861V4C1 1.79086 2.79086 0 5 0H8.39283C10.2507 0 11.8461 1.28563 12.4247 3.05109C13.9805 7.79868 16.6553 12.9832 20.3311 17.9912C29.942 31.0856 42.7537 38.0159 48.9463 33.4707C55.1388 28.9254 52.3677 14.6256 42.7568 1.53125C42.2948 0.901696 42.7362 0 43.5171 0H57.75C59.9591 0 61.75 1.79086 61.75 4V69.3283Z" fill="rgba(255,255,255,0.95)"/>
+                </svg>
+              </div>
+              <span class="demo-chat-title">Nalana</span>
+              <span class="demo-model-badge">Nalana 2</span>
+              <div class="demo-status-dot"></div>
+            </div>
+
+            <!-- Thread -->
+            <div class="demo-thread" bind:this={demoScrollEl}>
+              {#each demoMessages as msg}
+                {#if msg.role === 'user'}
+                  <div class="demo-msg demo-msg-user">
+                    <div class="demo-bubble demo-bubble-user">{msg.text}</div>
+                  </div>
+                {:else}
+                  <div class="demo-msg demo-msg-assistant">
+                    {#if msg.steps.length > 0}
+                      <div class="demo-steps">
+                        {#each msg.steps as step}
+                          <div class="demo-step">
+                            <span class="demo-step-dot"></span>{step}
+                          </div>
+                        {/each}
+                      </div>
+                    {/if}
+                    <div class="demo-bubble demo-bubble-assistant">{msg.text}</div>
+                  </div>
+                {/if}
+              {/each}
+              {#if demoTyping}
+                <div class="demo-msg demo-msg-assistant">
+                  <div class="demo-bubble demo-bubble-assistant demo-typing">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              {/if}
+            </div>
+
+            <!-- Composer -->
+            <div class="demo-composer">
+              <div class="demo-composer-shell">
+                <!-- svelte-ignore a11y-autofocus -->
+                <input
+                  class="demo-composer-input"
+                  type="text"
+                  placeholder="Type a command…"
+                  bind:value={demoInput}
+                  on:keydown={e => e.key === 'Enter' && sendDemoMessage()}
+                  disabled={demoTyping}
+                />
+                <button class="demo-composer-send" on:click={sendDemoMessage} disabled={demoTyping || !demoInput.trim()}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+                </button>
+              </div>
+              <p class="demo-hint">Live demo — no API call. Try: "add a glass sphere", "rotate 45 degrees", "add a floor"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- ══ FEATURES ══ -->
   <section id="features">
     <div class="container">
@@ -620,6 +865,157 @@
 {/if}
 
 <style>
+  /* ── Interactive Demo ── */
+  .demo-section { padding: 80px 0 40px; }
+
+  .demo-window {
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.07);
+  }
+  .demo-window-bar {
+    height: 40px; background: #2a2a2a;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; border-bottom: 1px solid #181818;
+  }
+  .demo-traffic-lights { display: flex; gap: 7px; align-items: center; }
+  .demo-tl { width: 12px; height: 12px; border-radius: 50%; }
+  .demo-tl-red    { background: #ff5f57; }
+  .demo-tl-yellow { background: #febc2e; }
+  .demo-tl-green  { background: #28c840; }
+  .demo-window-title { font-size: 13px; font-weight: 500; color: #999; font-family: -apple-system, 'Inter', sans-serif; }
+
+  .demo-split { display: flex; height: 500px; }
+
+  .demo-viewport { flex: 1.15; overflow: hidden; border-right: 1px solid #111; }
+  .demo-vp-svg { width: 100%; height: 100%; display: block; }
+
+  .demo-chat {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    background: #f2f2f5;
+  }
+
+  /* Aurora */
+  .demo-aurora { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .demo-blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(45px); opacity: 0.3;
+    animation: dBlobFloat 9s ease-in-out infinite;
+  }
+  .demo-blob-1 { width: 200px; height: 200px; background: #1085ef; top: -50px; right: -30px; }
+  .demo-blob-2 { width: 160px; height: 160px; background: #ff8c69; bottom: 50px; left: -30px; animation-delay: -3.5s; }
+  .demo-blob-3 { width: 120px; height: 120px; background: #a78ade; top: 45%; right: 22%; animation-delay: -7s; }
+  @keyframes dBlobFloat {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-18px) scale(1.05); }
+  }
+
+  /* Chat header */
+  .demo-chat-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    position: relative; z-index: 1; flex-shrink: 0;
+  }
+  .demo-chat-logo {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(135deg, #1085ef 0%, #6355ff 100%);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .demo-chat-title { font-size: 13px; font-weight: 700; color: #111; font-family: 'KonkhmerSleokchher', sans-serif; }
+  .demo-model-badge { font-size: 10px; font-weight: 500; color: #999; background: rgba(0,0,0,0.06); border-radius: 6px; padding: 2px 8px; }
+  .demo-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #2dd07a; margin-left: auto; flex-shrink: 0; box-shadow: 0 0 6px rgba(45,208,122,0.6); }
+
+  /* Thread */
+  .demo-thread {
+    flex: 1; overflow-y: auto; padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative; z-index: 1; scroll-behavior: smooth;
+  }
+  .demo-thread::-webkit-scrollbar { width: 4px; }
+  .demo-thread::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+  .demo-msg { display: flex; flex-direction: column; }
+  .demo-msg-user { align-items: flex-end; }
+  .demo-msg-assistant { align-items: flex-start; }
+
+  .demo-bubble {
+    max-width: 88%; padding: 9px 13px;
+    font-size: 13px; line-height: 1.55;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .demo-bubble-user {
+    background: #fff; color: #111;
+    border-radius: 16px 16px 4px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  .demo-bubble-assistant {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.75);
+    border-radius: 4px 16px 16px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    color: rgba(18,22,42,0.85);
+  }
+
+  /* Steps */
+  .demo-steps { display: flex; flex-direction: column; gap: 3px; margin-bottom: 5px; }
+  .demo-step { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888; font-family: monospace; }
+  .demo-step-dot { width: 5px; height: 5px; border-radius: 50%; background: #2dd07a; flex-shrink: 0; }
+
+  /* Typing indicator */
+  .demo-typing { display: flex; align-items: center; gap: 5px; padding: 12px 14px !important; }
+  .demo-typing span {
+    width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,0.22);
+    animation: dTyping 1.2s ease-in-out infinite;
+  }
+  .demo-typing span:nth-child(2) { animation-delay: .2s; }
+  .demo-typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes dTyping {
+    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Composer */
+  .demo-composer {
+    padding: 10px 12px 8px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    position: relative; z-index: 1; flex-shrink: 0;
+  }
+  .demo-composer-shell {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border-radius: 11px;
+    padding: 5px 6px 5px 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.09), inset 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.07);
+  }
+  .demo-composer-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 13px; color: #1a1a1a; font-family: 'Inter', system-ui, sans-serif; min-width: 0;
+  }
+  .demo-composer-input::placeholder { color: #b8b8b8; }
+  .demo-composer-input:disabled { opacity: 0.6; }
+  .demo-composer-send {
+    width: 28px; height: 28px; border-radius: 8px; border: none;
+    background: linear-gradient(180deg, #1a95ff 0%, #1085ef 100%);
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .14s; flex-shrink: 0;
+  }
+  .demo-composer-send:hover:not(:disabled) { opacity: .85; }
+  .demo-composer-send:disabled { opacity: .35; cursor: not-allowed; }
+  .demo-hint { font-size: 10px; color: #bbb; text-align: center; margin: 6px 0 0; line-height: 1.4; }
+
+  @media (max-width: 700px) {
+    .demo-viewport { display: none; }
+    .demo-split { height: 480px; }
+  }
+
   /* Email modal — local to this page */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
