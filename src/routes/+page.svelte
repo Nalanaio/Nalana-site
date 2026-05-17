@@ -468,10 +468,19 @@
           <a href="https://x.com/nalanaio" target="_blank" rel="noopener">Twitter</a>
           <a href="https://discord.gg/KRKCyxxkwb" target="_blank" rel="noopener">Discord</a>
           <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>
-          <a href="/terms">Terms</a>
-          <a href="/privacy">Privacy</a>
         </div>
         <span class="footer-copy">© 2026 Nalana.</span>
+      </div>
+      <div class="footer-legal">
+        <span class="footer-legal-label">Legal</span>
+        <div class="footer-legal-links">
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/eula">EULA</a>
+          <a href="/refund">Refund</a>
+          <a href="/cookies">Cookies</a>
+          <a href="/open-source">Open Source</a>
+        </div>
       </div>
     </div>
   </footer>
