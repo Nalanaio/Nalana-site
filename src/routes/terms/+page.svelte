@@ -184,7 +184,7 @@
   .footer-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .15s; }
   .footer-links a:hover { color: var(--ink-deep); }
   .footer-copy { font-size: 12px; color: #bbb; }
-  .footer-legal { display: flex; align-items: center; gap: 16px; padding: 14px 8px 0; flex-wrap: wrap; }
+  .footer-legal { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 14px 8px 0; flex-wrap: wrap; }
   .footer-legal-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #ccc; flex-shrink: 0; }
   .footer-legal-links { display: flex; gap: 20px; flex-wrap: wrap; }
   .footer-legal-links a { font-size: 12px; color: #bbb; text-decoration: none; transition: color .15s; }
