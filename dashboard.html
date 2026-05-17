@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nalana Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; background: #fafafa; color: #1a1a1a; padding: 2rem; max-width: 800px; margin: 0 auto; }
+  .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 1rem; }
+  h1, h2 { margin-bottom: 1rem; }
+  input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 6px; }
+  button { background: #1085EF; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  button:hover { background: #0A6FCC; }
+  .hidden { display: none; }
+  code { background: #f0f0f0; padding: 0.5rem; border-radius: 4px; display: block; word-break: break-all; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+
+<div id="auth-section" class="card">
+  <h1>Sign In to Nalana</h1>
+  <div id="auth-error" style="color: red; margin-bottom: 1rem;"></div>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Log In</button>
+  <button onclick="register()" style="background: #fff; color: #1085EF; border: 1px solid #1085EF;">Create Account</button>
+</div>
+
+<div id="dashboard-section" class="card hidden">
+  <h1>Your Dashboard</h1>
+  <p>Welcome back, <span id="user-email"></span>!</p>
+  
+  <h2>API Token</h2>
+  <p>Paste this token into the Nalana Blender plugin settings:</p>
+  <code id="api-token"></code>
+  <button onclick="copyToken()">Copy Token</button>
+
+  <h2 style="margin-top: 2rem;">Usage</h2>
+  <p>Plan: <strong id="usage-plan" style="text-transform: capitalize;"></strong></p>`n  <button id="upgrade-btn" onclick="upgradeToPro()" class="hidden" style="background: linear-gradient(135deg, #FF8C69, #F8D06C); margin-top: 0.5rem; color: white;">✨ Upgrade to Pro</button>
+  <p>Credits: <span id="usage-used"></span> / <span id="usage-limit"></span></p>
+
+  <button onclick="logout()" style="background: transparent; color: #767676; margin-top: 2rem; border: 1px solid #ddd;">Log Out</button>
+</div>
+
+<script>
+  const API_BASE = 'https://nalana-backend-production.up.railway.app';
+
+  async function apiCall(path, method = 'GET', body = null, useAuth = false) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (useAuth) {
+      headers['Authorization'] = 'Bearer ' + localStorage.getItem('nalana_token');
+    }
+    const res = await fetch(API_BASE + path, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : null
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  }
+
+  async function login() {
+    try {
+      const res = await apiCall('/login', 'POST', {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+      });
+      localStorage.setItem('nalana_token', res.access_token);
+      checkAuth();
+    } catch(e) { document.getElementById('auth-error').innerText = 'Login failed.'; }
+  }
+
+  async function register() {
+    try {
+      const res = await apiCall('/register', 'POST', {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+      });
+      localStorage.setItem('nalana_token', res.access_token);
+      checkAuth();
+    } catch(e) { document.getElementById('auth-error').innerText = 'Registration failed.'; }
+  }
+
+  async function loadDashboard() {
+    try {
+      const verify = await apiCall('/verify', 'POST', { access_token: localStorage.getItem('nalana_token') });
+      document.getElementById('user-email').innerText = verify.user.email;
+      document.getElementById('api-token').innerText = localStorage.getItem('nalana_token');
+      
+      const usage = await apiCall('/v1/usage', 'GET', null, true);
+      document.getElementById('usage-plan').innerText = usage.plan;
+      document.getElementById('usage-used').innerText = usage.credits_used;
+      document.getElementById('usage-limit').innerText = usage.monthly_credit_limit;`n      if (usage.plan === 'free') {`n        document.getElementById('upgrade-btn').classList.remove('hidden');`n      } else {`n        document.getElementById('upgrade-btn').classList.add('hidden');`n      }
+      if (usage.plan === 'free') {
+        document.getElementById('upgrade-btn').classList.remove('hidden');
+      } else {
+        document.getElementById('upgrade-btn').classList.add('hidden');
+      }
+
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('dashboard-section').classList.remove('hidden');
+    } catch(e) {
+      logout();
+    }
+  }
+
+  function checkAuth() {
+    if (localStorage.getItem('nalana_token')) {
+      loadDashboard();
+    } else {
+      document.getElementById('auth-section').classList.remove('hidden');
+      document.getElementById('dashboard-section').classList.add('hidden');
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('nalana_token');
+    checkAuth();
+  }
+
+  function copyToken() {
+    navigator.clipboard.writeText(localStorage.getItem('nalana_token'));
+    alert('Token copied!');
+  }
+
+  checkAuth();
+</script>
+</body>
+</html>
+();
+</script>
+</body>
+</html>
+

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nalana — 3D creation. Just say it.</title>
+<title>Nalana â€” 3D creation. Just say it.</title>
 
 <!-- Favicon -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -42,7 +42,7 @@
 </script>
 
 <style>
-/* ── RESET & ROOT ── */
+/* â”€â”€ RESET & ROOT â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -71,13 +71,13 @@ body {
 }
 h1,h2,h3,h4 { font-family: 'Amulya', sans-serif; }
 
-/* ── CURSOR ── */
+/* â”€â”€ CURSOR â”€â”€ */
 .cursor      { position:fixed; width:8px; height:8px; background:var(--primary); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .15s,height .15s,opacity .2s; }
 .cursor-ring { position:fixed; width:32px; height:32px; border:1.5px solid rgba(16,133,239,0.45); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); }
 .cursor.grow { width:18px; height:18px; }
 .cursor-ring.grow { width:52px; height:52px; border-color:rgba(16,133,239,0.7); }
 
-/* ── FIXED BACKGROUND LAYERS ── */
+/* â”€â”€ FIXED BACKGROUND LAYERS â”€â”€ */
 #hero-canvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
 
 .dot-grid-wrap { position:fixed; inset:0; perspective:1000px; pointer-events:none; z-index:2; }
@@ -91,17 +91,17 @@ h1,h2,h3,h4 { font-family: 'Amulya', sans-serif; }
   opacity: 0.9;
 }
 
-/* ── PAGE CONTENT LAYER ── */
+/* â”€â”€ PAGE CONTENT LAYER â”€â”€ */
 .page { position:relative; z-index:10; }
 
-/* ── IRIDESCENT GLOW BLOB ── */
+/* â”€â”€ IRIDESCENT GLOW BLOB â”€â”€ */
 .glow {
   position:absolute; pointer-events:none;
   background: linear-gradient(135deg, rgba(96,165,250,0.45), rgba(192,132,252,0.35), rgba(251,207,232,0.4));
   filter: blur(60px); border-radius:50%; mix-blend-mode:multiply; opacity:0.7;
 }
 
-/* ── GLASS SYSTEM ── */
+/* â”€â”€ GLASS SYSTEM â”€â”€ */
 .glass {
   background: rgba(255,255,255,0.42);
   backdrop-filter: blur(18px);
@@ -120,7 +120,7 @@ h1,h2,h3,h4 { font-family: 'Amulya', sans-serif; }
   border-radius:50%; pointer-events:none;
 }
 
-/* ── NAVBAR ── */
+/* â”€â”€ NAVBAR â”€â”€ */
 nav {
   position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
   z-index: 200; width: 92%; max-width: 1160px;
@@ -195,11 +195,11 @@ nav {
 .dl-btn-win:hover { background:rgba(255,255,255,0.95); border-color:rgba(0,0,0,0.22); transform:translateY(-1px); }
 .dl-icon { width:15px; height:15px; flex-shrink:0; opacity:0.9; }
 
-/* ── LAYOUT ── */
+/* â”€â”€ LAYOUT â”€â”€ */
 .container { max-width:1120px; margin:0 auto; padding:0 5%; }
 section { padding:100px 0; position:relative; }
 
-/* ── HERO ── */
+/* â”€â”€ HERO â”€â”€ */
 .hero {
   min-height: 100vh;
   display: flex; flex-direction: column;
@@ -282,7 +282,7 @@ section { padding:100px 0; position:relative; }
 .hero-dl-win:hover { background:rgba(255,255,255,0.95); border-color:rgba(0,0,0,0.24); transform:translateY(-2px); }
 .dl-icon-lg { width:20px; height:20px; flex-shrink:0; }
 
-/* ── VOICE BUBBLE ── */
+/* â”€â”€ VOICE BUBBLE â”€â”€ */
 @keyframes bubbleWarp { 0%,100%{border-radius:56px 52px 58px 54px/54px 58px 52px 56px} 33%{border-radius:52px 58px 54px 56px/58px 52px 56px 54px} 66%{border-radius:58px 54px 52px 58px/52px 56px 54px 58px} }
 @keyframes glowShift { 0%,100%{opacity:.6;background-position:0% 50%} 50%{opacity:.85;background-position:100% 50%} }
 @keyframes fadeOut { to{opacity:0;transform:translateY(-10px)} }
@@ -313,11 +313,11 @@ section { padding:100px 0; position:relative; }
 .voice-cmd.fade-out { animation:fadeOut .35s ease forwards; }
 .voice-cmd.fade-in  { animation:fadeIn  .35s ease forwards; }
 
-/* ── PLATFORM NOTE ── */
+/* â”€â”€ PLATFORM NOTE â”€â”€ */
 .platform-note { margin-top:28px; font-size:12px; color:#999; font-weight:500; }
 .platform-note a { color:var(--primary); text-decoration:none; }
 
-/* ── SECTION TITLES ── */
+/* â”€â”€ SECTION TITLES â”€â”€ */
 .section-label {
   font-size:12px; font-weight:700; color:var(--primary);
   text-transform:uppercase; letter-spacing:0.1em; margin-bottom:16px;
@@ -325,7 +325,7 @@ section { padding:100px 0; position:relative; }
 .section-title { font-size:clamp(32px,4vw,52px); font-weight:700; color:var(--ink-deep); line-height:1.1; letter-spacing:-0.02em; margin-bottom:20px; }
 .section-sub   { font-size:18px; color:#2a2a2a; max-width:600px; line-height:1.65; }
 
-/* ── VIDEO SECTION ── */
+/* â”€â”€ VIDEO SECTION â”€â”€ */
 .video-section { padding:80px 0 100px; }
 .video-wrap {
   position:relative;
@@ -377,7 +377,7 @@ section { padding:100px 0; position:relative; }
 }
 .video-wrap:hover .vid-replace-note { opacity:1; }
 
-/* ── FEATURES ── */
+/* â”€â”€ FEATURES â”€â”€ */
 .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
 .feature-card { padding:40px 36px; border-radius:36px; }
 .feature-icon-wrap { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:24px; }
@@ -385,7 +385,7 @@ section { padding:100px 0; position:relative; }
 .feature-desc  { font-size:15px; color:#444; line-height:1.65; }
 .feature-stat  { display:inline-block; margin-top:16px; font-size:13px; font-weight:600; color:var(--primary); padding:5px 14px; border-radius:100px; background:rgba(16,133,239,0.08); border:1px solid rgba(16,133,239,0.18); }
 
-/* ── SOCIAL PROOF ── */
+/* â”€â”€ SOCIAL PROOF â”€â”€ */
 .proof-grid { display:grid; grid-template-columns:5fr 4fr; gap:32px; align-items:stretch; }
 .quote-card { padding:60px; border-radius:44px; display:flex; flex-direction:column; justify-content:center; }
 .qmark { font-family:'Amulya',sans-serif; font-size:100px; font-weight:700; color:var(--primary); opacity:.22; line-height:.7; margin-bottom:8px; }
@@ -400,7 +400,7 @@ section { padding:100px 0; position:relative; }
 .metric-label { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; }
 .metric-val   { font-family:'Amulya',sans-serif; font-size:28px; font-weight:700; color:var(--primary); white-space:nowrap; }
 
-/* ── ABOUT ── */
+/* â”€â”€ ABOUT â”€â”€ */
 .about-card { padding:64px 72px; border-radius:48px; max-width:900px; margin:0 auto; text-align:center; }
 .about-card h2 { font-size:clamp(28px,3.5vw,44px); font-weight:700; color:var(--ink-deep); margin-bottom:20px; letter-spacing:-0.02em; }
 .about-card p  { font-size:17px; color:#333; line-height:1.75; max-width:680px; margin:0 auto; }
@@ -409,7 +409,7 @@ section { padding:100px 0; position:relative; }
 .founder-name  { font-size:14px; font-weight:600; color:var(--ink-deep); }
 .founder-title { font-size:12px; color:var(--muted); }
 
-/* ── FINAL CTA ── */
+/* â”€â”€ FINAL CTA â”€â”€ */
 .cta-section { text-align:center; }
 .cta-card { padding:80px 64px; border-radius:56px; max-width:860px; margin:0 auto; position:relative; overflow:hidden; }
 .cta-title { font-size:clamp(36px,5vw,64px); font-weight:700; color:var(--ink-deep); line-height:1.05; letter-spacing:-0.025em; margin-bottom:16px; }
@@ -460,7 +460,7 @@ section { padding:100px 0; position:relative; }
 .waitlist-btn:hover { transform:translateY(-1px); box-shadow:inset 0 4px 8px rgba(255,255,255,.35),0 10px 26px rgba(16,133,239,.42); }
 .success-msg { display:none; font-size:14px; font-weight:600; color:var(--primary); margin-top:14px; }
 
-/* ── FOOTER ── */
+/* â”€â”€ FOOTER â”€â”€ */
 footer { padding:48px 0 36px; }
 .footer-inner {
   display:flex; align-items:center; justify-content:space-between;
@@ -472,7 +472,7 @@ footer { padding:48px 0 36px; }
 .footer-links a:hover { color:var(--ink-deep); }
 .footer-copy { font-size:12px; color:#bbb; }
 
-/* ── NOT-BLENDER STRIP ── */
+/* â”€â”€ NOT-BLENDER STRIP â”€â”€ */
 .nb-strip {
   margin:0 0 80px;
   padding:20px 40px;
@@ -489,7 +489,7 @@ footer { padding:48px 0 36px; }
 .nb-strip-text strong { color:var(--ink-deep); }
 .nb-strip-text em { color:var(--primary); font-style:normal; font-weight:600; }
 
-/* ── MOBILE SEND BUTTONS ── */
+/* â”€â”€ MOBILE SEND BUTTONS â”€â”€ */
 .mobile-send-btns { display: none; }
 .mobile-send-mac, .mobile-send-win {
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -516,7 +516,7 @@ footer { padding:48px 0 36px; }
   .cta-mobile-email { display: block; }
 }
 
-/* ── EMAIL MODAL ── */
+/* â”€â”€ EMAIL MODAL â”€â”€ */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 2000;
   background: rgba(10,10,10,.5);
@@ -590,12 +590,12 @@ footer { padding:48px 0 36px; }
 }
 .modal-thanks-sub { font-size: 14px; color: var(--muted); line-height: 1.55; }
 
-/* ── SCROLL REVEAL ── */
+/* â”€â”€ SCROLL REVEAL â”€â”€ */
 .fade-up { opacity:1 !important; transform:none !important; }
 .fade-up.animated { opacity:0 !important; transform:translateY(28px) !important; transition:opacity .7s var(--ease), transform .7s var(--ease); }
 .fade-up.animated.visible { opacity:1 !important; transform:translateY(0) !important; }
 
-/* ── RESPONSIVE ── */
+/* â”€â”€ RESPONSIVE â”€â”€ */
 @media(max-width:900px){
   .features-grid,.proof-grid { grid-template-columns:1fr; }
   .bubble { min-width:300px; padding:16px 28px; }
@@ -620,9 +620,9 @@ footer { padding:48px 0 36px; }
 
 <div class="page">
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      NAVBAR
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <nav>
   <a href="#" class="nav-logo-pill">
     <!-- N mark inline -->
@@ -637,7 +637,7 @@ footer { padding:48px 0 36px; }
     <a href="#demo" class="nav-link">Demo</a>
     <a href="#features" class="nav-link">Features</a>
     <a href="#about" class="nav-link">About</a>
-    <a href="#download" class="nav-link">Download</a>
+    <a href="#download" class="nav-link">Download</a>`n      <a href="dashboard.html" class="nav-link">Dashboard / Login</a>
   </div>
 
   <div class="nav-downloads">
@@ -653,15 +653,15 @@ footer { padding:48px 0 36px; }
 </nav>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      HERO
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section class="hero" id="top">
   <div class="glow" style="width:60vw;height:60vh;top:5%;left:20%;z-index:-1;"></div>
 
   <div class="glass hero-eyebrow fade-up" style="border-radius:100px;">
     <span class="eyebrow-dot"></span>
-    Now available — Mac &amp; Windows
+    Now available â€” Mac &amp; Windows
   </div>
 
   <h1 class="hero-headline fade-up">
@@ -710,13 +710,13 @@ footer { padding:48px 0 36px; }
     </div>
   </div>
 
-  <p class="platform-note fade-up">Free to try. No account needed. <a href="#download">System requirements →</a></p>
+  <p class="platform-note fade-up">Free to try. No account needed. <a href="#download">System requirements â†’</a></p>
 </section>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      VIDEO / DEMO
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section id="demo" class="video-section">
   <div class="container">
     <div style="text-align:center;margin-bottom:40px;" class="fade-up">
@@ -729,15 +729,15 @@ footer { padding:48px 0 36px; }
       <video autoplay muted loop playsinline style="width:100%;border-radius:16px;display:block;">
         <source src="nalana-mvp-demo.web.mp4" type="video/mp4">
       </video>
-      <div class="vid-label">↳ Live Demo</div>
+      <div class="vid-label">â†³ Live Demo</div>
     </div>
   </div>
 </section>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      NOT BLENDER STRIP
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="container">
   <div class="nb-strip fade-up">
     <div class="nb-strip-icon">
@@ -748,15 +748,15 @@ footer { padding:48px 0 36px; }
     </div>
     <div class="nb-strip-text">
       <strong>Nalana is not Blender. It is not a plugin. It is not a Blender addon or mod.</strong>
-      Nalana is <em>its own separate software</em> — built on top of Blender. You never open Blender. You open Nalana. The interface is different. The friction is gone.
+      Nalana is <em>its own separate software</em> â€” built on top of Blender. You never open Blender. You open Nalana. The interface is different. The friction is gone.
     </div>
   </div>
 </div>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FEATURES
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section id="features">
   <div class="container">
     <div style="text-align:center;margin-bottom:56px;" class="fade-up">
@@ -780,7 +780,7 @@ footer { padding:48px 0 36px; }
           </svg>
         </div>
         <h3 class="feature-title">Just say it.</h3>
-        <p class="feature-desc">Voice or text. Either way, Nalana understands your intent — geometry, materials, lighting, transforms — and executes precisely.</p>
+        <p class="feature-desc">Voice or text. Either way, Nalana understands your intent â€” geometry, materials, lighting, transforms â€” and executes precisely.</p>
         <span class="feature-stat">Voice + text input</span>
       </div>
 
@@ -795,7 +795,7 @@ footer { padding:48px 0 36px; }
         </div>
         <h3 class="feature-title">Instant execution.</h3>
         <p class="feature-desc">Local processing. Common commands run in ~5ms. Complex operations under 600ms. No lag between thought and result.</p>
-        <span class="feature-stat" style="color:var(--salmon);background:rgba(255,140,105,0.08);border-color:rgba(255,140,105,0.2);">~5ms · sub-600ms</span>
+        <span class="feature-stat" style="color:var(--salmon);background:rgba(255,140,105,0.08);border-color:rgba(255,140,105,0.2);">~5ms Â· sub-600ms</span>
       </div>
 
       <div class="glass feature-card fade-up" style="transition-delay:.2s;">
@@ -817,9 +817,9 @@ footer { padding:48px 0 36px; }
 </section>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SOCIAL PROOF
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section>
   <div class="container">
     <div class="proof-grid">
@@ -828,7 +828,7 @@ footer { padding:48px 0 36px; }
         <p class="quote-text">This is exactly what our 3D teams need. I'd pay $50 a month for this without hesitation.</p>
         <div class="quote-attr">
           <strong>Senior Director of 3D Excellence</strong>
-          Nike / Jordan Brand — after one live demo
+          Nike / Jordan Brand â€” after one live demo
         </div>
       </div>
     </div>
@@ -836,9 +836,9 @@ footer { padding:48px 0 36px; }
 </section>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ABOUT
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section id="about">
   <div class="container">
     <div class="glow" style="width:40vw;height:40vh;top:-10%;left:-5%;z-index:-1;"></div>
@@ -849,7 +849,7 @@ footer { padding:48px 0 36px; }
         <div class="founder-avatar">C</div>
         <div>
           <div class="founder-name">Clarence Keith</div>
-          <div class="founder-title">Founder — Nalana · USC Iovine and Young Academy</div>
+          <div class="founder-title">Founder â€” Nalana Â· USC Iovine and Young Academy</div>
         </div>
       </div>
     </div>
@@ -857,9 +857,9 @@ footer { padding:48px 0 36px; }
 </section>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FINAL DOWNLOAD CTA
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section id="download" class="cta-section">
   <div class="container">
     <div class="glass cta-card fade-up">
@@ -880,10 +880,10 @@ footer { padding:48px 0 36px; }
       <div class="waitlist-label cta-desktop-only">Not ready? Get notified when we ship new versions.</div>
       <div class="waitlist-row cta-desktop-only" id="waitlistForm">
         <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="your@email.com" />
-        <button class="waitlist-btn" onclick="handleWaitlist()">Notify me →</button>
+        <button class="waitlist-btn" onclick="handleWaitlist()">Notify me â†’</button>
       </div>
-      <div class="success-msg cta-desktop-only" id="waitlistSuccess">✦ You're on the list.</div>
-      <p class="cta-desktop-only" style="margin-top:20px;font-size:12px;color:#bbb;">macOS 12+ · Windows 10/11 · Apple Silicon &amp; Intel</p>
+      <div class="success-msg cta-desktop-only" id="waitlistSuccess">âœ¦ You're on the list.</div>
+      <p class="cta-desktop-only" style="margin-top:20px;font-size:12px;color:#bbb;">macOS 12+ Â· Windows 10/11 Â· Apple Silicon &amp; Intel</p>
 
       <!-- Mobile: send to computer buttons -->
       <div class="cta-mobile-email">
@@ -903,9 +903,9 @@ footer { padding:48px 0 36px; }
 </section>
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      FOOTER
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <footer>
   <div class="container">
     <div class="glass footer-inner">
@@ -917,7 +917,7 @@ footer { padding:48px 0 36px; }
         <a href="/terms.html">Terms</a>
         <a href="/privacy.html">Privacy</a>
       </div>
-      <span class="footer-copy">© 2026 Nalana.</span>
+      <span class="footer-copy">Â© 2026 Nalana.</span>
     </div>
   </div>
 </footer>
@@ -925,9 +925,9 @@ footer { padding:48px 0 36px; }
 </div><!-- /page -->
 
 
-<!-- ══════════════════════════════════════════
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      TWEAKS PANEL
-══════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <style>
 /* Tweaks panel shell */
 #tweaks-panel {
@@ -1001,7 +1001,7 @@ footer { padding:48px 0 36px; }
 <div id="tweaks-panel">
   <div class="tp-header">
     <span class="tp-title">Tweaks</span>
-    <button class="tp-close" id="tp-close-btn">✕</button>
+    <button class="tp-close" id="tp-close-btn">âœ•</button>
   </div>
   <div class="tp-body">
 
@@ -1038,7 +1038,7 @@ footer { padding:48px 0 36px; }
 </div>
 
 <script>
-// ── TWEAKS PANEL PROTOCOL ──
+// â”€â”€ TWEAKS PANEL PROTOCOL â”€â”€
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "personality": "alive",
   "energy": 100,
@@ -1067,7 +1067,7 @@ function persist(key, val) {
   window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
 }
 
-// ── SEGMENTED CONTROLS ──
+// â”€â”€ SEGMENTED CONTROLS â”€â”€
 function initSeg(id, key, onChange) {
   const seg = document.getElementById(id);
   seg.querySelectorAll('.tp-seg-btn').forEach(btn => {
@@ -1081,7 +1081,7 @@ function initSeg(id, key, onChange) {
   });
 }
 
-// ── SLIDER CONTROL ──
+// â”€â”€ SLIDER CONTROL â”€â”€
 function initSlider(id, labelId, key, onChange) {
   const slider = document.getElementById(id);
   const label  = document.getElementById(labelId);
@@ -1095,9 +1095,9 @@ function initSlider(id, labelId, key, onChange) {
   update(slider.value);
 }
 
-// ══════════════════════════════════════════
-// PERSONALITY — reshapes color palette + surface feel
-// ══════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PERSONALITY â€” reshapes color palette + surface feel
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function applyPersonality(val) {
   const root = document.documentElement;
   const body = document.body;
@@ -1163,9 +1163,9 @@ function applyPersonality(val) {
   }
 }
 
-// ══════════════════════════════════════════
-// ENERGY — controls animation speed + intensity
-// ══════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ENERGY â€” controls animation speed + intensity
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let energyLevel = 60;
 function applyEnergy(val) {
   energyLevel = val;
@@ -1184,7 +1184,7 @@ function applyEnergy(val) {
   // Eyebrow dot pulse
   document.querySelector('.eyebrow-dot') && (document.querySelector('.eyebrow-dot').style.animationDuration = Math.max(0.5, 2 - (val/100)*1.5) + 's');
 
-  // Floating 3D objects (Three.js speed — stored globally)
+  // Floating 3D objects (Three.js speed â€” stored globally)
   window._nalanaEnergyFactor = factor;
 
   // Vid object float
@@ -1206,9 +1206,9 @@ function applyEnergy(val) {
   }
 }
 
-// ══════════════════════════════════════════
-// HEADLINE SCALE — reshapes type hierarchy
-// ══════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// HEADLINE SCALE â€” reshapes type hierarchy
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function applyScale(val) {
   const headline = document.querySelector('.hero-headline');
   const sectionTitles = document.querySelectorAll('.section-title');
@@ -1239,7 +1239,7 @@ function applyScale(val) {
   }
 }
 
-// ── INIT ALL CONTROLS ──
+// â”€â”€ INIT ALL CONTROLS â”€â”€
 initSeg('seg-personality', 'personality', applyPersonality);
 initSeg('seg-scale',       'scale',       applyScale);
 initSlider('slider-energy', 'label-energy', 'energy', applyEnergy);
@@ -1269,7 +1269,7 @@ applyEnergy(tweaks.energy);
 
 
 <script>
-// ── THREE.JS BLOB ──
+// â”€â”€ THREE.JS BLOB â”€â”€
 (function initThree() {
   const canvas = document.getElementById('hero-canvas');
   if (!canvas || typeof THREE === 'undefined') return;
@@ -1322,7 +1322,7 @@ applyEnergy(tweaks.energy);
   });
 })();
 
-// ── CURSOR ──
+// â”€â”€ CURSOR â”€â”€
 const cursor=document.getElementById('cursor');
 const ring=document.getElementById('cursorRing');
 let mx=0,my=0,rx=0,ry=0;
@@ -1333,8 +1333,8 @@ document.querySelectorAll('a,button').forEach(el=>{
 });
 (function animRing(){ rx+=(mx-rx)*.13; ry+=(my-ry)*.13; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
 
-// ── SCROLL REVEAL ──
-// Only animate elements below the fold — everything in viewport starts visible
+// â”€â”€ SCROLL REVEAL â”€â”€
+// Only animate elements below the fold â€” everything in viewport starts visible
 const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
 },{threshold:0});
@@ -1346,7 +1346,7 @@ document.querySelectorAll('.fade-up').forEach(el=>{
   }
 });
 
-// ── VOICE COMMAND ROTATION ──
+// â”€â”€ VOICE COMMAND ROTATION â”€â”€
 const cmds = [
   '"add a metallic sphere"',
   '"rotate it 45 degrees"',
@@ -1372,7 +1372,7 @@ setInterval(()=>{
   },350);
 },3200);
 
-// ── WAITLIST ──
+// â”€â”€ WAITLIST â”€â”€
 function handleWaitlist(){
   const email=document.getElementById('waitlistEmail').value;
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alert('Please enter a valid email.'); return; }
@@ -1380,7 +1380,7 @@ function handleWaitlist(){
   document.getElementById('waitlistSuccess').style.display='block';
 }
 
-// ── SCROLL DEPTH TRACKING ──
+// â”€â”€ SCROLL DEPTH TRACKING â”€â”€
 (function() {
   const milestones = [25, 50, 75, 90];
   const fired = new Set();
@@ -1397,12 +1397,12 @@ function handleWaitlist(){
   }, { passive: true });
 })();
 
-// ── DOWNLOAD CLICK — desktop only (mobile shows send buttons instead) ──
+// â”€â”€ DOWNLOAD CLICK â€” desktop only (mobile shows send buttons instead) â”€â”€
 function handleDownloadClick(e, platform, location) {
   gtag('event', 'download', { platform, location });
 }
 
-// ── EMAIL MODAL ──
+// â”€â”€ EMAIL MODAL â”€â”€
 let _modalPlatform = 'mac';
 
 function openEmailModal(platform) {
@@ -1413,7 +1413,7 @@ function openEmailModal(platform) {
   document.getElementById('modalEmail').value = '';
   document.getElementById('modalForm').style.display = 'block';
   document.getElementById('modalThanks').style.display = 'none';
-  document.getElementById('modalSubmit').textContent = 'Send it →';
+  document.getElementById('modalSubmit').textContent = 'Send it â†’';
   document.getElementById('modalSubmit').disabled = false;
   document.getElementById('emailModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1440,7 +1440,7 @@ async function submitModalEmail() {
     return;
   }
   const btn = document.getElementById('modalSubmit');
-  btn.textContent = 'Sending…';
+  btn.textContent = 'Sendingâ€¦';
   btn.disabled = true;
   gtag('event', 'email_capture', { platform: _modalPlatform });
   try {
@@ -1462,26 +1462,27 @@ async function submitModalEmail() {
   }
 }
 </script>
-<!-- ── EMAIL MODAL ── -->
+<!-- â”€â”€ EMAIL MODAL â”€â”€ -->
 <div class="modal-overlay" id="emailModal" onclick="handleModalOverlayClick(event)">
   <div class="modal-card">
-    <button class="modal-close" onclick="closeModal()">×</button>
+    <button class="modal-close" onclick="closeModal()">Ã—</button>
 
     <div id="modalForm">
       <div class="modal-platform-icon" id="modalIcon"></div>
       <h3 class="modal-title" id="modalTitle"></h3>
       <p class="modal-sub">Enter your email and we'll send the download link straight to your inbox.</p>
       <input type="email" class="modal-input" id="modalEmail" placeholder="your@email.com" />
-      <button class="modal-submit" id="modalSubmit" onclick="submitModalEmail()">Send it →</button>
+      <button class="modal-submit" id="modalSubmit" onclick="submitModalEmail()">Send it â†’</button>
     </div>
 
     <div class="modal-thanks" id="modalThanks">
-      <div class="modal-thanks-icon">✦</div>
+      <div class="modal-thanks-icon">âœ¦</div>
       <h3 class="modal-thanks-title">Link is on its way.</h3>
-      <p class="modal-thanks-sub">Check your inbox — open it on your computer to download Nalana.</p>
+      <p class="modal-thanks-sub">Check your inbox â€” open it on your computer to download Nalana.</p>
     </div>
   </div>
 </div>
 
 </body>
 </html>
+
