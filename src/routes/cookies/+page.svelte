@@ -86,13 +86,19 @@
         <a href="https://x.com/nalanaio" target="_blank" rel="noopener">Twitter</a>
         <a href="https://discord.gg/KRKCyxxkwb" target="_blank" rel="noopener">Discord</a>
         <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>
+      </div>
+      <span class="footer-copy">© 2026 Nalana.</span>
+    </div>
+    <div class="footer-legal">
+      <span class="footer-legal-label">Legal</span>
+      <div class="footer-legal-links">
         <a href="/terms">Terms</a>
         <a href="/privacy">Privacy</a>
         <a href="/eula">EULA</a>
         <a href="/refund">Refund</a>
         <a href="/cookies">Cookies</a>
+        <a href="/open-source">Open Source</a>
       </div>
-      <span class="footer-copy">© 2026 Nalana.</span>
     </div>
   </div>
 </footer>
@@ -160,13 +166,19 @@
     padding: 20px 32px; border-radius: 24px; gap: 16px; flex-wrap: wrap;
   }
   .footer-wordmark { font-family: 'KonkhmerSleokchher', sans-serif; font-size: 18px; color: var(--primary); }
-  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  .footer-links { display: flex; gap: 24px; }
   .footer-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .15s; }
   .footer-links a:hover { color: var(--ink-deep); }
   .footer-copy { font-size: 12px; color: #bbb; }
+  .footer-legal { display: flex; align-items: center; gap: 16px; padding: 14px 8px 0; flex-wrap: wrap; }
+  .footer-legal-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #ccc; flex-shrink: 0; }
+  .footer-legal-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .footer-legal-links a { font-size: 12px; color: #bbb; text-decoration: none; transition: color .15s; }
+  .footer-legal-links a:hover { color: var(--ink-deep); }
 
   @media (max-width: 600px) {
     .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
-    .footer-links { justify-content: center; }
+    .footer-legal { justify-content: center; }
+    .footer-legal-links { justify-content: center; }
   }
 </style>
