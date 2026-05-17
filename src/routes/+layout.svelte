@@ -14,6 +14,10 @@
     gtag('js', new Date());
     gtag('config', 'G-8XMNLBLH97');
   </script>
+  <!-- RB2B visitor identification -->
+  <script>
+    !function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";document.getElementsByTagName("script")[0].parentNode.insertBefore(s,document.getElementsByTagName("script")[0]);}("VN080H3PX16J");
+  </script>
 </svelte:head>
 
 <!-- Auth modal overlay — available on every page -->

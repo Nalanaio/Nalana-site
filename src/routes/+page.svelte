@@ -3,21 +3,73 @@
   import Nav from '$lib/components/Nav.svelte';
   import { openAuthModal, openEmailModal, emailModal, closeEmailModal } from '$lib/stores/modal.js';
 
+  // ── UTM variant definitions ──
+  const variants = {
+    arch: {
+      heroSub: 'Nalana is your 3D studio. Describe the space. It builds. No menus, no shortcuts, no friction.',
+      cmds: [
+        '"add a glass curtain wall"',
+        '"make the facade concrete"',
+        '"add recessed lighting to the ceiling"',
+        '"render a wide-angle exterior shot"',
+        '"apply a wood floor material"',
+        '"add a cantilevered overhang"',
+        '"make the columns thinner"',
+        '"duplicate the window grid"',
+      ],
+    },
+    game: {
+      heroSub: 'Nalana is your 3D studio. Describe your world. It builds. No menus, no shortcuts, no friction.',
+      cmds: [
+        '"add a low-poly terrain"',
+        '"create a dungeon wall tile"',
+        '"make it feel dystopian"',
+        '"add atmospheric fog"',
+        '"apply a worn metal texture"',
+        '"build a modular corridor"',
+        '"add directional god rays"',
+        '"make the environment darker"',
+      ],
+    },
+    design: {
+      heroSub: 'Nalana is your 3D studio. Describe the object. It builds. No menus, no shortcuts, no friction.',
+      cmds: [
+        '"model a minimal desk lamp"',
+        '"add an HDRI studio background"',
+        '"make it brushed aluminum"',
+        '"smooth the product curves"',
+        '"add a soft shadow plane"',
+        '"render a clean white backdrop"',
+        '"make the surface matte black"',
+        '"add a subtle reflection"',
+      ],
+    },
+    default: {
+      heroSub: 'Nalana is your 3D studio. Describe what you want to build. It builds. No menus, no shortcuts, no friction.',
+      cmds: [
+        '"add a metallic sphere"',
+        '"make the lighting warmer"',
+        '"duplicate this object"',
+        '"add a chrome torus"',
+        '"smooth out the edges"',
+        '"apply a glass material"',
+        '"rotate 45 degrees"',
+        '"make it bigger"',
+      ],
+    },
+  };
+
+  let heroSub = variants.default.heroSub;
+  let voiceCmds = variants.default.cmds;
+
   // ── Voice command rotation ──
-  const voiceCmds = [
-    '"add a metallic sphere"',
-    '"make the lighting warmer"',
-    '"duplicate this object"',
-    '"add a chrome torus"',
-    '"smooth out the edges"',
-    '"apply a glass material"',
-    '"rotate 45 degrees"',
-    '"make it bigger"',
-  ];
   let cmdIndex = 0;
   let voiceCmdEl;
   let voiceCmdText = voiceCmds[0];
   let cmdFading = false;
+
+  // ── OS detection ──
+  let detectedOS = 'unknown';
 
   // ── Waitlist state ──
   let waitlistEmail = '';
@@ -86,6 +138,31 @@
   }
 
   onMount(() => {
+    // ── OS detection ──
+    const ua = navigator.userAgent;
+    if (/Mac|iPhone|iPad|iPod/.test(ua) && !/Windows/.test(ua)) {
+      detectedOS = 'mac';
+    } else if (/Windows/.test(ua)) {
+      detectedOS = 'windows';
+    }
+
+    // ── UTM → variant swap ──
+    const params = new URLSearchParams(window.location.search);
+    const src = (params.get('utm_source') || '').toLowerCase();
+    const campaign = (params.get('utm_campaign') || '').toLowerCase();
+    const combined = src + ' ' + campaign;
+    let variant = variants.default;
+    if (/arch|archviz|archdaily|dezeen|houzz|build|construct/.test(combined)) {
+      variant = variants.arch;
+    } else if (/game|unity|unreal|indie|itch|steam/.test(combined)) {
+      variant = variants.game;
+    } else if (/design|product|industrial|behance|dribbble/.test(combined)) {
+      variant = variants.design;
+    }
+    heroSub = variant.heroSub;
+    voiceCmds = variant.cmds;
+    voiceCmdText = voiceCmds[0];
+
     // ── Custom cursor ──
     const cursor = document.getElementById('cursor');
     const ring   = document.getElementById('cursorRing');
@@ -220,9 +297,7 @@
       <span class="line-blue">Just say it.</span>
     </h1>
 
-    <p class="hero-sub fade-up">
-      Nalana is your 3D studio. Describe what you want to build. It builds. No menus, no shortcuts, no friction.
-    </p>
+    <p class="hero-sub fade-up">{heroSub}</p>
 
     <div class="not-blender glass fade-up" style="border-radius:100px;">
       <span class="nb-badge">Not a plugin</span>
@@ -230,6 +305,7 @@
     </div>
 
     <div class="hero-ctas fade-up">
+      {#if detectedOS !== 'windows'}
       <a
         href="/api/download?platform=mac"
         class="hero-dl-mac"
@@ -238,6 +314,8 @@
         <svg class="dl-icon-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         Download for Mac
       </a>
+      {/if}
+      {#if detectedOS !== 'mac'}
       <a
         href="/api/download?platform=windows"
         class="hero-dl-win"
@@ -246,6 +324,7 @@
         <svg class="dl-icon-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>
         Download for Windows
       </a>
+      {/if}
       <!-- Mobile: send to computer -->
       <div class="mobile-send-btns">
         <button class="mobile-send-mac" on:click={() => openEmailModal('mac')}>
@@ -278,11 +357,6 @@
   <section class="proof-strip fade-up">
     <div class="container">
       <div class="proof-strip-inner">
-        <div class="proof-stat">
-          <span class="proof-stat-number">200+</span>
-          <span class="proof-stat-label">downloads</span>
-        </div>
-        <div class="proof-divider"></div>
         <span class="proof-used-by">Used by creators from</span>
         <div class="proof-logos">
           <span class="proof-logo proof-logo-usc">USC</span>
