@@ -1,54 +1,100 @@
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
 import { browser } from '$app/environment';
 
-// ── AUTH STATE ──
-// Persists JWT in localStorage; hydrates on page load
-function createAuthStore() {
-  const stored = browser ? localStorage.getItem('nalana_token') : null;
-  const storedUser = browser ? JSON.parse(localStorage.getItem('nalana_user') || 'null') : null;
+const TOKEN_KEY = 'nalana_token';
+const USER_KEY = 'nalana_user';
 
-  const { subscribe, set, update } = writable({
-    token: stored,
-    user: storedUser,  // { id, email, name, plan, credits }
+function isMockToken(token) {
+  return !token || token.startsWith('mock_jwt_');
+}
+
+function readStoredSession() {
+  if (!browser) return { token: null, user: null };
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (isMockToken(token)) {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    return { token: null, user: null };
+  }
+  let user = null;
+  try {
+    user = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+  } catch {
+    user = null;
+  }
+  return { token, user };
+}
+
+function createAuthStore() {
+  const initial = readStoredSession();
+
+  const store = writable({
+    token: initial.token,
+    user: initial.user,
     loading: false,
     error: null,
   });
 
+  const { subscribe, set, update } = store;
+
   return {
     subscribe,
 
-    /** Call after successful login/register */
     setSession(token, user) {
-      if (browser) {
-        localStorage.setItem('nalana_token', token);
-        localStorage.setItem('nalana_user', JSON.stringify(user));
+      if (browser && !isMockToken(token)) {
+        localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
       }
       set({ token, user, loading: false, error: null });
     },
 
-    /** Clear session (logout) */
     logout() {
       if (browser) {
-        localStorage.removeItem('nalana_token');
-        localStorage.removeItem('nalana_user');
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
       }
       set({ token: null, user: null, loading: false, error: null });
     },
 
     setLoading(loading) {
-      update(s => ({ ...s, loading }));
+      update((s) => ({ ...s, loading }));
     },
 
     setError(error) {
-      update(s => ({ ...s, loading: false, error }));
+      update((s) => ({ ...s, loading: false, error }));
+    },
+
+    /** Validate token with backend; returns true if session is valid. */
+    async refreshSession() {
+      const { token } = get(store);
+      if (!token || isMockToken(token)) {
+        this.logout();
+        return false;
+      }
+
+      this.setLoading(true);
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          this.logout();
+          return false;
+        }
+        this.setSession(token, data.user);
+        return true;
+      } catch {
+        return false;
+      } finally {
+        this.setLoading(false);
+      }
     },
   };
 }
 
 export const auth = createAuthStore();
 
-/** True when user is logged in */
-export const isLoggedIn = derived(auth, $auth => !!$auth.token);
+export const isLoggedIn = derived(auth, ($auth) => !!$auth.token && !isMockToken($auth.token));
 
-/** Current user object or null */
-export const currentUser = derived(auth, $auth => $auth.user);
+export const currentUser = derived(auth, ($auth) => $auth.user);

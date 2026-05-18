@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { auth, isLoggedIn } from '$lib/stores/auth.js';
+  import { authErrorMessage } from '$lib/authErrors.js';
 
   let mode = 'login'; // 'login' | 'signup'
   let email = '', password = '', name = '';
@@ -27,11 +28,21 @@
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (!res.ok) { error = data.error || 'Something went wrong.'; loading = false; return; }
+      if (!res.ok) {
+        error = authErrorMessage(res.status, data, mode);
+        loading = false;
+        return;
+      }
+      if (!data.token || !data.user?.id) {
+        error = 'Invalid response from server. Please try again.';
+        loading = false;
+        return;
+      }
       auth.setSession(data.token, data.user);
       goto('/account');
     } catch {
       error = 'Network error. Please try again.';
+    } finally {
       loading = false;
     }
   }

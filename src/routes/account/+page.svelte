@@ -3,9 +3,16 @@
   import { goto } from '$app/navigation';
   import { auth, currentUser, isLoggedIn } from '$lib/stores/auth.js';
 
-  onMount(() => {
-    // Redirect to login if not authenticated
-    if (!$isLoggedIn) goto('/login');
+  let verifying = true;
+
+  onMount(async () => {
+    if (!$isLoggedIn) {
+      goto('/login');
+      return;
+    }
+    const ok = await auth.refreshSession();
+    verifying = false;
+    if (!ok) goto('/login');
   });
 
   function logout() {
@@ -42,6 +49,7 @@
   .avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#1085EF,#A78ADE); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; color: #fff; flex-shrink: 0; }
   .user-name { font-size: 20px; font-weight: 700; color: #0a0a0a; }
   .user-email { font-size: 14px; color: #888; }
+  .user-id { font-size: 12px; color: #bbb; margin-top: 4px; font-family: monospace; }
 
   .plan-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 8px; }
 
@@ -79,7 +87,9 @@
   <div class="container">
     <a href="/" class="back">← Back to nalana.io</a>
 
-    {#if $currentUser}
+    {#if verifying}
+      <p style="color:#888;font-size:16px;">Verifying session…</p>
+    {:else if $currentUser}
       <h1>Hi, {$currentUser.name?.split(' ')[0] ?? 'there'} 👋</h1>
       <p class="subtitle">Manage your Nalana account and credits.</p>
 
@@ -91,6 +101,9 @@
           <div>
             <div class="user-name">{$currentUser.name}</div>
             <div class="user-email">{$currentUser.email}</div>
+            {#if $currentUser.id}
+              <div class="user-id">User ID: {$currentUser.id}</div>
+            {/if}
             <div class="plan-badge" style="background:{planColors[$currentUser.plan] ?? '#888'}18;color:{planColors[$currentUser.plan] ?? '#888'};">
               {planLabels[$currentUser.plan] ?? $currentUser.plan} plan
             </div>
@@ -128,8 +141,6 @@
 
       <button class="logout-btn" on:click={logout}>Log out</button>
 
-    {:else}
-      <p style="color:#888;font-size:16px;">Loading account…</p>
     {/if}
   </div>
 </div>

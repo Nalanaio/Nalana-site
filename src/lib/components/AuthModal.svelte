@@ -1,6 +1,7 @@
 <script>
   import { authModal, closeAuthModal } from '$lib/stores/modal.js';
   import { auth } from '$lib/stores/auth.js';
+  import { authErrorMessage } from '$lib/authErrors.js';
 
   let email = '';
   let password = '';
@@ -42,7 +43,13 @@
       const data = await res.json();
 
       if (!res.ok) {
-        error = data.error || 'Something went wrong. Please try again.';
+        error = authErrorMessage(res.status, data, mode);
+        loading = false;
+        return;
+      }
+
+      if (!data.token || !data.user?.id) {
+        error = 'Invalid response from server. Please try again.';
         loading = false;
         return;
       }
