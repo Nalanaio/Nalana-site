@@ -1,6 +1,11 @@
 .env
 .env.local
 
+node_modules
+.svelte-kit
+.vercel
+build
+
 # FigJam files (too large for GitHub)
 *.jam
 
