@@ -3,7 +3,8 @@ import { env } from '$env/dynamic/private';
 
 /**
  * Backend root URL — must match IDE NALANA_API_BASE exactly (no trailing slash).
- * Auth: POST /v1/auth/login, /v1/auth/register; GET /v1/users/me
+ * Auth: POST /v1/auth/login, register, refresh, forgot-password, reset-password
+ * Users: GET/PATCH /v1/users/me; GET /v1/usage/me
  *
  * Local: NALANA_API_BASE in .env (restart `npm run dev` after editing)
  * Vercel: same variable in project Environment Variables
@@ -27,18 +28,31 @@ export function apiUnavailable() {
   );
 }
 
+/** Normalize user object from backend (AuthResponse or /users/me). */
+export function normalizeUser(rawUser, data = {}) {
+  const u = rawUser ?? data;
+  const tier = u.tier ?? u.plan ?? data.tier ?? data.plan ?? 'free';
+  const displayName = u.display_name ?? u.name ?? data.display_name ?? data.name ?? '';
+  return {
+    id: u.id ?? u.user_id ?? data.user_id,
+    email: u.email ?? data.email,
+    name: displayName,
+    display_name: displayName,
+    avatar_url: u.avatar_url ?? data.avatar_url ?? '',
+    email_verified: Boolean(u.email_verified ?? data.email_verified),
+    plan: tier,
+    tier,
+    credits: u.credits ?? data.credits ?? 0,
+    status: u.status ?? 'active',
+  };
+}
+
 /** Normalize backend payloads (access_token vs token, nested user). */
 export function normalizeAuthResponse(data) {
   const token = data.access_token ?? data.token;
-  const rawUser = data.user ?? data;
-  const user = {
-    id: rawUser.id ?? rawUser.user_id ?? data.user_id,
-    email: rawUser.email ?? data.email,
-    name: rawUser.name ?? data.name ?? '',
-    plan: rawUser.plan ?? data.plan ?? 'free',
-    credits: rawUser.credits ?? data.credits ?? 0,
-  };
-  return { token, user };
+  const refresh_token = data.refresh_token ?? null;
+  const user = normalizeUser(data.user ?? data, data);
+  return { token, refresh_token, user };
 }
 
 /** Map backend errors to user-facing messages. */
@@ -48,6 +62,9 @@ export function mapAuthError(status, data, { mode = 'login' } = {}) {
     data?.detail ??
     (typeof data?.message === 'string' ? data.message : null);
 
+  if (status === 403) {
+    return detail || 'Email not verified. Check your inbox or request a new verification email.';
+  }
   if (status === 401 && mode === 'login') {
     return detail || 'No account found. Please sign up first.';
   }
@@ -150,7 +167,7 @@ export async function proxyMe(authHeader) {
         );
       }
 
-      const { user } = normalizeAuthResponse({ user: data, ...data });
+      const user = normalizeUser(data.user ?? data, data);
       return json({ user, token }, { status: 200 });
     } catch (err) {
       console.error(`[auth] GET ${path} error:`, err);
@@ -158,4 +175,112 @@ export async function proxyMe(authHeader) {
   }
 
   return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
+}
+
+/** Authenticated GET/PATCH (and other methods) to backend. */
+export async function proxyAuthenticated(path, request, options = {}) {
+  const base = getApiBase();
+  if (!base) return apiUnavailable();
+
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return json({ error: 'Missing or invalid authorization.' }, { status: 401 });
+  }
+
+  const token = authHeader.slice(7);
+  if (token.startsWith('mock_jwt_')) {
+    return json({ error: 'Invalid session. Please log in again.' }, { status: 401 });
+  }
+
+  const method = options.method ?? 'GET';
+  let body;
+  if (options.body !== undefined) {
+    body = JSON.stringify(options.body);
+  } else if (method !== 'GET' && method !== 'HEAD') {
+    try {
+      body = JSON.stringify(await request.json());
+    } catch {
+      body = undefined;
+    }
+  }
+
+  try {
+    const res = await fetch(`${base}${path}`, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authHeader,
+      },
+      body,
+    });
+
+    let data = {};
+    const text = await res.text();
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { detail: text };
+      }
+    }
+
+    if (!res.ok) {
+      return json(
+        { error: mapAuthError(res.status, data, options) },
+        { status: res.status }
+      );
+    }
+
+    if (path.includes('/users/me')) {
+      const user = normalizeUser(data.user ?? data, data);
+      return json({ user, token }, { status: res.status });
+    }
+
+    return json(data, { status: res.status });
+  } catch (err) {
+    console.error(`[auth] ${method} ${path} error:`, err);
+    return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
+  }
+}
+
+/** Proxy JSON to backend without auth-response normalization. */
+export async function proxyBackend(path, body, options = {}) {
+  const base = getApiBase();
+  if (!base) {
+    console.error(`[auth] ${path} — NALANA_API_BASE not set (must match IDE)`);
+    return apiUnavailable();
+  }
+
+  try {
+    const res = await fetch(`${base}${path}`, {
+      method: options.method ?? 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers ?? {}),
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+
+    let data = {};
+    const text = await res.text();
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { detail: text };
+      }
+    }
+
+    if (!res.ok) {
+      return json(
+        { error: mapAuthError(res.status, data, options) },
+        { status: res.status }
+      );
+    }
+
+    return json(data, { status: res.status });
+  } catch (err) {
+    console.error(`[auth] ${path} backend error:`, err);
+    return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
+  }
 }
