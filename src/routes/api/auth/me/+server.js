@@ -16,7 +16,9 @@ export async function PATCH({ request }) {
   if (typeof body.display_name === 'string') {
     patch.display_name = body.display_name.trim();
   }
-  if (typeof body.avatar_url === 'string') {
+  if (body.avatar_url === null || body.avatar_url === '') {
+    patch.avatar_url = null;
+  } else if (typeof body.avatar_url === 'string') {
     patch.avatar_url = body.avatar_url.trim();
   }
 
