@@ -26,7 +26,7 @@
     <a href="/#about"    class="nav-link">About</a>
     <a href="/#download" class="nav-link">Download</a>
     {#if $isLoggedIn}
-      <a href="/account" class="nav-link">My Account</a>
+      <a href="/account" class="nav-link">Profile</a>
     {:else}
       <a href="/login"   class="nav-link">Log in</a>
     {/if}
