@@ -287,10 +287,8 @@
 </div>
 
 <style>
-  /* the redesign has no custom cursor — undo the global cursor:none */
-  :global(body) { cursor: auto; }
-
-  .page-b { position: relative; background: #fafafa; overflow: hidden; color: #0a0a0a; font-family: 'Inter', sans-serif; }
+  /* the redesign has no custom cursor; undo the global body{cursor:none} on this page only */
+  .page-b { position: relative; background: #fafafa; overflow: hidden; color: #0a0a0a; font-family: 'Inter', sans-serif; cursor: auto; }
   ::selection { background: rgba(16, 133, 239, 0.18); }
 
   /* animated gradient blobs */
@@ -303,7 +301,7 @@
   .ball { position: fixed; top: 0; left: 0; width: 420px; height: 420px; margin: -210px 0 0 -210px; border-radius: 50%; background: radial-gradient(circle, rgba(90, 160, 255, 0.22), rgba(110, 170, 250, 0.09) 45%, transparent 70%); filter: blur(80px); z-index: 1; pointer-events: none; will-change: transform; transform: translate(50vw, 40vh); }
 
   /* nav */
-  .nav { position: fixed; top: 22px; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; pointer-events: none; }
+  .nav { position: fixed; top: 22px; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; pointer-events: none; transform: none; width: auto; max-width: none; }
   .nav-logo { pointer-events: auto; display: flex; align-items: center; gap: 1px; padding: 9px 20px 9px 15px; border-radius: 100px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 30px rgba(20, 30, 80, 0.1); text-decoration: none; }
   .wordmark { font-family: 'Amulya', sans-serif; font-weight: 700; color: #0a0a0a; }
   .nav-logo .wordmark { font-size: 18px; margin-left: 6px; }
@@ -318,7 +316,7 @@
   .wrap { position: relative; z-index: 10; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
 
   /* hero */
-  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 150px 0 28px; }
+  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 150px 0 28px; min-height: auto; }
   .hero-badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 16px rgba(20, 30, 80, 0.06); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #1a1a1a; margin-bottom: 30px; }
   .dot-green { width: 7px; height: 7px; border-radius: 50%; background: #28c840; box-shadow: 0 0 8px #28c840; }
   .hero-h1 { font-family: 'Amulya', sans-serif; font-size: clamp(44px, 6vw, 76px); font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; color: #0a0a0a; max-width: 920px; margin: 0 0 22px; }
@@ -406,7 +404,7 @@
   .footer-links a { color: #767676; text-decoration: none; font-size: 13.5px; font-weight: 500; }
   .footer-links a:hover { color: #1085ef; }
   .footer-copy { font-size: 13px; color: #9a9aa2; }
-  .footer-legal { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 20px; padding: 0 36px; }
+  .footer-legal { display: flex; align-items: center; justify-content: flex-start; gap: 16px; flex-wrap: wrap; margin-top: 20px; padding: 0 36px; }
   .legal-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a4a7b0; }
   .legal-links { display: flex; gap: 18px; flex-wrap: wrap; }
   .legal-links a { color: #8a8a93; text-decoration: none; font-size: 13px; }
