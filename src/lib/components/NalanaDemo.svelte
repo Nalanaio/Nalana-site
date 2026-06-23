@@ -3,6 +3,7 @@
 
   // Accepted for API compatibility with the prototype (visual is fixed).
   export let theme = 'color';
+  void theme;
 
   let rootEl, vpEl, messagesEl;
 
@@ -129,16 +130,33 @@
   async function autoplay() {
     if (userActed || dead) return;
     await sleep(1200);
-    const seq = [0, 1, 2, 3].map((i) => commandList()[i]);
-    for (const c of seq) {
+    while (!userActed && !dead) {
+      const seq = [0, 1, 2, 3].map((i) => commandList()[i]);
+      for (const c of seq) {
+        if (userActed || dead) return;
+        const ok = await typeInto(c.chip);
+        if (!ok) return;
+        await sleep(360);
+        if (userActed || dead) return;
+        input = '';
+        dispatch(c.chip, c);
+        await sleep(2900);
+      }
+      // hold on the finished, lit model for a beat...
       if (userActed || dead) return;
-      const ok = await typeInto(c.chip);
-      if (!ok) return;
+      await sleep(2500);
+      // ...then wipe the scene and let the loop rebuild from scratch
+      const del = deleteCommand();
+      const okDel = await typeInto(del.chip);
+      if (!okDel) return;
       await sleep(360);
       if (userActed || dead) return;
       input = '';
-      dispatch(c.chip, c);
-      await sleep(2900);
+      dispatch(del.chip, del);
+      await sleep(2600);
+      if (userActed || dead) return;
+      messages = seed();
+      await sleep(900);
     }
   }
 
@@ -188,6 +206,16 @@
     const tickFn = () => {
       group.rotation.y += 0.0038;
       three.objs.forEach((o, i) => { o.position.y = 0.25 + Math.sin(Date.now() * 0.0011 + i * 1.6) * 0.1; });
+      if (vac) {
+        const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+        vac.meshes.forEach((m) => {
+          if (m.userData.appearStart != null) {
+            const t = Math.min(1, (now - m.userData.appearStart) / 240);
+            m.scale.setScalar(1 - Math.pow(1 - t, 3));
+            if (t >= 1) m.userData.appearStart = null;
+          }
+        });
+      }
       renderer.render(scene, cam);
       raf = requestAnimationFrame(tickFn);
     };
@@ -246,15 +274,51 @@
       m.position.set(p.loc[0], p.loc[1], p.loc[2]);
       if (p.rot) m.rotation.set(p.rot[0], p.rot[1], p.rot[2]);
       m.userData.mat = p.mat;
+      m.visible = false;
       v.add(m); meshes.push(m);
     });
     v.rotation.x = -Math.PI / 2;
     v.scale.setScalar(2.2);
     v.position.y = -1.2;
     three.group.add(v);
-    vac = { group: v, meshes, mats: {} };
+    vac = { group: v, meshes, mats: {}, clay };
     active = v;
-    objCount = 27;
+    revealVacuumPart(0);
+  }
+
+  // reveal the vacuum one part at a time, with a quick scale-pop and the
+  // vert counter ticking up as each part lands
+  function revealVacuumPart(i) {
+    if (dead || !vac || i >= vac.meshes.length) return;
+    const m = vac.meshes[i];
+    m.visible = true;
+    m.scale.setScalar(0.001);
+    m.userData.appearStart = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    objCount = i + 1;
+    const id = setTimeout(() => revealVacuumPart(i + 1), 55);
+    timers.push(id);
+  }
+
+  function deleteCommand() {
+    return {
+      chip: 'delete everything',
+      text: 'Cleared the scene — every object removed. Ready for the next build.',
+      ops: ['select_all_objects()', 'delete_objects × 27', 'scene.reset()'],
+      act: deleteScene,
+    };
+  }
+
+  function deleteScene() {
+    if (three && vac) {
+      three.group.remove(vac.group);
+      vac.meshes.forEach((m) => { if (m.geometry) m.geometry.dispose(); });
+      if (vac.mats) Object.values(vac.mats).forEach((mt) => mt && mt.dispose && mt.dispose());
+      if (vac.clay) vac.clay.dispose();
+      vac = null;
+    }
+    active = null;
+    objCount = 0;
+    if (extraLight) extraLight.intensity = 0;
   }
 
   function applyMaterials() {
@@ -272,7 +336,18 @@
       silver: M('#c2c5c9', 0.28, 0.6),
     };
     vac.mats = mats;
-    vac.meshes.forEach((m) => { const mt = mats[m.userData.mat]; if (mt) m.material = mt; });
+    applyMaterialPart(0);
+  }
+
+  // assign the real materials one part at a time, so the model gets
+  // "painted" sequentially rather than all at once
+  function applyMaterialPart(i) {
+    if (dead || !vac || i >= vac.meshes.length) return;
+    const m = vac.meshes[i];
+    const mt = vac.mats[m.userData.mat];
+    if (mt) m.material = mt;
+    const id = setTimeout(() => applyMaterialPart(i + 1), 45);
+    timers.push(id);
   }
 
   function onInputEvt() { markActed(); }
