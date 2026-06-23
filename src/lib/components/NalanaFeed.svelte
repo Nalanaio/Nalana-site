@@ -124,7 +124,7 @@
   <div class="messages">
     {#each bubbles as b (b.who + b.text)}
       <div class="row" style="justify-content:{b.who === 'user' ? 'flex-end' : 'flex-start'};">
-        <div class="bubble {b.who}">{b.text}</div>
+        <div class="cbub {b.who}">{b.text}</div>
       </div>
     {/each}
   </div>
@@ -204,14 +204,14 @@
     display: flex; flex-direction: column; justify-content: flex-end; gap: 11px;
   }
   .row { display: flex; }
-  .bubble {
+  .cbub {
     font-size: 13px; line-height: 1.5; animation: nfRise 0.35s ease both;
   }
-  .bubble.user {
+  .cbub.user {
     max-width: 88%; padding: 10px 14px; border-radius: 16px; border-bottom-right-radius: 5px;
     background: #1085ef; color: #fff; box-shadow: 0 4px 14px rgba(16, 133, 239, 0.4);
   }
-  .bubble.nalana {
+  .cbub.nalana {
     max-width: 90%; padding: 10px 14px; border-radius: 16px; border-bottom-left-radius: 5px;
     background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(15, 23, 42, 0.07);
     color: #27303f; box-shadow: 0 1px 4px rgba(10, 15, 40, 0.05);
