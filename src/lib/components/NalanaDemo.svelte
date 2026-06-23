@@ -365,7 +365,7 @@
       <div class="messages" bind:this={messagesEl}>
         {#each view as m}
           <div class="msg" style="align-items:{m.align};">
-            <div class="bubble {m.who}">
+            <div class="cbub {m.who}">
               {#if m.text}<span>{m.text}</span>{/if}
               {#if m.hasOps}
                 <div class="ops">
@@ -495,9 +495,9 @@
   }
   .messages { position: relative; flex: 1; overflow-y: auto; padding: 10px 16px; display: flex; flex-direction: column; gap: 13px; }
   .msg { display: flex; flex-direction: column; gap: 5px; }
-  .bubble { max-width: 90%; padding: 11px 15px; font-size: 13px; line-height: 1.5; border-radius: 16px; }
-  .bubble.user { background: #1085ef; color: #fff; border-bottom-right-radius: 5px; }
-  .bubble.nalana { background: rgba(255, 255, 255, 0.92); color: #27303f; border: 1px solid rgba(15, 23, 42, 0.07); border-bottom-left-radius: 5px; box-shadow: 0 1px 4px rgba(10, 15, 40, 0.05); }
+  .cbub { max-width: 90%; padding: 11px 15px; font-size: 13px; line-height: 1.5; border-radius: 16px; }
+  .cbub.user { background: #1085ef; color: #fff; border-bottom-right-radius: 5px; }
+  .cbub.nalana { background: rgba(255, 255, 255, 0.92); color: #27303f; border: 1px solid rgba(15, 23, 42, 0.07); border-bottom-left-radius: 5px; box-shadow: 0 1px 4px rgba(10, 15, 40, 0.05); }
   .ops { margin-top: 9px; border-radius: 10px; background: rgba(16, 133, 239, 0.07); border: 1px solid rgba(16, 133, 239, 0.18); padding: 9px 11px; display: flex; flex-direction: column; gap: 7px; }
   .op { display: flex; align-items: center; gap: 8px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 10.5px; color: #0a6fcc; line-height: 1.35; }
   .op.running { opacity: 0.78; }
