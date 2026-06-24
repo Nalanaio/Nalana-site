@@ -13,9 +13,6 @@
   $: mode = $authModal.mode;
   $: platform = $authModal.platform;
 
-  const platformLabel = { mac: 'Mac', windows: 'Windows' };
-  const platformIcon = { mac: '🍎', windows: '🪟' };
-
   function switchMode(m) {
     authModal.update((s) => ({ ...s, mode: m }));
     error = '';
@@ -105,14 +102,7 @@
         <a href="/account" class="submit-btn" style="text-decoration:none;text-align:center;">Go to account</a>
         <button type="button" class="skip-btn" on:click={closeAuthModal}>Close</button>
       {:else}
-        {#if platform}
-          <div class="download-context">
-            <span class="platform-icon">{platformIcon[platform] ?? '⬇️'}</span>
-            <span class="download-badge">Nalana for {platformLabel[platform] ?? platform} is downloading…</span>
-          </div>
-        {/if}
-
-        <h2 class="card-title">{mode === 'signup' ? 'Create your free profile' : 'Log in to Nalana'}</h2>
+        <h2 class="card-title">{mode === 'signup' ? (platform ? 'While you download, create your profile' : 'Create your profile') : 'Log in to Nalana'}</h2>
         <p class="card-sub">
           {mode === 'signup' ? 'One account for the website and IDE.' : 'Pick up where you left off.'}
         </p>
@@ -158,6 +148,7 @@
     backdrop-filter: blur(10px);
     display: flex; align-items: center; justify-content: center;
     padding: 24px;
+    cursor: auto;
   }
   .card {
     width: 100%; max-width: 400px;
@@ -166,8 +157,6 @@
     position: relative;
   }
   .close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 18px; color: #bbb; cursor: pointer; }
-  .download-context { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px; background: rgba(16,133,239,0.08); margin-bottom: 20px; }
-  .download-badge { font-size: 12px; font-weight: 600; color: #1085EF; }
   .card-title { font-family: 'Amulya', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
   .card-sub { font-size: 14px; color: #888; margin-bottom: 28px; line-height: 1.55; }
   .field { display: block; width: 100%; padding: 13px 18px; border-radius: 100px; border: 1.5px solid rgba(228,228,231,0.8); background: #fafafa; font-size: 15px; margin-bottom: 10px; box-sizing: border-box; }

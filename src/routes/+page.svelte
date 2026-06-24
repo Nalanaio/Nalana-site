@@ -41,6 +41,14 @@
   let raf;
   let onMove;
 
+  // ── Demo reveal-on-scroll ──
+  let demoEl;
+  let demoVisible = false;
+  let demoIO;
+  let revealTimer;
+  let onScroll;
+  let scrolled = false;
+
   onMount(() => {
     const ua = navigator.userAgent;
     if (/Mac|iPhone|iPad|iPod/.test(ua) && !/Windows/.test(ua)) detectedOS = 'mac';
@@ -59,11 +67,36 @@
       raf = requestAnimationFrame(loop);
     };
     loop();
+
+    if (demoEl) {
+      if ('IntersectionObserver' in window) {
+        demoIO = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) { demoVisible = true; demoIO.disconnect(); }
+            });
+          },
+          { threshold: 0.4 }
+        );
+        demoIO.observe(demoEl);
+      } else {
+        demoVisible = true;
+      }
+
+      // Fallback: if the user hasn't scrolled within 3s, reveal anyway so the
+      // demo sharpens into focus and signals there's more below.
+      onScroll = () => { scrolled = true; };
+      window.addEventListener('scroll', onScroll, { passive: true, once: true });
+      revealTimer = setTimeout(() => { if (!scrolled) demoVisible = true; }, 3000);
+    }
   });
 
   onDestroy(() => {
     if (onMove) window.removeEventListener('mousemove', onMove);
     if (raf) cancelAnimationFrame(raf);
+    if (demoIO) demoIO.disconnect();
+    if (revealTimer) clearTimeout(revealTimer);
+    if (onScroll) window.removeEventListener('scroll', onScroll);
   });
 </script>
 
@@ -111,7 +144,7 @@
     <!-- HERO -->
     <section class="hero">
       <div class="hero-badge"><span class="dot-green"></span>Nalana V2 is now available for early access</div>
-      <h1 class="hero-h1">Build in 3D by describing<br>what you want.</h1>
+      <h1 class="hero-h1">Build anything.</h1>
       <p class="hero-sub">Nalana turns your words into real, editable geometry: clean topology, production-ready, fully yours to refine.</p>
       <div class="not-plugin"><span class="np-badge">Not a plugin</span>nalana is its own software, built on Blender.</div>
       <div class="hero-ctas">
@@ -127,21 +160,12 @@
             <span class="cta-hov">Windows 10/11 · 64-bit</span>
           </a>
         {/if}
-        <a class="ghost-cta" href="#demo">
-          <span class="play"><svg width="9" height="9" viewBox="0 0 10 10" fill="#fff"><polygon points="2,1 9,5 2,9"/></svg></span>See it work
-        </a>
-      </div>
-      <div class="trust">
-        <span>Built on Blender</span><span class="trust-dot"></span>
-        <span>USC Iovine &amp; Young Academy</span><span class="trust-dot"></span>
-        <span>Validated by studio 3D teams</span>
       </div>
     </section>
 
     <!-- DEMO -->
-    <section id="demo" class="demo-section">
+    <section id="demo" class="demo-section" class:revealed={demoVisible} bind:this={demoEl}>
       <div class="demo-frame">
-        <div class="live-badge"><span class="dot-white"></span>LIVE</div>
         <div class="demo-inner">
           <NalanaDemo theme="color" />
         </div>
@@ -316,7 +340,7 @@
   .wrap { position: relative; z-index: 10; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
 
   /* hero */
-  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 150px 0 28px; min-height: auto; }
+  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 88vh; min-height: 88svh; padding: 96px 0 40px; }
   .hero-badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 16px rgba(20, 30, 80, 0.06); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #1a1a1a; margin-bottom: 30px; }
   .dot-green { width: 7px; height: 7px; border-radius: 50%; background: #28c840; box-shadow: 0 0 8px #28c840; }
   .hero-h1 { font-family: 'Amulya', sans-serif; font-size: clamp(44px, 6vw, 76px); font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; color: #0a0a0a; max-width: 920px; margin: 0 0 22px; }
@@ -331,16 +355,14 @@
   .os-cta .cta-hov { display: none; }
   .os-cta:hover .cta-def { display: none; }
   .os-cta:hover .cta-hov { display: inline-flex; align-items: center; gap: 8px; }
-  .ghost-cta { display: inline-flex; align-items: center; gap: 9px; padding: 16px 26px; border-radius: 100px; font-size: 15px; font-weight: 600; color: #0a0a0a; text-decoration: none; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(10, 10, 10, 0.1); backdrop-filter: blur(10px); }
-  .ghost-cta .play { width: 22px; height: 22px; border-radius: 50%; background: #0a0a0a; display: inline-flex; align-items: center; justify-content: center; }
-  .trust { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; font-size: 12.5px; font-weight: 500; color: #6a6a72; }
-  .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: #c3c3cc; }
 
   /* demo */
   .demo-section { padding: 16px 0 80px; }
-  .demo-frame { position: relative; border-radius: 24px; padding: 14px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.7), 0 30px 80px -24px rgba(20, 30, 80, 0.4); }
-  .live-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 5; display: inline-flex; align-items: center; gap: 7px; padding: 5px 14px; border-radius: 100px; background: linear-gradient(135deg, #3a9bf2, #1085ef 55%, #5b6ef0); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; white-space: nowrap; box-shadow: 0 6px 18px rgba(16, 133, 239, 0.45); }
-  .dot-white { width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+  .demo-frame { position: relative; border-radius: 24px; padding: 14px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.7), 0 30px 80px -24px rgba(20, 30, 80, 0.4); opacity: 0.18; filter: blur(8px); transform: translateY(18px); transition: opacity 0.85s ease, filter 0.85s ease, transform 0.9s cubic-bezier(0.22, 0.7, 0.2, 1); }
+  .demo-section.revealed .demo-frame { opacity: 1; filter: blur(0); transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .demo-frame { opacity: 1; filter: none; transform: none; transition: none; }
+  }
   .demo-inner { height: 540px; border-radius: 14px; overflow: hidden; }
 
   /* validation */
