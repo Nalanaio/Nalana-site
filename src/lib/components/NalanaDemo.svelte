@@ -465,10 +465,10 @@
       <div class="panel-input-wrap">
         <div class="panel-input">
           <div class="input-line">
-            <input bind:value={input} on:input={onInputEvt} on:keydown={onKeyEvt} on:focus={onFocusEvt} placeholder="What do you want to build..." />
+            <input bind:value={input} on:input={onInputEvt} on:keydown={onKeyEvt} on:focus={onFocusEvt} placeholder="What do you want to build..." style="pointer-events: none;" tabindex="-1" />
             {#if typing}<span class="caret"></span>{/if}
           </div>
-          <button class="send" on:click={submit} title="Send" aria-label="Send">
+          <button class="send" on:click={submit} title="Send" aria-label="Send" style="pointer-events: none;" tabindex="-1">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="6 11 12 5 18 11"/></svg>
           </button>
         </div>
@@ -500,7 +500,8 @@
     box-shadow: 0 30px 70px -20px rgba(8, 15, 40, 0.5), 0 8px 24px rgba(8, 15, 40, 0.25);
   }
   .titlebar {
-    height: 30px; flex-shrink: 0; display: flex; align-items: center; gap: 9px;
+    display: none;
+    height: 30px; flex-shrink: 0; align-items: center; gap: 9px;
     padding: 0 12px; background: #2b2b2b; border-bottom: 1px solid #1a1a1a;
   }
   .title-text { font-size: 11px; color: #b0b0b0; }
@@ -509,7 +510,8 @@
   .ctrl-box { width: 9px; height: 9px; border: 1px solid #9a9a9a; display: inline-block; }
   .ctrl-x { font-size: 13px; line-height: 1; }
   .tabs {
-    height: 30px; flex-shrink: 0; display: flex; align-items: center; gap: 2px;
+    display: none;
+    height: 30px; flex-shrink: 0; align-items: center; gap: 2px;
     padding: 0 10px; background: #323232; border-bottom: 1px solid #1a1a1a; overflow: hidden;
   }
   .tab { font-size: 11px; color: #b6b6b6; padding: 5px 10px; border-radius: 5px; white-space: nowrap; }
@@ -543,7 +545,8 @@
   .vp-persp { top: 10px; color: #d8d8d8; font-weight: 500; }
   .vp-coll { top: 28px; color: #bcbcbc; }
   .panel {
-    position: absolute; top: 14px; right: 14px; bottom: 14px; width: 38%; min-width: 330px; max-width: 430px;
+    position: absolute; top: 14px; right: 14px; width: 38%; min-width: 330px; max-width: 430px;
+    aspect-ratio: 401 / 594;
     display: flex; flex-direction: column; border-radius: 20px; overflow: hidden;
     background: linear-gradient(150deg, rgba(255, 255, 255, 0.94), rgba(244, 247, 255, 0.86));
     backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
