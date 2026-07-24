@@ -10,6 +10,7 @@
   let looping = false;
   let timers = [];
   let io;
+  let nextId = 0;
 
   const pairs = [
     ['model a desk lamp', 'Built it — clean, editable mesh.'],
@@ -53,7 +54,7 @@
     looping = true;
     if (!bubbles.length) {
       const seed = next();
-      bubbles = [{ who: 'user', text: seed[0] }, { who: 'nalana', text: seed[1] }];
+      bubbles = [{ id: nextId++, who: 'user', text: seed[0] }, { id: nextId++, who: 'nalana', text: seed[1] }];
     }
     while (on && !dead) {
       const [prompt, reply] = next();
@@ -65,10 +66,12 @@
       await sleep(480);
       if (!on || dead) { looping = false; return; }
       typed = '';
-      bubbles = [...bubbles, { who: 'user', text: prompt }].slice(-4);
+      bubbles = [...bubbles, { id: nextId++, who: 'user', text: prompt }].slice(-16);
       await sleep(560);
-      if (!on || dead) { looping = false; return; }
-      bubbles = [...bubbles, { who: 'nalana', text: reply }].slice(-4);
+      // A prompt bubble is now visible, so its reply must land no matter what —
+      // only a real teardown (dead) should skip it; visibility toggling (on) must not.
+      if (dead) { looping = false; return; }
+      bubbles = [...bubbles, { id: nextId++, who: 'nalana', text: reply }].slice(-16);
       await sleep(1100);
     }
     looping = false;
@@ -104,25 +107,9 @@
 <div class="feed" bind:this={rootEl}>
   <div class="glow-overlay"></div>
 
-  <!-- header -->
-  <div class="hdr">
-    <div class="brand">
-      <svg width="22" height="26" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
-      <span class="status-dot"></span>
-    </div>
-    <div class="hdr-icons">
-      <span class="q">?</span>
-      <span class="burger"><span></span><span></span><span></span></span>
-    </div>
-  </div>
-
-  <div class="model-row">
-    <span class="model-pill">Select model ▾</span>
-  </div>
-
   <!-- messages -->
   <div class="messages">
-    {#each bubbles as b (b.who + b.text)}
+    {#each bubbles as b (b.id)}
       <div class="row" style="justify-content:{b.who === 'user' ? 'flex-end' : 'flex-start'};">
         <div class="cbub {b.who}">{b.text}</div>
       </div>
@@ -169,38 +156,8 @@
       radial-gradient(120% 80% at 100% 0%, rgba(255, 150, 170, 0.16), transparent 50%),
       radial-gradient(120% 90% at 0% 100%, rgba(90, 150, 255, 0.16), transparent 55%);
   }
-  .hdr {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 14px 16px 6px;
-    flex-shrink: 0;
-  }
-  .brand { display: flex; flex-direction: column; align-items: center; line-height: 1; }
-  .status-dot {
-    width: 5px; height: 5px; border-radius: 50%; background: #28c840;
-    margin-top: 3px; box-shadow: 0 0 6px rgba(40, 200, 90, 0.65);
-  }
-  .hdr-icons {
-    position: absolute; top: 14px; right: 16px;
-    display: flex; align-items: center; gap: 12px; color: #6a6f7e;
-  }
-  .q {
-    width: 20px; height: 20px; border-radius: 50%; border: 1.4px solid #9aa0b0;
-    display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
-  }
-  .burger { display: inline-flex; flex-direction: column; gap: 3px; }
-  .burger span { width: 16px; height: 1.6px; background: #9aa0b0; }
-  .model-row { position: relative; display: flex; padding: 0 16px 6px; flex-shrink: 0; }
-  .model-pill {
-    margin-left: auto; font-size: 11.5px; color: #3a3f4c; font-weight: 500;
-    background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(15, 23, 42, 0.1);
-    border-radius: 9px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 8px;
-    box-shadow: 0 1px 3px rgba(10, 15, 40, 0.08);
-  }
   .messages {
-    position: relative; flex: 1; overflow: hidden; padding: 6px 16px 4px;
+    position: relative; flex: 1; overflow: hidden; margin-top: 24px; padding: 0 16px 4px;
     display: flex; flex-direction: column; justify-content: flex-end; gap: 11px;
   }
   .row { display: flex; }
