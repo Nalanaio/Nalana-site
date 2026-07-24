@@ -344,7 +344,7 @@
   .wrap { position: relative; z-index: 10; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
 
   /* hero */
-  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 88vh; min-height: 88svh; padding: 96px 0 40px; }
+  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: min(88vh, 900px); min-height: min(88svh, 900px); padding: 96px 0 40px; }
   .hero-badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 16px rgba(20, 30, 80, 0.06); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #1a1a1a; margin-bottom: 48px; }
   .dot-green { width: 7px; height: 7px; border-radius: 50%; background: #28c840; box-shadow: 0 0 8px #28c840; }
   .hero-h1 { font-family: 'Amulya', sans-serif; font-size: clamp(44px, 6vw, 76px); font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; color: #0a0a0a; max-width: 920px; margin: 0 0 22px; }
@@ -370,7 +370,7 @@
   .demo-inner { height: 700px; border-radius: 14px; overflow: hidden; }
 
   /* validation */
-  .validation { padding: 30px 0 70px; display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
+  .validation { margin-top: calc(-1 * min(44vh, 450px) + 224px); margin-top: calc(-1 * min(44svh, 450px) + 224px); padding: 64px 0 70px; display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
   .used-by { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #8a8a93; }
   .logos { display: flex; gap: 36px; align-items: center; flex-wrap: wrap; justify-content: center; }
   .vlogo { font-family: 'Amulya', sans-serif; font-size: 27px; font-weight: 700; color: #5a5a64; letter-spacing: 0.01em; }
@@ -450,9 +450,11 @@
   @media (max-width: 1024px) {
     .hero-badge { margin-bottom: 32px; }
     .not-plugin { margin-bottom: 48px; }
+    .validation { padding-top: 48px; margin-top: calc(-1 * min(44vh, 450px) + 196px); margin-top: calc(-1 * min(44svh, 450px) + 196px); }
   }
   @media (max-width: 640px) {
     .hero-badge { margin-bottom: 24px; }
     .not-plugin { margin-bottom: 32px; }
+    .validation { padding-top: 32px; margin-top: calc(-1 * min(44vh, 450px) + 229px); margin-top: calc(-1 * min(44svh, 450px) + 229px); }
   }
 </style>
