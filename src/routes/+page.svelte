@@ -166,15 +166,6 @@
       </div>
     </section>
 
-    <!-- DEMO -->
-    <section id="demo" class="demo-section" class:revealed={demoVisible} bind:this={demoEl}>
-      <div class="demo-frame">
-        <div class="demo-inner">
-          <NalanaDemo theme="color" />
-        </div>
-      </div>
-    </section>
-
     <!-- VALIDATION STRIP -->
     <section class="validation">
       <span class="used-by">Used by creators from</span>
@@ -182,6 +173,15 @@
         <span class="vlogo">USC</span>
         <span class="vlogo">GDA·V</span>
         <span class="vlogo wide">WAYFAIR</span>
+      </div>
+    </section>
+
+    <!-- DEMO -->
+    <section id="demo" class="demo-section" class:revealed={demoVisible} bind:this={demoEl}>
+      <div class="demo-frame">
+        <div class="demo-inner">
+          <NalanaDemo theme="color" />
+        </div>
       </div>
     </section>
 
