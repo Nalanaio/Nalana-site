@@ -121,7 +121,7 @@
   <nav class="nav">
     <a href="#top" class="nav-logo">
       <svg width="20" height="24" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
-      <span class="wordmark">nalana</span>
+      <span class="wordmark">Nalana</span>
     </a>
     <div class="nav-center">
       <a href="#demo">Demo</a>
@@ -149,7 +149,7 @@
       <div class="hero-badge"><span class="dot-green"></span>Nalana V2 is now available for early access</div>
       <h1 class="hero-h1">Build anything.</h1>
       <p class="hero-sub">Nalana turns your words into real, editable geometry: clean topology, production-ready, fully yours to refine.</p>
-      <div class="not-plugin"><span class="np-badge">Not a plugin</span>nalana is its own software, built on Blender.</div>
+      <div class="not-plugin"><span class="np-badge">Not a plugin</span>Nalana is its own software, built on Blender.</div>
       <div class="hero-ctas">
         {#if showMac}
           <a class="os-cta dark" href="#access" on:click={() => requestAccess('mac', 'hero')}>
@@ -233,7 +233,7 @@
             <div class="compare-divider"><span>vs</span></div>
             <div class="compare-col">
               <svg width="120" height="120" viewBox="0 0 100 100" fill="none" stroke="#1085EF" stroke-width="1.2"><g style="stroke-dasharray:620;animation:ftDrawClean 4s ease-in-out infinite;"><polygon points="50,16 71,28 71,52 50,64 29,52 29,28"/><polygon points="50,64 71,52 71,72 50,84 29,72 29,52"/><line x1="50" y1="16" x2="50" y2="64"/><line x1="71" y1="28" x2="71" y2="72"/><line x1="29" y1="28" x2="29" y2="72"/><line x1="50" y1="40" x2="71" y2="40"/><line x1="50" y1="40" x2="29" y2="40"/><line x1="29" y1="62" x2="71" y2="62"/></g></svg>
-              <span class="compare-label blue">nalana</span>
+              <span class="compare-label blue">Nalana</span>
             </div>
           </div>
           <div class="block-copy">
@@ -290,7 +290,7 @@
       <div class="footer-bar">
         <span class="footer-brand">
           <svg width="18" height="22" viewBox="0 0 69 82" fill="none"><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
-          <span class="wordmark">nalana</span>
+          <span class="wordmark">Nalana</span>
         </span>
         <div class="footer-links">
           <a href="https://x.com/nalanaio" target="_blank" rel="noopener">Twitter</a>
@@ -445,5 +445,14 @@
   @media (max-width: 860px) {
     .nav-center { display: none; }
     .block { grid-template-columns: 1fr; gap: 24px; }
+  }
+
+  @media (max-width: 1024px) {
+    .hero-badge { margin-bottom: 32px; }
+    .not-plugin { margin-bottom: 48px; }
+  }
+  @media (max-width: 640px) {
+    .hero-badge { margin-bottom: 24px; }
+    .not-plugin { margin-bottom: 32px; }
   }
 </style>
