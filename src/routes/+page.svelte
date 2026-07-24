@@ -52,10 +52,18 @@
   let onScroll;
   let scrolled = false;
 
+  // ── Nav glass: only apply once the user scrolls past the hero ──
+  let navScrolled = false;
+  let onNavScroll;
+
   onMount(() => {
     const ua = navigator.userAgent;
     if (/Mac|iPhone|iPad|iPod/.test(ua) && !/Windows/.test(ua)) detectedOS = 'mac';
     else if (/Windows/.test(ua)) detectedOS = 'windows';
+
+    onNavScroll = () => { navScrolled = window.scrollY > 8; };
+    window.addEventListener('scroll', onNavScroll, { passive: true });
+    onNavScroll();
 
     let mx = window.innerWidth * 0.5;
     let my = window.innerHeight * 0.4;
@@ -100,6 +108,7 @@
     if (demoIO) demoIO.disconnect();
     if (revealTimer) clearTimeout(revealTimer);
     if (onScroll) window.removeEventListener('scroll', onScroll);
+    if (onNavScroll) window.removeEventListener('scroll', onNavScroll);
   });
 </script>
 
@@ -119,7 +128,7 @@
 
   <!-- NAV -->
   <nav class="nav">
-    <div class="nav-shell">
+    <div class="nav-shell" class:nav-scrolled={navScrolled}>
       <a href="#top" class="nav-logo">
         <svg width="20" height="24" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
         <span class="wordmark">Nalana</span>
@@ -288,7 +297,7 @@
     <footer class="footer">
       <div class="footer-bar">
         <span class="footer-brand">
-          <svg width="18" height="22" viewBox="0 0 69 82" fill="none"><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
+          <svg width="18" height="22" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
           <span class="wordmark">Nalana</span>
         </span>
         <div class="footer-links">
@@ -339,13 +348,18 @@
     justify-content: space-between;
     padding: 0 40px;
     border-radius: 0;
-    background: var(--nl-surface-header);
-    backdrop-filter: var(--nl-glass-filter);
-    -webkit-backdrop-filter: var(--nl-glass-filter);
-    border: 1px solid var(--nl-glass-border);
+    background: transparent;
+    border: 1px solid transparent;
     border-left: none;
     border-right: none;
-    box-shadow: var(--nl-shadow-header), var(--nl-shell-shadow);
+    box-shadow: none;
+    transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+  }
+  .nav-shell.nav-scrolled {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: var(--nl-glass-filter);
+    -webkit-backdrop-filter: var(--nl-glass-filter);
+    border-color: var(--nl-glass-border);
   }
   .nav-logo { display: flex; align-items: center; gap: 1px; text-decoration: none; }
   .wordmark { font-family: 'Amulya', sans-serif; font-weight: 700; color: #0a0a0a; }
@@ -355,7 +369,7 @@
   .nav-center a:hover { color: #0a0a0a; }
   .nav-right { display: flex; align-items: center; gap: 10px; }
   .nav-os { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; text-decoration: none; padding: 10px 18px; border-radius: 100px; }
-  .nav-os.mac { color: #0a0a0a; background: #fff; box-shadow: 0 2px 8px rgba(20, 30, 80, 0.12); }
+  .nav-os.mac { color: #fff; background: #0a0a0a; box-shadow: 0 2px 8px rgba(20, 30, 80, 0.12); }
   .nav-os.win { color: #fff; background: linear-gradient(135deg, #3a9bf2, #1085ef 55%, #5b6ef0); box-shadow: 0 6px 18px rgba(16, 133, 239, 0.3); }
 
   .wrap { position: relative; z-index: 10; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
