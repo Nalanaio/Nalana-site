@@ -119,27 +119,26 @@
 
   <!-- NAV -->
   <nav class="nav">
-    <a href="#top" class="nav-logo">
-      <svg width="20" height="24" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
-      <span class="wordmark">nalana</span>
-    </a>
-    <div class="nav-center">
-      <a href="#demo">Demo</a>
-      <a href="#features">Features</a>
-      <a href="#access">Early access</a>
-      <a href="/login">Profile</a>
-    </div>
-    <div class="nav-right">
-      {#if showMac}
-        <a class="nav-os mac" href="#access" on:click={() => requestAccess('mac', 'nav')}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Request access
-        </a>
-      {/if}
-      {#if showWin}
-        <a class="nav-os win" href="#access" on:click={() => requestAccess('windows', 'nav')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>Request access
-        </a>
-      {/if}
+    <div class="nav-shell">
+      <a href="#top" class="nav-logo">
+        <svg width="20" height="24" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
+        <span class="wordmark">nalana</span>
+      </a>
+      <div class="nav-center">
+        <a href="#demo">Demo</a>
+        <a href="#features">Features</a>
+        <a href="/login">Profile</a>
+      </div>
+      <div class="nav-right">
+        {#if showMac}
+          <a class="nav-os mac" href="#access" on:click={() => requestAccess('mac', 'nav')}>Request early access</a>
+        {/if}
+        {#if showWin}
+          <a class="nav-os win" href="#access" on:click={() => requestAccess('windows', 'nav')}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>Request early access
+          </a>
+        {/if}
+      </div>
     </div>
   </nav>
 
@@ -329,16 +328,34 @@
   .ball { position: fixed; top: 0; left: 0; width: 420px; height: 420px; margin: -210px 0 0 -210px; border-radius: 50%; background: radial-gradient(circle, rgba(90, 160, 255, 0.22), rgba(110, 170, 250, 0.09) 45%, transparent 70%); filter: blur(80px); z-index: 1; pointer-events: none; will-change: transform; transform: translate(50vw, 40vh); }
 
   /* nav */
-  .nav { position: fixed; top: 22px; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; pointer-events: none; transform: none; width: auto; max-width: none; }
-  .nav-logo { pointer-events: auto; display: flex; align-items: center; gap: 1px; padding: 9px 20px 9px 15px; border-radius: 100px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 30px rgba(20, 30, 80, 0.1); text-decoration: none; }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; display: flex; justify-content: center; padding: 0; pointer-events: none; transform: none; width: auto; max-width: none; }
+  .nav-shell {
+    pointer-events: auto;
+    position: relative;
+    width: 100%;
+    height: var(--nl-header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-radius: 0;
+    background: var(--nl-surface-header);
+    backdrop-filter: var(--nl-glass-filter);
+    -webkit-backdrop-filter: var(--nl-glass-filter);
+    border: 1px solid var(--nl-glass-border);
+    border-left: none;
+    border-right: none;
+    box-shadow: var(--nl-shadow-header), var(--nl-shell-shadow);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 1px; text-decoration: none; }
   .wordmark { font-family: 'Amulya', sans-serif; font-weight: 700; color: #0a0a0a; }
   .nav-logo .wordmark { font-size: 18px; margin-left: 6px; }
-  .nav-center { pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 7px; border-radius: 100px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 30px rgba(20, 30, 80, 0.1); }
-  .nav-center a { font-size: 13.5px; font-weight: 500; color: #444; text-decoration: none; padding: 8px 16px; border-radius: 100px; transition: background 0.18s; }
-  .nav-center a:hover { background: rgba(244, 244, 245, 0.85); }
-  .nav-right { pointer-events: auto; display: flex; align-items: center; gap: 10px; }
-  .nav-os { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; text-decoration: none; padding: 10px 16px; border-radius: 100px; }
-  .nav-os.mac { color: #0a0a0a; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(22px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 6px 18px rgba(20, 30, 80, 0.1); }
+  .nav-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; border: none; box-shadow: none; padding: 0; border-radius: 0; }
+  .nav-center a { font-size: 13.5px; font-weight: 500; color: #444; text-decoration: none; padding: 8px 16px; border-radius: 100px; transition: color 0.18s; }
+  .nav-center a:hover { color: #0a0a0a; }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-os { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; text-decoration: none; padding: 10px 18px; border-radius: 100px; }
+  .nav-os.mac { color: #0a0a0a; background: #fff; box-shadow: 0 2px 8px rgba(20, 30, 80, 0.12); }
   .nav-os.win { color: #fff; background: linear-gradient(135deg, #3a9bf2, #1085ef 55%, #5b6ef0); box-shadow: 0 6px 18px rgba(16, 133, 239, 0.3); }
 
   .wrap { position: relative; z-index: 10; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
