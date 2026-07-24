@@ -153,7 +153,7 @@
       <div class="hero-ctas">
         {#if showMac}
           <a class="os-cta dark" href="#access" on:click={() => requestAccess('mac', 'hero')}>
-            <span class="cta-def"><svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Request early access</span>
+            <span class="cta-def">Request early access</span>
             <span class="cta-hov">We onboard studios weekly →</span>
           </a>
         {/if}
@@ -345,11 +345,11 @@
 
   /* hero */
   .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 88vh; min-height: 88svh; padding: 96px 0 40px; }
-  .hero-badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 16px rgba(20, 30, 80, 0.06); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #1a1a1a; margin-bottom: 30px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 16px rgba(20, 30, 80, 0.06); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #1a1a1a; margin-bottom: 48px; }
   .dot-green { width: 7px; height: 7px; border-radius: 50%; background: #28c840; box-shadow: 0 0 8px #28c840; }
   .hero-h1 { font-family: 'Amulya', sans-serif; font-size: clamp(44px, 6vw, 76px); font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; color: #0a0a0a; max-width: 920px; margin: 0 0 22px; }
   .hero-sub { font-size: 19px; line-height: 1.6; color: #3a3a3a; font-weight: 450; max-width: 580px; margin: 0 0 16px; }
-  .not-plugin { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); font-size: 13px; color: #4a4a52; margin-bottom: 32px; }
+  .not-plugin { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); font-size: 13px; color: #4a4a52; margin-bottom: 64px; }
   .np-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #1085ef; background: rgba(16, 133, 239, 0.1); padding: 3px 9px; border-radius: 100px; }
   .hero-ctas { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
   .os-cta { display: inline-flex; align-items: center; text-decoration: none; padding: 16px 28px; border-radius: 100px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; }
