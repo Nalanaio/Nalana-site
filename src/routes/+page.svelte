@@ -262,7 +262,7 @@
         <div class="access-blob a2"></div>
         <div class="access-inner">
           <div class="eyebrow light">Early access</div>
-          <h2 class="access-h2">We're onboarding studios now.</h2>
+          <h2 class="access-h2">The next generation of 3D starts here.</h2>
           <p class="access-p">Tell us about your team. We're bringing on a small group of studios each month and working with each one directly.</p>
           {#if waitlistDone}
             <div class="access-done">✦ You're on the list. We'll reach out personally within two business days.</div>
@@ -411,7 +411,7 @@
   .access-blob.a2 { width: 320px; height: 320px; bottom: -130px; left: -60px; background: radial-gradient(circle, rgba(255, 140, 105, 0.4), transparent 60%); }
   .access-inner { position: relative; z-index: 2; max-width: 560px; margin: 0 auto; }
   .eyebrow.light { color: rgba(255, 255, 255, 0.7); }
-  .access-h2 { font-family: 'Amulya', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 700; color: #fff; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .access-h2 { font-family: 'Amulya', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 700; color: #fff; margin: 0 0 14px; letter-spacing: -0.02em; line-height: 1.2; }
   .access-p { font-size: 16px; line-height: 1.6; color: rgba(255, 255, 255, 0.82); margin: 0 0 30px; }
   .access-done { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 100px; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; font-size: 15px; font-weight: 500; }
   .access-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
@@ -450,9 +450,15 @@
   @media (max-width: 1024px) {
     .hero-badge { margin-bottom: 32px; }
     .not-plugin { margin-bottom: 48px; }
+    .access-p { margin-bottom: 24px; }
   }
   @media (max-width: 640px) {
     .hero-badge { margin-bottom: 24px; }
     .not-plugin { margin-bottom: 32px; }
+    .access-p { margin-bottom: 16px; }
+    .access-h2 { margin-left: -32px; margin-right: -32px; }
+  }
+  @media (min-width: 1025px) {
+    .access-p { margin-bottom: 40px; }
   }
 </style>
