@@ -13,6 +13,17 @@
   function shortSha(value) {
     return value ? value.slice(0, 8) : 'unknown';
   }
+
+  function platformLabel(platform) {
+    if (!platform) return 'Unknown';
+    if (platform.startsWith('Windows')) return 'Windows';
+    if (platform.startsWith('macOS')) return 'Mac';
+    return platform;
+  }
+
+  function buildTitle(build, runNumber) {
+    return `Nalana - ${platformLabel(build.platform)} - Dev Build ${runNumber}`;
+  }
 </script>
 
 <svelte:head>
@@ -86,7 +97,7 @@
           <article class="download card">
             <div>
               <span class="platform">{build.platform}</span>
-              <h2>{build.filename}</h2>
+              <h2>{buildTitle(build, data.manifest.run_number)}</h2>
               <p>{Math.round((build.size_bytes ?? 0) / 1024 / 1024)} MB · SHA-256 <code>{build.sha256}</code></p>
             </div>
             <a class="download-button" href={build.download_url}>Download <span>↓</span></a>
