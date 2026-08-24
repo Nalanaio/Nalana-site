@@ -20,10 +20,15 @@
   let signupSuccess = false;
   let resetBanner = false;
 
+  function postLoginPath() {
+    const next = get(page).url.searchParams.get('next');
+    return next?.startsWith('/') && !next.startsWith('//') ? next : '/account';
+  }
+
   onMount(() => {
     const session = get(auth);
     if (session.token && session.user) {
-      goto('/account');
+      goto(postLoginPath());
       return;
     }
     const params = new URLSearchParams(window.location.search);
@@ -82,7 +87,7 @@
         return;
       }
 
-      goto('/account');
+      goto(postLoginPath());
     } catch {
       error = 'Network error. Please try again.';
     } finally {

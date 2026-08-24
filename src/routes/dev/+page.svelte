@@ -1,6 +1,27 @@
 <script>
+  import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  import { auth } from '$lib/stores/auth.js';
+
   export let data;
-  export let form;
+
+  let checkingAccount = true;
+  let authorized = false;
+
+  onMount(async () => {
+    authorized = await auth.refreshSession();
+    checkingAccount = false;
+
+    if (!authorized) {
+      goto('/login?next=%2Fdev');
+    }
+  });
+
+  function logout() {
+    auth.logout();
+    authorized = false;
+    goto('/login?next=%2Fdev');
+  }
 
   function formatDate(value) {
     if (!value) return 'Unknown';
@@ -34,38 +55,20 @@
 <main class="shell">
   <a class="wordmark" href="/">Nalana</a>
 
-  {#if !data.configured}
-    <section class="card message-card">
-      <span class="eyebrow">Developer access</span>
-      <h1>Dev downloads are not configured.</h1>
-      <p>Add the private Vercel environment variables before sharing this page.</p>
-    </section>
-  {:else if !data.authorized}
+  {#if checkingAccount}
     <section class="card login-card">
-      <span class="eyebrow">Private channel</span>
-      <h1>Download a Nalana dev build.</h1>
-      <p>Enter the tester password to access the latest installers.</p>
-
-      <form method="POST">
-        <label for="password">Access password</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required />
-        {#if form?.error}
-          <p class="error">{form.error}</p>
-        {/if}
-        <button type="submit">Continue</button>
-      </form>
+      <span class="eyebrow">Dev channel</span>
+      <h1>Checking your Nalana account.</h1>
+      <p>One moment while we verify your sign-in.</p>
     </section>
-  {:else}
+  {:else if authorized}
     <section class="intro">
       <div>
         <span class="eyebrow">Private dev channel</span>
         <h1>Download the latest Nalana build.</h1>
         <p class="lede">These installers are published automatically after the <code>dev</code> branch build passes.</p>
       </div>
-      <form method="POST">
-        <input type="hidden" name="action" value="logout" />
-        <button class="logout" type="submit">Sign out</button>
-      </form>
+      <button class="logout" type="button" on:click={logout}>Sign out</button>
     </section>
 
     {#if data.error}
@@ -107,6 +110,13 @@
 
       <p class="note">These are development builds. Expect rough edges, and report the commit shown above with any feedback.</p>
     {/if}
+  {:else}
+    <section class="card login-card">
+      <span class="eyebrow">Dev channel</span>
+      <h1>Sign in to access dev builds.</h1>
+      <p>Use the Nalana account you already have. No separate dev-page password is needed.</p>
+      <a class="download-button" href="/login?next=%2Fdev">Log in to Nalana</a>
+    </section>
   {/if}
 </main>
 
@@ -137,12 +147,9 @@
   .note { margin-top: 18px; font-size: 13px; }
   .logout { background: transparent; color: var(--muted); font-size: 13px; padding: 8px 0; }
   .login-card, .message-card { max-width: 520px; margin: 18vh auto 0; padding: 42px; }
-  .login-card h1, .message-card h1 { font-size: clamp(34px, 6vw, 52px); }
+  .login-card h1 { font-size: clamp(34px, 6vw, 52px); }
   .login-card p, .message-card p { margin-top: 16px; }
-  label { display: block; margin: 28px 0 8px; color: var(--ink-deep); font-size: 13px; font-weight: 700; }
-  input[type='password'] { width: 100%; border: 1px solid #dce1ea; border-radius: 10px; background: white; font: inherit; padding: 13px 14px; }
-  .login-card button { margin-top: 18px; }
-  .error { color: #c54848; font-size: 13px; }
+  .login-card .download-button { display: inline-block; margin-top: 24px; }
   .message-card h2 { margin-top: 10px; }
 
   @media (max-width: 640px) {
