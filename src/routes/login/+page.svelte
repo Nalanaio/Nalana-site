@@ -4,6 +4,7 @@
   import { page } from '$app/stores';
   import { get } from 'svelte/store';
   import { auth } from '$lib/stores/auth.js';
+  import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
   import {
     authErrorMessage,
     isEmailNotVerifiedError,
@@ -20,10 +21,15 @@
   let signupSuccess = false;
   let resetBanner = false;
 
+  function postLoginPath() {
+    const next = get(page).url.searchParams.get('next');
+    return next?.startsWith('/') && !next.startsWith('//') ? next : '/account';
+  }
+
   onMount(() => {
     const session = get(auth);
     if (session.token && session.user) {
-      goto('/account');
+      goto(postLoginPath());
       return;
     }
     const params = new URLSearchParams(window.location.search);
@@ -82,7 +88,7 @@
         return;
       }
 
-      goto('/account');
+      goto(postLoginPath());
     } catch {
       error = 'Network error. Please try again.';
     } finally {
@@ -127,8 +133,6 @@
   .forgot a:hover { text-decoration: underline; }
 
   .error { font-size: 13px; color: #e53e3e; text-align: center; margin-bottom: 10px; line-height: 1.45; }
-  .warn { font-size: 13px; color: #b45309; background: rgba(251,191,36,0.12); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; line-height: 1.45; text-align: left; }
-  .warn a { color: #1085EF; font-weight: 600; }
 
   .submit { width: 100%; padding: 15px; border-radius: 100px; border: none; background: linear-gradient(135deg,#1085EF,#6366F1); color: #fff; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16,133,239,0.28); transition: opacity .15s, transform .15s; margin-top: 4px; }
   .submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
@@ -150,14 +154,14 @@
     </a>
 
     {#if signupSuccess}
-      <h1>Account created</h1>
-      <p class="subtitle">
-        Your Nalana account is ready. Use the same email and password in the IDE and on this site.
-      </p>
-      <a href="/account" class="btn-secondary">Go to my account</a>
-      <button type="button" class="switch-link" style="display:block;width:100%;margin-top:16px;" on:click={() => { signupSuccess = false; mode = 'login'; }}>
-        Log in instead
-      </button>
+      <EmailVerifyPanel variant="signup" {email} title="Account created">
+        <svelte:fragment slot="actions">
+          <a href="/account" class="btn-secondary">Go to my account</a>
+          <button type="button" class="switch-link" style="display:block;width:100%;margin-top:16px;" on:click={() => { signupSuccess = false; mode = 'login'; }}>
+            Log in instead
+          </button>
+        </svelte:fragment>
+      </EmailVerifyPanel>
     {:else}
       <h1>{mode === 'signup' ? 'Create your account' : 'Welcome back'}</h1>
       <p class="subtitle">
@@ -186,11 +190,7 @@
         {/if}
 
         {#if showUnverified}
-          <div class="warn" role="alert">
-            {error}
-            <br /><br />
-            <a href="/">← Back to nalana.io</a>
-          </div>
+          <EmailVerifyPanel variant="banner" {email} title="Email not verified" subtitle={error} />
         {:else if error}
           <p class="error">{error}</p>
         {/if}

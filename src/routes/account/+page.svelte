@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { auth, currentUser, isLoggedIn } from '$lib/stores/auth.js';
+  import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
 
   let verifying = true;
   /** @type {{ credits_remaining?: number; plan?: string; tier?: string } | null} */
@@ -67,11 +68,6 @@
     font-size: 14px; color: #166534; background: rgba(34,197,94,0.12);
     border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;
   }
-  .verify-banner {
-    font-size: 14px; color: #b45309; background: rgba(251,191,36,0.12);
-    border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; line-height: 1.5;
-  }
-
   .card {
     background: #fff; border-radius: 24px; padding: 32px;
     border: 1px solid rgba(228,228,231,0.8);
@@ -136,9 +132,12 @@
       {/if}
 
       {#if $currentUser.email_verified === false}
-        <p class="verify-banner" role="status">
-          Your email is not verified yet. Some features may be limited until you verify.
-        </p>
+        <EmailVerifyPanel
+          variant="banner"
+          email={$currentUser.email}
+          title="Email not verified"
+          subtitle="Some features may be limited until you verify. We'll send a new link to {$currentUser.email}."
+        />
       {/if}
 
       <div class="card">
