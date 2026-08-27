@@ -11,3 +11,4 @@ build
 
 # Claude worktrees
 .claude/
+.DS_Store

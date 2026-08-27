@@ -31,6 +31,16 @@
   --muted:     #767676;
   --border:    rgba(228,228,231,0.5);
   --ease:      cubic-bezier(0.4,0,0.2,1);
+
+  /* Nalana app glass tokens (header) */
+  --nl-glass-filter:   blur(12px) saturate(120%);
+  --nl-surface-header: rgba(255, 255, 255, 0.15);
+  --nl-glass-fill:     rgba(255, 255, 255, 0.22);
+  --nl-glass-border:   rgba(255, 255, 255, 0.42);
+  --nl-shadow-header:  0 0 4.85px 0 rgba(0, 0, 0, 0.15);
+  --nl-shell-shadow:   0 29px 49px -20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+  --nl-radius-panel:   40px;
+  --nl-header-h:       70px;
 }
 
 html { scroll-behavior: smooth; }
