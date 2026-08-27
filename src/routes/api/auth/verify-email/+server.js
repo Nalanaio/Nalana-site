@@ -7,13 +7,18 @@ import { proxyBackend, normalizeUser } from '$lib/server/authApi.js';
  */
 export async function POST({ request }) {
   const body = await request.json().catch(() => ({}));
-  const { token } = body;
+  const { token, email } = body;
 
   if (!token || typeof token !== 'string') {
     return json({ error: 'Verification token is required.' }, { status: 400 });
   }
 
-  const res = await proxyBackend('/v1/auth/verify-email', { token });
+  const payload = { token };
+  if (email && typeof email === 'string') {
+    payload.email = email;
+  }
+
+  const res = await proxyBackend('/v1/auth/verify-email', payload);
   const data = await res.json();
 
   if (!res.ok) {

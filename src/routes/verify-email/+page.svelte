@@ -5,7 +5,7 @@
   import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
   import { resendVerificationEmail, RESEND_SUCCESS_MESSAGE } from '$lib/authClient.js';
 
-  /** @type {'loading' | 'success' | 'error' | 'missing'} */
+  /** @type {'loading' | 'success' | 'error' | 'missing' | 'resend'} */
   let state = 'loading';
   let errorDetail = '';
   let emailForResend = '';
@@ -15,23 +15,39 @@
   let resending = false;
 
   $: token = $page.url.searchParams.get('token') ?? '';
+  $: emailParam = $page.url.searchParams.get('email') ?? '';
+  $: actionParam = $page.url.searchParams.get('action') ?? '';
+  $: isResendAction =
+    actionParam === 'resend' ||
+    $page.url.searchParams.get('resend') === 'true' ||
+    $page.url.searchParams.get('resend') === '1';
 
   onMount(() => {
+    if (emailParam) {
+      resendEmailInput = emailParam;
+      emailForResend = emailParam;
+    }
+    if (isResendAction && !token) {
+      state = 'resend';
+      return;
+    }
     if (!token) {
       state = 'missing';
       return;
     }
-    verify(token);
+    verify(token, emailParam);
   });
 
-  async function verify(verificationToken) {
+  async function verify(verificationToken, email = '') {
     state = 'loading';
     errorDetail = '';
     try {
+      const payload = { token: verificationToken };
+      if (email) payload.email = email;
       const res = await fetch('/api/auth/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: verificationToken }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -40,7 +56,7 @@
         return;
       }
       state = 'success';
-      emailForResend = data.user?.email ?? '';
+      emailForResend = data.user?.email ?? email;
       setTimeout(() => goto('/login'), 3000);
     } catch {
       state = 'error';
@@ -203,6 +219,18 @@
       <h1>Email verified!</h1>
       <p class="sub">Your account is ready. Redirecting to login in a few seconds…</p>
       <a href="/login" class="btn-primary">Go to login →</a>
+
+    {:else if state === 'resend'}
+      <div class="success-icon" aria-hidden="true">✉</div>
+      <h1>Resend verification email</h1>
+      <p class="sub">Confirm your email address below to receive a new verification link.</p>
+      <input class="field" type="email" placeholder="your@email.com" bind:value={resendEmailInput} />
+      <button type="button" class="btn-primary" disabled={resending} on:click={handleResend}>
+        {resending ? 'Sending…' : 'Send verification email'}
+      </button>
+      {#if resendMsg}<p class="msg success">{resendMsg}</p>{/if}
+      {#if resendError}<p class="msg error">{resendError}</p>{/if}
+      <a href="/login" class="btn-link">Back to login</a>
 
     {:else if state === 'missing'}
       <h1>Invalid link</h1>
