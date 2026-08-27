@@ -227,18 +227,18 @@
         <div class="block">
           <div class="compare-visual">
             <div class="compare-col">
-              <svg width="120" height="120" viewBox="0 0 100 100" fill="none" stroke="#aab0bd" stroke-width="1.2"><g style="stroke-dasharray:620;animation:ftDrawMessy 4s ease-in-out infinite;"><path d="M50 14 L70 22 L80 40 L74 60 L82 72 L60 84 L42 80 L26 86 L18 66 L24 48 L16 34 L34 24 Z"/><path d="M50 14 L42 80"/><path d="M70 22 L26 86"/><path d="M80 40 L18 66"/><path d="M74 60 L34 24"/><path d="M60 84 L24 48"/><path d="M82 72 L16 34"/><path d="M50 14 L60 84"/><path d="M34 24 L82 72"/></g></svg>
+              <svg width="132" height="132" viewBox="0 0 100 100" fill="none" stroke="#aab0bd" stroke-width="1.2"><g style="stroke-dasharray:620;animation:ftDrawMessy 4s ease-in-out infinite;"><path d="M50 14 L70 22 L80 40 L74 60 L82 72 L60 84 L42 80 L26 86 L18 66 L24 48 L16 34 L34 24 Z"/><path d="M50 14 L42 80"/><path d="M70 22 L26 86"/><path d="M80 40 L18 66"/><path d="M74 60 L34 24"/><path d="M60 84 L24 48"/><path d="M82 72 L16 34"/><path d="M50 14 L60 84"/><path d="M34 24 L82 72"/></g></svg>
               <span class="compare-label gray">diffusion</span>
             </div>
             <div class="compare-divider"><span>vs</span></div>
             <div class="compare-col">
-              <svg width="120" height="120" viewBox="0 0 100 100" fill="none" stroke="#1085EF" stroke-width="1.2"><g style="stroke-dasharray:620;animation:ftDrawClean 4s ease-in-out infinite;"><polygon points="50,16 71,28 71,52 50,64 29,52 29,28"/><polygon points="50,64 71,52 71,72 50,84 29,72 29,52"/><line x1="50" y1="16" x2="50" y2="64"/><line x1="71" y1="28" x2="71" y2="72"/><line x1="29" y1="28" x2="29" y2="72"/><line x1="50" y1="40" x2="71" y2="40"/><line x1="50" y1="40" x2="29" y2="40"/><line x1="29" y1="62" x2="71" y2="62"/></g></svg>
+              <svg width="132" height="132" viewBox="0 0 100 100" fill="none" stroke="#1085EF" stroke-width="1.2"><g style="stroke-dasharray:620;animation:ftDrawClean 4s ease-in-out infinite;"><polygon points="50,16 71,28 71,52 50,64 29,52 29,28"/><polygon points="50,64 71,52 71,72 50,84 29,72 29,52"/><line x1="50" y1="16" x2="50" y2="64"/><line x1="71" y1="28" x2="71" y2="72"/><line x1="29" y1="28" x2="29" y2="72"/><line x1="50" y1="40" x2="71" y2="40"/><line x1="50" y1="40" x2="29" y2="40"/><line x1="29" y1="62" x2="71" y2="62"/></g></svg>
               <span class="compare-label blue">Nalana</span>
             </div>
           </div>
           <div class="block-copy">
             <div class="block-num">03</div>
-            <h3>Real geometry, not generated guesswork</h3>
+            <h3 class="tight-lh">Real geometry, not generated guesswork</h3>
             <p>Nalana builds from the ground up. Actual topology, not scraped blobs. Production-ready for any pipeline.</p>
           </div>
         </div>
@@ -378,15 +378,16 @@
 
   /* features */
   .features { padding: 80px 0 60px; }
-  .feat-head { text-align: center; max-width: 680px; margin: 0 auto 64px; }
+  .feat-head { text-align: center; max-width: 720px; margin: 0 auto 64px; }
   .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #1085ef; margin-bottom: 16px; }
   .feat-h2 { font-family: 'Amulya', sans-serif; font-size: clamp(36px, 5vw, 60px); font-weight: 700; color: #0a0a0a; margin: 0 0 18px; letter-spacing: -0.025em; line-height: 1.02; }
   .feat-sub { font-size: 18px; line-height: 1.6; color: #4a4a52; margin: 0; }
-  .feat-blocks { display: flex; flex-direction: column; gap: 30px; }
+  .feat-blocks { display: flex; flex-direction: column; gap: 40px; }
   .block { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; align-items: center; }
   .block-visual { aspect-ratio: 16 / 11; }
-  .block-copy .block-num { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; font-weight: 600; color: #1085ef; margin-bottom: 14px; }
+  .block-copy .block-num { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; font-weight: 600; color: #1085ef; margin-bottom: 14px; }
   .block-copy h3 { font-family: 'Amulya', sans-serif; font-size: clamp(24px, 2.6vw, 32px); font-weight: 700; color: #0a0a0a; margin: 0 0 13px; letter-spacing: -0.02em; }
+  .block-copy h3.tight-lh { line-height: 1.2; }
   .block-copy p { font-size: 16px; line-height: 1.65; color: #555; margin: 0; max-width: 420px; }
 
   /* block 02 — app collapse */
@@ -397,11 +398,11 @@
   /* block 03 — comparison */
   .compare-visual { position: relative; aspect-ratio: 16 / 11; border-radius: 24px; overflow: hidden; background: linear-gradient(160deg, #ffffff, #f6f9fe); border: 1px solid rgba(15, 23, 42, 0.07); box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.7), 0 18px 44px -24px rgba(20, 30, 80, 0.2); display: flex; align-items: center; justify-content: center; }
   .compare-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .compare-label { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+  .compare-label { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; font-weight: 600; letter-spacing: 0.04em; }
   .compare-label.gray { color: #9aa0ac; }
   .compare-label.blue { color: #1085ef; }
   .compare-divider { width: 1px; align-self: stretch; margin: 26px 0; background: rgba(15, 23, 42, 0.1); position: relative; }
-  .compare-divider span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 9px; color: #9aa0ac; background: #f4f6fb; padding: 3px 0; }
+  .compare-divider span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; color: #9aa0ac; background: #f4f6fb; padding: 3px 6px; }
 
   /* access */
   .access { padding: 70px 0 100px; }

@@ -17,6 +17,7 @@
   let timers = [];
   let queue = [];
   let running = false;
+  let nextId = 0;
 
   const buckets = [
     { key: 'color', re: /\b(blue|red|green|orange|salmon|black|white|purple|lavender|pink|yellow|gold|teal|brown|navy|crimson|magenta|cyan|beige|copper|bronze|silver|maroon|olive|indigo|turquoise|coral|mint|darker|lighter|recolou?r|paint|colou?r|tint|hue)\b/, replies: ['Recolored it for you.', 'New color applied.', 'Done — fresh coat.', 'Updated the material color.'] },
@@ -41,7 +42,7 @@
   }
 
   function push(who, text) {
-    bubbles = [...bubbles, { who, text }].slice(-3);
+    bubbles = [...bubbles, { id: nextId++, who, text }].slice(-16);
   }
 
   function drain() {
@@ -164,6 +165,7 @@
     group = new THREE.Group();
     scene.add(group);
     mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(1.05, 4), mat);
+    mesh.scale.setScalar(0.81);
     group.add(mesh);
     onResize = () => {
       if (!host.clientWidth) return;
@@ -233,7 +235,7 @@
   <div class="panel">
     <div class="panel-glow"></div>
     <div class="replies">
-      {#each bubbles as b (b.who + b.text)}
+      {#each bubbles as b (b.id)}
         <div class="row" style="justify-content:{b.who === 'user' ? 'flex-end' : 'flex-start'};">
           <div class="cbub {b.who}">{b.text}</div>
         </div>
@@ -241,9 +243,9 @@
     </div>
     <div class="input-wrap">
       <div class="input">
-        <input bind:value={input} on:keydown={onKey} placeholder="What do you want to change…" />
+        <input bind:value={input} on:keydown={onKey} placeholder="What do you want to change?" />
         <button class="send" on:click={send} title="Send" aria-label="Send">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg>
         </button>
       </div>
       <div class="bridge">
@@ -287,7 +289,7 @@
     width: 6px; height: 6px; border-radius: 50%; background: #28c840; box-shadow: 0 0 7px #28c840;
   }
   .panel {
-    position: absolute; top: 14px; right: 14px; bottom: 14px; width: 44%; min-width: 200px;
+    position: absolute; top: 14px; right: 14px; bottom: 14px; width: 48.4%; min-width: 220px;
     display: flex; flex-direction: column; border-radius: 18px; overflow: hidden;
     background: linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(244, 247, 255, 0.88));
     backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
@@ -299,32 +301,34 @@
       radial-gradient(120% 90% at 0% 100%, rgba(90, 150, 255, 0.16), transparent 55%);
   }
   .replies {
-    position: relative; flex: 1; overflow: hidden; padding: 14px 13px 6px;
-    display: flex; flex-direction: column; justify-content: flex-end; gap: 9px;
+    position: relative; flex: 1; overflow: hidden; margin-top: 21px; padding: 0 13px 6px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
   }
   .row { display: flex; }
-  .cbub { font-size: 12.5px; line-height: 1.45; animation: tiRise 0.35s ease both; }
+  .cbub { font-size: 11.5px; line-height: 1.5; animation: tiRise 0.35s ease both; }
   .cbub.user {
-    max-width: 90%; padding: 9px 13px; border-radius: 15px; border-bottom-right-radius: 5px;
+    max-width: 90%; padding: 10px 14px; border-radius: 15px; border-bottom-right-radius: 5px;
     background: #1085ef; color: #fff; box-shadow: 0 4px 14px rgba(16, 133, 239, 0.4);
   }
   .cbub.nalana {
-    max-width: 92%; padding: 9px 13px; border-radius: 15px; border-bottom-left-radius: 5px;
+    max-width: 92%; padding: 10px 14px; border-radius: 15px; border-bottom-left-radius: 5px;
     background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(15, 23, 42, 0.07);
     color: #27303f; box-shadow: 0 1px 4px rgba(10, 15, 40, 0.05);
   }
-  .input-wrap { position: relative; padding: 6px 11px 11px; flex-shrink: 0; }
+  .input-wrap { position: relative; padding: 6px 16px 11px; flex-shrink: 0; }
   .input {
-    display: flex; align-items: center; gap: 7px; background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(16, 133, 239, 0.25); border-radius: 100px; padding: 6px 6px 6px 14px;
+    display: flex; align-items: center; gap: 0; background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(16, 133, 239, 0.25); border-radius: 100px;
+    padding: 8px clamp(4px, 1.5vw, 8px);
     box-shadow: 0 1px 4px rgba(10, 15, 40, 0.06);
   }
   .input input {
     flex: 1; background: transparent; border: none; outline: none;
-    font-family: 'Inter', sans-serif; font-size: 12.5px; color: #1a1a1a; min-width: 0;
+    font-family: 'Inter', sans-serif; font-size: 11.5px; color: #1a1a1a; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .send {
-    width: 30px; height: 30px; border-radius: 50%; border: none; background: #1085ef;
+    width: 20px; height: 20px; border-radius: 50%; border: none; background: #1085ef;
     box-shadow: 0 2px 10px rgba(16, 133, 239, 0.45);
     display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
   }
