@@ -13,14 +13,10 @@
   let waitlistEmail = '';
   let waitlistDone = false;
   let waitlistLoading = false;
-  let waitlistPlatform = '';   // OS the visitor showed interest in (from the CTA they clicked)
-  let waitlistInput;           // bound <input>, focused when a CTA scrolls to the form
 
-  function requestAccess(platform, location) {
-    waitlistPlatform = platform || '';
-    if (typeof gtag !== 'undefined') gtag('event', 'request_access', { platform, location });
-    // The CTA's href="#access" scrolls to the form; drop the cursor in the field once there.
-    setTimeout(() => waitlistInput?.focus({ preventScroll: true }), 500);
+  function trackDownload(platform, location) {
+    const analytics = /** @type {{ gtag?: (...args: unknown[]) => void }} */ (globalThis);
+    analytics.gtag?.('event', 'download', { platform, location });
   }
 
   async function handleWaitlist() {
@@ -28,7 +24,7 @@
     if (!waitlistEmail.includes('@')) return;
     waitlistLoading = true;
     try {
-      const platform = waitlistPlatform || (detectedOS === 'windows' ? 'windows' : 'mac');
+      const platform = detectedOS === 'windows' ? 'windows' : 'mac';
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -136,15 +132,18 @@
       <div class="nav-center">
         <a href="#demo">Demo</a>
         <a href="#features">Features</a>
+        <a href="#access">Studios</a>
         <a href="/login">Profile</a>
       </div>
       <div class="nav-right">
         {#if showMac}
-          <a class="nav-os mac" href="#access" on:click={() => requestAccess('mac', 'nav')}>Request early access</a>
+          <a class="nav-os mac" href="/api/download?platform=mac" on:click={() => trackDownload('mac', 'nav')}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Mac
+          </a>
         {/if}
         {#if showWin}
-          <a class="nav-os win" href="#access" on:click={() => requestAccess('windows', 'nav')}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>Request early access
+          <a class="nav-os win" href="/api/download?platform=windows" on:click={() => trackDownload('windows', 'nav')}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>Windows
           </a>
         {/if}
       </div>
@@ -154,21 +153,21 @@
   <div class="wrap">
     <!-- HERO -->
     <section class="hero">
-      <div class="hero-badge"><span class="dot-green"></span>Nalana V2 is now available for early access</div>
+      <div class="hero-badge"><span class="dot-green"></span>Nalana V2 is available now</div>
       <h1 class="hero-h1">Build anything.</h1>
       <p class="hero-sub">Nalana turns your words into real, editable geometry: clean topology, production-ready, fully yours to refine.</p>
       <div class="not-plugin"><span class="np-badge">Not a plugin</span>Nalana is its own software, built on Blender.</div>
       <div class="hero-ctas">
         {#if showMac}
-          <a class="os-cta dark" href="#access" on:click={() => requestAccess('mac', 'hero')}>
-            <span class="cta-def">Request early access</span>
-            <span class="cta-hov">We onboard studios weekly →</span>
+          <a class="os-cta dark" href="/api/download?platform=mac" on:click={() => trackDownload('mac', 'hero')}>
+            <span class="cta-def"><svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Download for Mac</span>
+            <span class="cta-hov">macOS 12+ · Apple Silicon</span>
           </a>
         {/if}
         {#if showWin}
-          <a class="os-cta blue" href="#access" on:click={() => requestAccess('windows', 'hero')}>
-            <span class="cta-def"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>Request early access</span>
-            <span class="cta-hov">We onboard studios weekly →</span>
+          <a class="os-cta blue" href="/api/download?platform=windows" on:click={() => trackDownload('windows', 'hero')}>
+            <span class="cta-def"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 5.557L10.173 4.5v7.145H3V5.557zM11 4.35L20.994 3v8.645H11V4.35zM3 12.345h7.173V19.5L3 18.442v-6.097zM11 12.345h9.994v8.61L11 19.63v-7.285z"/></svg>Download for Windows</span>
+            <span class="cta-hov">Windows 10/11 · 64-bit</span>
           </a>
         {/if}
       </div>
@@ -269,7 +268,7 @@
         <div class="access-blob a1"></div>
         <div class="access-blob a2"></div>
         <div class="access-inner">
-          <div class="eyebrow light">Early access</div>
+          <div class="eyebrow light">Studio early access</div>
           <h2 class="access-h2">The next generation of 3D starts here.</h2>
           <p class="access-p">Tell us about your team. We're bringing on a small group of studios each month and working with each one directly.</p>
           {#if waitlistDone}
@@ -278,7 +277,6 @@
             <div class="access-form">
               <input
                 type="email"
-                bind:this={waitlistInput}
                 bind:value={waitlistEmail}
                 on:keydown={(e) => e.key === 'Enter' && handleWaitlist()}
                 placeholder="you@studio.com"
