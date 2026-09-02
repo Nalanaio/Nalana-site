@@ -5,11 +5,12 @@ import {
   STABLE_RELEASE_CHANNEL,
   resolveStableDownload,
   STABLE_RELEASE_BASE_URL,
+  STABLE_RELEASE_TAG,
 } from '../src/lib/server/stable-release.js';
 
 const stableManifest = {
-  channel: STABLE_RELEASE_CHANNEL,
-  release_tag: 'dev-latest',
+  channel: 'stable',
+  release_tag: 'stable-latest',
   builds: [
     {
       platform: 'Windows x64',
@@ -21,6 +22,11 @@ const stableManifest = {
     },
   ],
 };
+
+test('uses the stable release channel for public downloads', () => {
+  assert.equal(STABLE_RELEASE_CHANNEL, 'stable');
+  assert.equal(STABLE_RELEASE_TAG, 'stable-latest');
+});
 
 test('resolves the Windows installer from the current public manifest', () => {
   assert.equal(
@@ -51,14 +57,14 @@ test('rejects manifests from another channel or release tag', () => {
   assert.equal(
     resolveStableDownload({
       platform: 'windows',
-      manifest: { ...stableManifest, channel: 'stable' },
+      manifest: { ...stableManifest, channel: 'dev' },
     }),
     null,
   );
   assert.equal(
     resolveStableDownload({
       platform: 'windows',
-      manifest: { ...stableManifest, release_tag: 'stable-latest' },
+      manifest: { ...stableManifest, release_tag: 'dev-latest' },
     }),
     null,
   );
