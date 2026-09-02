@@ -2,13 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  STABLE_RELEASE_CHANNEL,
   resolveStableDownload,
   STABLE_RELEASE_BASE_URL,
 } from '../src/lib/server/stable-release.js';
 
 const stableManifest = {
-  channel: 'stable',
-  release_tag: 'stable-latest',
+  channel: STABLE_RELEASE_CHANNEL,
+  release_tag: 'dev-latest',
   builds: [
     {
       platform: 'Windows x64',
@@ -21,21 +22,21 @@ const stableManifest = {
   ],
 };
 
-test('resolves the Windows installer from the stable manifest', () => {
+test('resolves the Windows installer from the current public manifest', () => {
   assert.equal(
     resolveStableDownload({ platform: 'windows', manifest: stableManifest }),
     `${STABLE_RELEASE_BASE_URL}/nalana-windows-x64-stable-a1b2c3d4-r42.1.exe`,
   );
 });
 
-test('resolves the Apple Silicon installer from the stable manifest', () => {
+test('resolves the Apple Silicon installer from the current public manifest', () => {
   assert.equal(
     resolveStableDownload({ platform: 'mac', manifest: stableManifest }),
     `${STABLE_RELEASE_BASE_URL}/nalana-macos-arm64-stable-a1b2c3d4-r42.1.dmg`,
   );
 });
 
-test('falls back to the configured production installer before stable-latest exists', () => {
+test('falls back to the configured installer when the public manifest is unavailable', () => {
   assert.equal(
     resolveStableDownload({
       platform: 'windows',
@@ -50,14 +51,14 @@ test('rejects manifests from another channel or release tag', () => {
   assert.equal(
     resolveStableDownload({
       platform: 'windows',
-      manifest: { ...stableManifest, channel: 'dev' },
+      manifest: { ...stableManifest, channel: 'stable' },
     }),
     null,
   );
   assert.equal(
     resolveStableDownload({
       platform: 'windows',
-      manifest: { ...stableManifest, release_tag: 'dev-latest' },
+      manifest: { ...stableManifest, release_tag: 'stable-latest' },
     }),
     null,
   );
