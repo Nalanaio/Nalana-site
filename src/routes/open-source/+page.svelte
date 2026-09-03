@@ -56,7 +56,7 @@
       <span class="footer-wordmark">Nalana</span>
       <div class="footer-links">
         <a href="https://x.com/nalanaio" target="_blank" rel="noopener">Twitter</a>
-        <a href="https://discord.gg/KRKCyxxkwb" target="_blank" rel="noopener">Discord</a>
+        <a href="https://discord.gg/GXjbwrcwFz" target="_blank" rel="noopener">Discord</a>
         <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>
       </div>
       <span class="footer-copy">© 2026 Nalana.</span>
