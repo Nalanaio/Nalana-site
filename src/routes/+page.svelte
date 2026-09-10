@@ -9,30 +9,9 @@
   $: showMac = detectedOS !== 'windows';
   $: showWin = detectedOS !== 'mac';
 
-  // ── Early-access waitlist ──
-  let waitlistEmail = '';
-  let waitlistDone = false;
-  let waitlistLoading = false;
-
   function trackDownload(platform, location) {
     const analytics = /** @type {{ gtag?: (...args: unknown[]) => void }} */ (globalThis);
     analytics.gtag?.('event', 'download', { platform, location });
-  }
-
-  async function handleWaitlist() {
-    if (!waitlistEmail || waitlistLoading) return;
-    if (!waitlistEmail.includes('@')) return;
-    waitlistLoading = true;
-    try {
-      const platform = detectedOS === 'windows' ? 'windows' : 'mac';
-      const res = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: waitlistEmail, platform }),
-      });
-      if (res.ok) waitlistDone = true;
-    } catch {}
-    waitlistLoading = false;
   }
 
   // ── Mouse-follow blur ball ──
@@ -132,7 +111,6 @@
       <div class="nav-center">
         <a href="#demo">Demo</a>
         <a href="#features">Features</a>
-        <a href="#access">Studios</a>
         <a href="/login">Profile</a>
       </div>
       <div class="nav-right">
@@ -258,35 +236,6 @@
             <p>Nalana doesn't replace the artist. It expands what one is capable of. The vision stays yours.</p>
           </div>
           <div class="block-visual"><NalanaTryIt /></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- EARLY ACCESS -->
-    <section id="access" class="access">
-      <div class="access-card">
-        <div class="access-blob a1"></div>
-        <div class="access-blob a2"></div>
-        <div class="access-inner">
-          <div class="eyebrow light">Studio early access</div>
-          <h2 class="access-h2">The next generation of 3D starts here.</h2>
-          <p class="access-p">Tell us about your team. We're bringing on a small group of studios each month and working with each one directly.</p>
-          {#if waitlistDone}
-            <div class="access-done">✦ You're on the list. We'll reach out personally within two business days.</div>
-          {:else}
-            <div class="access-form">
-              <input
-                type="email"
-                bind:value={waitlistEmail}
-                on:keydown={(e) => e.key === 'Enter' && handleWaitlist()}
-                placeholder="you@studio.com"
-              />
-              <button on:click={handleWaitlist} disabled={waitlistLoading}>
-                {waitlistLoading ? '…' : 'Request access →'}
-              </button>
-            </div>
-            <p class="access-fine">No card required. We reply to every request personally.</p>
-          {/if}
         </div>
       </div>
     </section>
@@ -433,24 +382,6 @@
   .compare-divider { width: 1px; align-self: stretch; margin: 26px 0; background: rgba(15, 23, 42, 0.1); position: relative; }
   .compare-divider span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; color: #9aa0ac; background: #f4f6fb; padding: 3px 6px; }
 
-  /* access */
-  .access { padding: 70px 0 100px; }
-  .access-card { position: relative; text-align: center; padding: 60px 40px; border-radius: 36px; overflow: hidden; background: linear-gradient(140deg, #0e1830, #142a55 55%, #1085ef); box-shadow: 0 30px 80px -30px rgba(16, 40, 120, 0.6); }
-  .access-blob { position: absolute; border-radius: 50%; filter: blur(40px); }
-  .access-blob.a1 { width: 380px; height: 380px; top: -120px; right: -80px; background: radial-gradient(circle, rgba(167, 138, 222, 0.5), transparent 60%); }
-  .access-blob.a2 { width: 320px; height: 320px; bottom: -130px; left: -60px; background: radial-gradient(circle, rgba(255, 140, 105, 0.4), transparent 60%); }
-  .access-inner { position: relative; z-index: 2; max-width: 560px; margin: 0 auto; }
-  .eyebrow.light { color: rgba(255, 255, 255, 0.7); }
-  .access-h2 { font-family: 'Amulya', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 700; color: #fff; margin: 0 0 14px; letter-spacing: -0.02em; line-height: 1.2; }
-  .access-p { font-size: 16px; line-height: 1.6; color: rgba(255, 255, 255, 0.82); margin: 0 0 30px; }
-  .access-done { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 100px; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; font-size: 15px; font-weight: 500; }
-  .access-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
-  .access-form input { flex: 1; min-width: 240px; padding: 15px 22px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.12); color: #fff; font-family: 'Inter', sans-serif; font-size: 14.5px; outline: none; }
-  .access-form input::placeholder { color: rgba(255, 255, 255, 0.55); }
-  .access-form button { padding: 15px 28px; border-radius: 100px; border: none; background: #fff; color: #0e1830; font-family: 'Inter', sans-serif; font-size: 14.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-  .access-form button:disabled { opacity: 0.7; cursor: default; }
-  .access-fine { font-size: 12px; color: rgba(255, 255, 255, 0.55); margin: 16px 0 0; }
-
   /* footer */
   .footer { padding: 30px 0 50px; }
   .footer-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; padding: 24px 36px; border-radius: 100px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.75); }
@@ -480,15 +411,9 @@
   @media (max-width: 1024px) {
     .hero-badge { margin-bottom: 32px; }
     .not-plugin { margin-bottom: 48px; }
-    .access-p { margin-bottom: 24px; }
   }
   @media (max-width: 640px) {
     .hero-badge { margin-bottom: 24px; }
     .not-plugin { margin-bottom: 32px; }
-    .access-p { margin-bottom: 16px; }
-    .access-h2 { margin-left: -32px; margin-right: -32px; }
-  }
-  @media (min-width: 1025px) {
-    .access-p { margin-bottom: 40px; }
   }
 </style>
