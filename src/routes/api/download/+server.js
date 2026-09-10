@@ -1,11 +1,13 @@
 import { redirect } from '@sveltejs/kit';
+import { notifyDownload } from '$lib/server/download-notification.js';
 import {
   resolveStableDownload,
   STABLE_MANIFEST_URL,
 } from '$lib/server/stable-release.js';
 
 /** GET /api/download?platform=mac|windows */
-export async function GET({ fetch, url }) {
+export async function GET({ fetch, url, request, setHeaders }) {
+  setHeaders({ 'cache-control': 'no-store' });
   const platform = url.searchParams.get('platform');
 
   if (platform !== 'mac' && platform !== 'windows') {
@@ -37,5 +39,6 @@ export async function GET({ fetch, url }) {
     return new Response('The latest Nalana download is temporarily unavailable.', { status: 503 });
   }
 
+  await notifyDownload({ platform, request, fetch });
   throw redirect(302, downloadUrl);
 }
