@@ -3,23 +3,68 @@
   import { onMount } from 'svelte';
   import { auth } from '$lib/stores/auth.js';
 
-  export let data;
-
   let checkingAccount = true;
   let authorized = false;
+  let accessRestricted = false;
+  let userEmail = '';
+  let manifest = null;
+  let error = null;
 
   onMount(async () => {
-    authorized = await auth.refreshSession();
-    checkingAccount = false;
-
-    if (!authorized) {
+    const sessionOk = await auth.refreshSession();
+    if (!sessionOk) {
+      checkingAccount = false;
+      authorized = false;
       goto('/login?next=%2Fdev');
+      return;
+    }
+
+    try {
+      const authHeader = auth.getAuthHeader();
+      const res = await fetch('/api/dev/manifest', {
+        headers: {
+          Authorization: authHeader || '',
+        },
+      });
+
+      const body = await res.json().catch(() => ({}));
+
+      if (res.status === 401) {
+        auth.logout();
+        checkingAccount = false;
+        authorized = false;
+        goto('/login?next=%2Fdev');
+        return;
+      }
+
+      if (res.status === 403) {
+        checkingAccount = false;
+        authorized = false;
+        accessRestricted = true;
+        userEmail = body.email || $auth.user?.email || 'your account';
+        return;
+      }
+
+      if (!res.ok) {
+        error = body.error || `Could not load dev builds (${res.status}).`;
+      } else {
+        manifest = body.manifest;
+      }
+
+      authorized = true;
+      userEmail = body.user?.email || $auth.user?.email || '';
+    } catch {
+      error = 'Could not reach the dev build service. Try again shortly.';
+      authorized = true;
+    } finally {
+      checkingAccount = false;
     }
   });
 
   function logout() {
     auth.logout();
     authorized = false;
+    accessRestricted = false;
     goto('/login?next=%2Fdev');
   }
 
@@ -61,6 +106,17 @@
       <h1>Checking your Nalana account.</h1>
       <p>One moment while we verify your sign-in.</p>
     </section>
+  {:else if accessRestricted}
+    <section class="card login-card">
+      <span class="eyebrow">Dev channel</span>
+      <h1>Access restricted.</h1>
+      <p>Signed in as <strong>{userEmail}</strong>.</p>
+      <p class="lede">Internal developer builds are limited to authorized team members. If you need developer access, contact Clarence.</p>
+      <div class="actions">
+        <button class="download-button" type="button" on:click={logout}>Sign out</button>
+        <a class="home-link" href="/">Back to home</a>
+      </div>
+    </section>
   {:else if authorized}
     <section class="intro">
       <div>
@@ -71,36 +127,36 @@
       <button class="logout" type="button" on:click={logout}>Sign out</button>
     </section>
 
-    {#if data.error}
+    {#if error}
       <section class="card message-card">
         <h2>No build available</h2>
-        <p>{data.error}</p>
+        <p>{error}</p>
       </section>
-    {:else if data.manifest}
+    {:else if manifest}
       <section class="meta card">
         <div>
           <span class="meta-label">Published</span>
-          <strong>{formatDate(data.manifest.created_at)}</strong>
+          <strong>{formatDate(manifest.created_at)}</strong>
         </div>
         <div>
           <span class="meta-label">Commit</span>
-          <strong><code>{shortSha(data.manifest.commit)}</code></strong>
+          <strong><code>{shortSha(manifest.commit)}</code></strong>
         </div>
         <div>
           <span class="meta-label">Actions run</span>
-          <strong>#{data.manifest.run_number}</strong>
+          <strong>#{manifest.run_number}</strong>
         </div>
-        {#if data.manifest.workflow_url}
-          <a class="run-link" href={data.manifest.workflow_url} target="_blank" rel="noopener">View build run ↗</a>
+        {#if manifest.workflow_url}
+          <a class="run-link" href={manifest.workflow_url} target="_blank" rel="noopener">View build run ↗</a>
         {/if}
       </section>
 
       <section class="downloads">
-        {#each data.manifest.builds ?? [] as build}
+        {#each manifest.builds ?? [] as build}
           <article class="download card">
             <div>
               <span class="platform">{build.platform}</span>
-              <h2>{buildTitle(build, data.manifest.run_number)}</h2>
+              <h2>{buildTitle(build, manifest.run_number)}</h2>
               <p>{Math.round((build.size_bytes ?? 0) / 1024 / 1024)} MB · SHA-256 <code>{build.sha256}</code></p>
             </div>
             <a class="download-button" href={build.download_url}>Download <span>↓</span></a>
@@ -138,6 +194,9 @@
   .meta-label { color: #8b93a2; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
   .meta strong { color: var(--ink-deep); font-size: 14px; }
   .run-link { margin-left: auto; color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none; }
+  .home-link { color: var(--muted); font-size: 14px; font-weight: 600; text-decoration: none; padding: 12px 18px; }
+  .home-link:hover { color: var(--ink-deep); text-decoration: underline; }
+  .actions { display: flex; align-items: center; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
   .downloads { display: grid; gap: 14px; margin-top: 18px; }
   .download { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px; }
   .platform { display: block; margin-bottom: 8px; color: var(--primary); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
@@ -149,7 +208,7 @@
   .login-card, .message-card { max-width: 520px; margin: 18vh auto 0; padding: 42px; }
   .login-card h1 { font-size: clamp(34px, 6vw, 52px); }
   .login-card p, .message-card p { margin-top: 16px; }
-  .login-card .download-button { display: inline-block; margin-top: 24px; }
+  .login-card .download-button { display: inline-block; margin-top: 0; }
   .message-card h2 { margin-top: 10px; }
 
   @media (max-width: 640px) {
