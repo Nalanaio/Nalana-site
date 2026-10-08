@@ -4,6 +4,9 @@
   import NalanaFeed from '$lib/components/NalanaFeed.svelte';
   import NalanaTryIt from '$lib/components/NalanaTryIt.svelte';
 
+  export let data;
+  $: productLabel = data?.productLabel || 'Nalana';
+
   // ── OS detection ──
   let detectedOS = 'unknown';
   $: showMac = detectedOS !== 'windows';
@@ -88,7 +91,7 @@
 </script>
 
 <svelte:head>
-  <title>Nalana — Build in 3D by describing what you want</title>
+  <title>{productLabel} — Build in 3D by describing what you want</title>
   <meta name="description" content="Nalana turns your words into real, editable geometry: clean topology, production-ready, fully yours to refine. The AI-native 3D studio, built on Blender." />
 </svelte:head>
 
@@ -131,7 +134,7 @@
   <div class="wrap">
     <!-- HERO -->
     <section class="hero">
-      <div class="hero-badge"><span class="dot-green"></span>Nalana V2 is available now</div>
+      <div class="hero-badge"><span class="dot-green"></span>{productLabel} is available now</div>
       <h1 class="hero-h1">Build anything.</h1>
       <p class="hero-sub">Nalana turns your words into real, editable geometry: clean topology, production-ready, fully yours to refine.</p>
       <div class="not-plugin"><span class="np-badge">Not a plugin</span>Nalana is its own software, built on Blender.</div>
@@ -165,7 +168,7 @@
     <section id="demo" class="demo-section" class:revealed={demoVisible} bind:this={demoEl}>
       <div class="demo-frame">
         <div class="demo-inner">
-          <NalanaDemo theme="color" />
+          <NalanaDemo theme="color" {productLabel} />
         </div>
       </div>
     </section>
