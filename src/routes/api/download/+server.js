@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { notifyDownload } from '$lib/server/download-notification.js';
 import {
   resolveStableDownload,
-  STABLE_MANIFEST_URL,
+  loadStableManifest,
 } from '$lib/server/stable-release.js';
 
 /** GET /api/download?platform=mac|windows */
@@ -14,17 +14,7 @@ export async function GET({ fetch, url, request, setHeaders }) {
     return new Response('Unknown platform. Use ?platform=mac or ?platform=windows', { status: 400 });
   }
 
-  let manifest = null;
-  try {
-    const response = await fetch(STABLE_MANIFEST_URL, {
-      headers: { accept: 'application/json' },
-      cache: 'no-store',
-    });
-    if (response.ok) manifest = await response.json();
-  } catch {
-    // Keep the currently configured production installer available until the
-    // first stable-latest release exists or during a transient GitHub outage.
-  }
+  const manifest = await loadStableManifest(fetch);
 
   const downloadUrl = resolveStableDownload({
     platform,

@@ -6,9 +6,12 @@ import {
   resolveStableDownload,
   STABLE_RELEASE_BASE_URL,
   STABLE_RELEASE_TAG,
+  loadStableManifest,
+  stableReleaseLabel,
 } from '../src/lib/server/stable-release.js';
 
 const stableManifest = {
+  version: '2.1.0',
   channel: 'stable',
   release_tag: 'stable-latest',
   builds: [
@@ -22,6 +25,25 @@ const stableManifest = {
     },
   ],
 };
+
+test('labels the version actually available for both supported platforms', () => {
+  assert.equal(stableReleaseLabel(stableManifest), 'Nalana 2.1');
+  assert.equal(stableReleaseLabel({ ...stableManifest, version: '2.1.1' }), 'Nalana 2.1.1');
+  for (const manifest of [null, { ...stableManifest, version: undefined },
+    { ...stableManifest, channel: 'beta' }, { ...stableManifest, builds: [] },
+    { ...stableManifest, version: '<invalid>' }]) {
+    assert.equal(stableReleaseLabel(manifest), 'Nalana');
+  }
+});
+
+test('manifest failures keep the homepage and configured fallback downloads available', async () => {
+  for (const fetch of [async () => { throw new Error('offline'); },
+    async () => ({ ok: false }), async () => ({ ok: true, json: async () => { throw new Error('invalid JSON'); } })]) {
+    const manifest = await loadStableManifest(fetch);
+    assert.equal(stableReleaseLabel(manifest), 'Nalana');
+    assert.equal(resolveStableDownload({ platform: 'windows', manifest, fallbackUrls: { windows: 'https://downloads.example.test/nalana.exe' } }), 'https://downloads.example.test/nalana.exe');
+  }
+});
 
 test('uses the stable release channel for public downloads', () => {
   assert.equal(STABLE_RELEASE_CHANNEL, 'stable');

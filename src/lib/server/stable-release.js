@@ -11,6 +11,30 @@ const platformLabels = {
   windows: 'Windows x64',
 };
 
+export async function loadStableManifest(fetch) {
+  try {
+    const response = await fetch(STABLE_MANIFEST_URL, {
+      headers: { accept: 'application/json' },
+      cache: 'no-store',
+      signal: AbortSignal.timeout(5000),
+    });
+    return response.ok ? await response.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+export function stableReleaseLabel(manifest) {
+  if (
+    !resolveStableDownload({ platform: 'mac', manifest })
+    || !resolveStableDownload({ platform: 'windows', manifest })
+    || typeof manifest?.version !== 'string'
+    || !/^\d+\.\d+\.\d+$/.test(manifest.version)
+  ) return 'Nalana';
+
+  return `Nalana ${manifest.version.replace(/\.0$/, '')}`;
+}
+
 export function resolveStableDownload({ platform, manifest, fallbackUrls = {} }) {
   const expectedPlatform = platformLabels[platform];
   if (!expectedPlatform) return null;
