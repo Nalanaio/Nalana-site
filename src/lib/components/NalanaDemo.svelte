@@ -489,7 +489,7 @@
     <span>Tris: <span class="stat">{tris}</span></span>
     <span class="status-spacer">Memory: 24.8 MiB</span>
     <span>VRAM: 1.8/6.0 GiB</span>
-    <span class="stat">2.0.0</span>
+    <span class="stat">{productLabel}</span>
   </div>
 </div>
 
