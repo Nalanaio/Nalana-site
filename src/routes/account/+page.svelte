@@ -3,7 +3,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { auth, currentUser, isLoggedIn } from '$lib/stores/auth.js';
-  import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
+  import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
 
   let verifying = true;
   /** @type {{ credits_remaining?: number; plan?: string; tier?: string } | null} */
@@ -115,7 +115,7 @@
   .logout-btn:hover { border-color: #e53e3e; color: #e53e3e; }
 </style>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 <div class="page">
   <div class="container">
@@ -132,12 +132,7 @@
       {/if}
 
       {#if $currentUser.email_verified === false}
-        <EmailVerifyPanel
-          variant="banner"
-          email={$currentUser.email}
-          title="Email not verified"
-          subtitle="Some features may be limited until you verify. We'll send a new link to {$currentUser.email}."
-        />
+        <VerificationRecovery policy={$currentUser.verification} />
       {/if}
 
       <div class="card">

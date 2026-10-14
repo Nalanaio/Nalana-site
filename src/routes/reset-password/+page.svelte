@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { afterNavigate, goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { apiDetail, validatePassword, MIN_PASSWORD_LENGTH } from '$lib/authClient.js';
 
@@ -15,6 +15,14 @@
     if (!token) {
       error = 'Reset link is invalid or missing. Request a new link below.';
     }
+  });
+  afterNavigate(({ complete, to }) => {
+    void complete.then(() => {
+      const current = new URL(window.location.href);
+      if (current.href === to?.url.href && current.searchParams.get('token')) {
+        void goto(current.pathname, { replaceState: true, noScroll: true, keepFocus: true });
+      }
+    });
   });
 
   async function submit() {
@@ -44,6 +52,7 @@
         return;
       }
 
+      token = ''; password = ''; confirm = '';
       goto('/login?reset=success');
     } catch {
       error = 'Network error. Please try again.';
@@ -55,9 +64,10 @@
 
 <svelte:head>
   <title>Reset password — Nalana</title>
+  <meta name="referrer" content="no-referrer" />
 </svelte:head>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 <style>
   :global(body) { cursor: auto; background: #fafafa; }

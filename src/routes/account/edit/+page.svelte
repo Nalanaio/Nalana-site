@@ -76,6 +76,7 @@
   }
 
   async function saveProfile() {
+    const session = get(auth);
     const header = auth.getAuthHeader();
     if (!header) {
       goto('/login');
@@ -104,8 +105,8 @@
         return;
       }
 
-      const session = get(auth);
-      auth.setSession(session.token, data.user, session.refreshToken);
+      if (get(auth).sessionEpoch !== session.sessionEpoch) return;
+      auth.updateUser(data.user, session.sessionEpoch);
       goto('/account?saved=1');
     } catch {
       saveError = 'Network error. Please try again.';
@@ -188,7 +189,7 @@
   .msg-err { font-size: 13px; color: #e53e3e; margin-top: 8px; }
 </style>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 <div class="page">
   <div class="container">

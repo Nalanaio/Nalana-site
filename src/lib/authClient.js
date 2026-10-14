@@ -27,7 +27,7 @@ export function validatePassword(password, confirm) {
  * @param {{ error?: string; detail?: string; message?: string }} data
  */
 export function apiDetail(data) {
-  return data?.error ?? data?.detail ?? data?.message ?? '';
+  return [data?.error, data?.detail, data?.message].find((value) => typeof value === 'string') ?? '';
 }
 
 /**
@@ -70,15 +70,18 @@ export function authErrorMessage(status, data, mode = 'login') {
 }
 
 /** @param {string} email */
-export async function resendVerificationEmail(email) {
-  const res = await fetch('/api/auth/resend-verification', {
+export async function resendVerificationEmail(email, authHeader = null) {
+  const res = await fetch(authHeader ? '/api/auth/resend-verification/current' : '/api/auth/resend-verification', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
+    headers: { 'Content-Type': 'application/json', ...(authHeader ? { Authorization: authHeader } : {}) },
+    body: JSON.stringify(authHeader ? {} : { email }),
+    signal: AbortSignal.timeout(10000),
   });
   const data = await res.json().catch(() => ({}));
   return {
     ok: res.ok,
+    data,
+    status: res.status,
     message: res.ok
       ? data.message ?? RESEND_SUCCESS_MESSAGE
       : data.error ?? data.detail ?? data.message ?? 'Could not send verification email.',

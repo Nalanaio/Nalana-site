@@ -14,8 +14,8 @@
   $: displaySubtitle =
     subtitle ||
     (email
-      ? `If your account exists, we will send a verification link to ${email}. Click the link in that email, then log in.`
-      : 'We will send a verification link to your inbox. Click the link in that email, then log in.');
+      ? `If your account exists, we will send a verification link to ${email}. Open the link in that email and confirm verification.`
+      : 'We will send a verification link to your inbox. Open the link in that email and confirm verification.');
 
   async function handleResend() {
     if (!email || resending) return;

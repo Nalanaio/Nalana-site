@@ -12,80 +12,37 @@
 <div class="container">
   <div class="legal-header">
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: May 5, 2026</p>
+    <p class="updated">Last updated: October 12, 2026</p>
   </div>
 
   <div class="legal-body">
 
-    <p>This Privacy Policy describes how Nalana, Inc. ("Nalana," "we," "us," or "our") collects and uses information when you use our software ("Service"). We built Nalana with a minimal data footprint by design. <strong>We do not collect personal information through the application.</strong> For information about cookies used on this website, see our <a href="/cookies">Cookie Policy</a>.</p>
-
-    <div class="divider"></div>
-
-    <h2>1. What We Collect</h2>
-
-    <h3>Creation activity data (in-app)</h3>
-    <p>When you use Nalana to create 3D content, we collect anonymized data about your creative activity to improve the product. This includes:</p>
+    <p>Nalana uses account information and operational records to provide the application, protect accounts and diagnose failures. Optional website analytics, visitor identification and in-app usage measurement have separate choices. See our <a href="/cookies">Cookie Policy</a> for website storage and controls.</p>
+    <h2>Accounts and service operation</h2>
+    <p>We process your email address, account profile, authentication and verification state, account entitlements and service requests. Passwords are checked against a protected password hash. Verification messages are sent through our email provider, Resend. Queued, provider accepted, delivered and bounced are distinct delivery states; delivery does not prove that you read a message.</p>
+    <p>To provide requested AI features, Nalana sends the instructions and context needed for that request to the backend and its configured AI providers. Optional funnel measurement does not include prompts, generated code, scene contents, file paths, passwords, email addresses or verification tokens. Diagnostics have a separate setting and are not enabled by granting usage permission.</p>
+    <h2>Operational download and activity records</h2>
+    <p>Operational records describe account creation, sign-in outcomes, verification, authorized cloud operations, delivery and installer transfer attempts. A download start means the transfer server accepted a nonempty response-body write. It does not establish a completed file, installation, application launch or a unique person. A direct fallback download is unobserved.</p>
+    <p>A first-party random download cookie helps suppress repeated download notifications within 24 hours. It is not used to fingerprint you or shared as a Google Analytics or RB2B identity. Deleting cookies or using another browser can create another identity.</p>
+    <h2>Optional usage measurement and linking</h2>
+    <p>Website analytics and app usage measurement are default off until you choose to allow them. With permission, pseudonymous usage records can describe current app readiness, observed result presentation, intentional revisions and explicit saves. An optional account association or short-lived download pairing code can connect permitted activity across surfaces. We do not match people by IP address, email address or nearby timestamps to invent a funnel link. Without permission or a valid explicit link, coverage remains unknown or unlinked.</p>
+    <p>Google Analytics and RB2B visitor identification require separate website choices. RB2B is an identification service and its data must not be described as anonymous. Sensitive recovery, verification, pairing and operator pages do not load these vendors. Change your choices using <button type="button" on:click={() => window.dispatchEvent(new Event('nalana:privacy-settings'))}>Privacy settings</button>. In-app usage permission is controlled separately in Nalana Settings.</p>
+    <h2>Retention</h2>
     <ul>
-      <li><strong>Commands and prompts:</strong> The natural language instructions you give to generate or modify 3D objects and scenes — used in aggregate to improve Nalana's AI</li>
-      <li><strong>Creation patterns:</strong> What types of objects, materials, and scenes are generated (e.g., "chair," "outdoor lighting") — no content is stored, only anonymous metadata</li>
-      <li><strong>App version and OS:</strong> Which version of Nalana you're running and your operating system — used for compatibility and stability</li>
-      <li><strong>Crash and error reports:</strong> Anonymized diagnostic data when the app crashes — used to fix bugs</li>
+      <li>Optional raw usage events, enrollments and links: up to 90 days.</li>
+      <li>Operational download intents and attempts: up to 30 days.</li>
+      <li>Verification delivery, reminder and webhook audit records: up to 90 days.</li>
+      <li>Pairing codes: 15 minutes; pairing records: up to 7 days.</li>
+      <li>Nonidentifying daily aggregates: up to 13 months.</li>
+      <li>Account verification policy state: account lifetime. Active cloud-operation admission records remain available while the operation is live.</li>
     </ul>
-    <p>This data is <strong>not linked to your identity</strong>. We do not collect your name, email, IP address, or any other personal identifier through the application itself.</p>
-
-    <h3>Website and contact</h3>
-    <p>If you contact us via email, we retain that correspondence to respond to your inquiry. Our website uses Google Analytics 4 and standard server logs to understand traffic patterns. Analytics data is anonymized and not linked to your identity. For full details on what cookies are set, see our <a href="/cookies">Cookie Policy</a>.</p>
-
-    <h2>2. What We Do Not Collect</h2>
-    <ul>
-      <li>Your name, email address, or identity — unless you contact us directly</li>
-      <li>Your IP address or precise location through the app</li>
-      <li>Payment or financial information of any kind</li>
-      <li>Your actual 3D files, renders, or project data — these stay on your device</li>
-      <li>Microphone or audio recordings</li>
-    </ul>
-
-    <h2>3. How We Use Activity Data</h2>
-    <p>The anonymized creation data we collect is used exclusively to:</p>
-    <ul>
-      <li>Improve Nalana's AI models and command understanding</li>
-      <li>Identify which features are used most and least</li>
-      <li>Debug crashes and improve app stability</li>
-      <li>Understand what kinds of 3D work people are doing</li>
-    </ul>
-    <p>We do not sell this data, use it for advertising, or share it with third parties for commercial purposes.</p>
-
-    <h2>4. Opting Out</h2>
-    <p>You can opt out of sending usage data to Nalana from within the application settings. Opting out does not affect your ability to use the software.</p>
-
-    <h2>5. Data Sharing</h2>
-    <p>We do not sell any data. We may share anonymized, aggregate data with:</p>
-    <ul>
-      <li><strong>Infrastructure providers:</strong> Services that host our backend (all data is anonymized before transmission)</li>
-      <li><strong>Legal requirements:</strong> If required by law or valid legal process</li>
-      <li><strong>Business transfers:</strong> In connection with a merger or acquisition, with the same privacy protections</li>
-    </ul>
-
-    <h2>6. Security</h2>
-    <p>We use industry-standard encryption and security practices to protect the data we do collect. Because we don't collect personal information, the risk surface for our users is minimal by design.</p>
-
-    <h2>7. Children</h2>
-    <p>Nalana is not directed at children under 13. We do not knowingly collect any data from children under 13.</p>
-
-    <h2>8. Related Policies</h2>
-    <p>This Privacy Policy works alongside our other legal documents:</p>
-    <ul>
-      <li><a href="/terms">Terms of Service</a> — governing your use of the Service</li>
-      <li><a href="/eula">End User License Agreement</a> — governing the desktop application specifically</li>
-      <li><a href="/cookies">Cookie Policy</a> — describing cookies and analytics on nalana.io</li>
-      <li><a href="/refund">Refund Policy</a> — describing how refunds are handled</li>
-    </ul>
-
-    <h2>9. Changes to This Policy</h2>
-    <p>We may update this policy as the product evolves. We'll update the "Last updated" date at the top when we do. If we ever begin collecting personal information, we will update this policy significantly and notify users.</p>
-
-    <h2>10. Contact</h2>
-    <p>Questions about our data practices? Reach us at <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>.</p>
+    <p>These limits describe acquisition and usage measurement. Account, billing, support and security records may have different retention needs. We retain minimal operational or security evidence where needed to prevent abuse, resolve disputes or meet applicable obligations.</p>
+    <h2>Your choices and deletion</h2>
+    <p>You may revoke optional usage permission at any time. Revocation stops new optional collection and clears pending uploads; it does not erase all historical business records. You can request deletion of optional measurement records with proof of account or enrollment ownership. Requests are completed within 30 days, subject to disclosed security and operational exceptions. Contact <a href="mailto:clarence@nalana.io">clarence@nalana.io</a> for access, deletion or help with your choices.</p>
+    <h2>Providers and security</h2>
+    <p>Our hosting, database, email, payment and configured AI providers process information needed for the requested service. Optional website vendors run only under the applicable choice. We use access controls, encrypted transport and restricted credentials; no system can promise absolute security. Funnel events exclude raw IP addresses, raw user agents and sensitive URL queries; service security logs have a separate operational purpose.</p>
+    <h2>Children and changes</h2>
+    <p>Nalana is not directed at children under 13. We update this policy as practices change. Related documents: <a href="/terms">Terms</a>, <a href="/eula">EULA</a>, <a href="/refund">Refund Policy</a> and <a href="/cookies">Cookie Policy</a>.</p>
 
   </div>
 </div>
@@ -162,15 +119,12 @@
     font-size: 20px; font-weight: 700; color: var(--ink-deep);
     margin: 40px 0 12px; letter-spacing: -0.01em;
   }
-  .legal-body h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin: 24px 0 8px; }
   .legal-body p { margin-bottom: 16px; }
-  .legal-body ul, .legal-body ol { padding-left: 24px; margin-bottom: 16px; }
+  .legal-body ul { padding-left: 24px; margin-bottom: 16px; }
   .legal-body li { margin-bottom: 8px; }
   .legal-body a { color: var(--primary); text-decoration: none; }
   .legal-body a:hover { text-decoration: underline; }
-  .legal-body strong { font-weight: 600; color: var(--ink-deep); }
 
-  .divider { height: 1px; background: var(--border); margin: 40px 0; }
 
   footer { padding: 48px 5% 36px; }
   .footer-inner {

@@ -47,10 +47,24 @@ export function resolveStableDownload({ platform, manifest, fallbackUrls = {} })
     if (
       typeof build?.download_url === 'string'
       && build.download_url.startsWith(`${STABLE_RELEASE_BASE_URL}/`)
+      && validateStableDownload(build.download_url, platform)
     ) {
       return build.download_url;
     }
   }
 
-  return fallbackUrls[platform] || null;
+  return validateStableDownload(fallbackUrls[platform], platform);
+}
+
+/** Exact release origin/repository; configured fallbacks receive the same checks. */
+export function validateStableDownload(value, platform) {
+  try {
+    const url = new URL(value);
+    const extension = platform === 'windows' ? '.exe' : platform === 'mac' ? '.dmg' : null;
+    const prefix = `/${STABLE_RELEASE_REPO}/releases/download/`;
+    if (!extension || url.protocol !== 'https:' || url.hostname !== 'github.com' || url.port || url.username || url.password || url.search || url.hash || !url.pathname.startsWith(prefix)) return null;
+    const suffix = url.pathname.slice(prefix.length).split('/');
+    if (suffix.length !== 2 || !/^[A-Za-z0-9._-]+$/.test(suffix[0]) || !/^[A-Za-z0-9._-]+$/.test(suffix[1]) || !suffix[1].endsWith(extension)) return null;
+    return url.href;
+  } catch { return null; }
 }

@@ -12,68 +12,26 @@
 <div class="container">
   <div class="legal-header">
     <h1>Cookie Policy</h1>
-    <p class="updated">Last updated: May 5, 2026</p>
+    <p class="updated">Last updated: October 12, 2026</p>
   </div>
 
   <div class="legal-body">
 
-    <p>This Cookie Policy explains how Nalana, Inc. ("Nalana," "we," "us," or "our") uses cookies and similar tracking technologies when you visit <strong>nalana.io</strong>. This policy should be read alongside our <a href="/privacy">Privacy Policy</a>.</p>
-
-    <div class="divider"></div>
-
-    <h2>1. What Are Cookies?</h2>
-    <p>Cookies are small text files placed on your device by a website. They are widely used to make websites work efficiently and to provide information to site owners. Cookies can be "persistent" (they remain on your device until they expire or are deleted) or "session" cookies (they are deleted when you close your browser).</p>
-
-    <h2>2. How We Use Cookies</h2>
-    <p>We use cookies on our website (<strong>nalana.io</strong>) for the following purposes:</p>
-
-    <h3>Analytics cookies</h3>
-    <p>We use Google Analytics 4 to understand how visitors interact with our website — which pages are most visited, how long people stay, and where they come from. This helps us improve the site and our product marketing.</p>
-    <p>Google Analytics sets the following cookies:</p>
-    <ul>
-      <li><strong>_ga</strong> — Registers a unique ID to generate statistical data on how you use the website. Duration: 2 years.</li>
-      <li><strong>_ga_[ID]</strong> — Used by Google Analytics 4 to persist session state. Duration: 2 years.</li>
-    </ul>
-    <p>These cookies do not identify you personally. The data collected is aggregated and anonymized. You can opt out of Google Analytics tracking using the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a>.</p>
-
-    <h3>Strictly necessary cookies</h3>
-    <p>Some cookies are essential for the website to function. These include session management cookies if you are logged in to your Nalana account. These cannot be disabled without affecting site functionality.</p>
-
-    <h2>3. What We Do Not Use</h2>
-    <p>We do not use:</p>
-    <ul>
-      <li>Advertising or retargeting cookies</li>
-      <li>Third-party social media tracking pixels</li>
-      <li>Fingerprinting or other persistent tracking beyond what is described above</li>
-    </ul>
-
-    <h2>4. Third-Party Cookies</h2>
-    <p>Google Analytics is the only third-party service that sets cookies on nalana.io. Google's use of data collected through Analytics is governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
-
-    <h2>5. Managing Cookies</h2>
-    <p>You can control and delete cookies through your browser settings. Most browsers allow you to:</p>
-    <ul>
-      <li>See what cookies are set and delete them individually</li>
-      <li>Block third-party cookies</li>
-      <li>Block cookies from particular sites</li>
-      <li>Block all cookies from being set</li>
-    </ul>
-    <p>Note that blocking all cookies may affect the functionality of some parts of our website. For guidance on managing cookies in your browser, visit:</p>
-    <ul>
-      <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Chrome</a></li>
-      <li><a href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer" target="_blank" rel="noopener">Firefox</a></li>
-      <li><a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener">Safari</a></li>
-      <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Edge</a></li>
-    </ul>
-
-    <h2>6. Do Not Track</h2>
-    <p>Some browsers include a "Do Not Track" (DNT) feature that signals to websites that you do not want to be tracked. There is currently no industry standard for how websites should respond to DNT signals. We do not currently respond to DNT signals, but we do limit our tracking to the analytics described above.</p>
-
-    <h2>7. Changes to This Policy</h2>
-    <p>We may update this Cookie Policy as our website or tracking practices change. We will update the "Last updated" date at the top when we do.</p>
-
-    <h2>8. Contact</h2>
-    <p>Questions about our use of cookies? Contact us at <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>.</p>
+    <p>This policy describes website cookies and similar storage. Optional analytics and visitor identification are default off. These choices are separate from optional in-app usage measurement and diagnostics.</p>
+    <h2>Operational storage</h2>
+    <p>Website account sessions and security controls use browser storage and private cookies as needed for authentication, recovery and restricted operator access. Operator cookies are HttpOnly, Secure and SameSite Strict, and expire after 15 minutes. Private backend credentials are not exposed to the browser.</p>
+    <p>The download deduplication cookie is a signed random first-party value with a non-sliding lifetime of 24 hours. It is HttpOnly, Secure and SameSite Lax. It suppresses repeated notifications for the same browser, platform and release; it does not identify a unique person. Expiry, deletion, cookie blocking or another browser can produce a new identity. Cookies are not proof that a download finished or the application was installed.</p>
+    <h2>Optional analytics and visitor identification</h2>
+    <p>Google Analytics measures permitted website activity. RB2B is a separate visitor-identification integration and requires its own permission. An analytics or app usage grant does not silently enable RB2B. Vendor storage and retention depend on the vendor and configured service. We do not promise that vendor data is anonymous or that revocation erases information already sent.</p>
+    <p>Optional first-party usage enrollment may use a pseudonymous browser visitor ID and session ID. Consented account association or an explicit pairing code can link a download with app activity. A pairing code expires after 15 minutes and does not authenticate an account, verify email or prove installation. Operational deduplication values, account email, passwords, verification tokens and pairing codes are not forwarded as analytics identities.</p>
+    <p>Verification, password recovery, pairing and operator pages do not load optional third-party analytics or identification scripts. Changing optional choices stops new dispatch; a page reload may be needed to remove a vendor already loaded in the current document.</p>
+    <h2>Change your choices</h2>
+    <p><button type="button" on:click={() => window.dispatchEvent(new Event('nalana:privacy-settings'))}>Open privacy settings</button> to review separate analytics and visitor-identification choices at any time. App usage permission and diagnostics are controlled separately inside Nalana Settings.</p>
+    <p>Your browser can block or delete cookies and website storage. Blocking operational cookies may affect login or deduplication. Declining optional measurement does not prevent downloading or using local app features.</p>
+    <h2>Retention and deletion</h2>
+    <p>Optional raw measurement records and links are retained for up to 90 days; operational download records for 30 days; delivery audit records for 90 days; pairing records for 7 days with code secrets expiring after 15 minutes; nonidentifying daily aggregates for 13 months. Account policy state is retained for the account lifetime. Revocation stops new optional collection and clears pending uploads; it is separate from a request to delete historical records. See the <a href="/privacy">Privacy Policy</a> for deletion within 30 days and operational/security exceptions.</p>
+    <h2>Contact</h2>
+    <p>Questions about storage or choices? Email <a href="mailto:clarence@nalana.io">clarence@nalana.io</a>.</p>
 
   </div>
 </div>
@@ -150,15 +108,10 @@
     font-size: 20px; font-weight: 700; color: var(--ink-deep);
     margin: 40px 0 12px; letter-spacing: -0.01em;
   }
-  .legal-body h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin: 24px 0 8px; }
   .legal-body p { margin-bottom: 16px; }
-  .legal-body ul { padding-left: 24px; margin-bottom: 16px; }
-  .legal-body li { margin-bottom: 8px; }
   .legal-body a { color: var(--primary); text-decoration: none; }
   .legal-body a:hover { text-decoration: underline; }
-  .legal-body strong { font-weight: 600; color: var(--ink-deep); }
 
-  .divider { height: 1px; background: var(--border); margin: 40px 0; }
 
   footer { padding: 48px 5% 36px; }
   .footer-inner {

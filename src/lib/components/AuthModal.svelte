@@ -1,6 +1,7 @@
 <script>
   import { authModal, closeAuthModal } from '$lib/stores/modal.js';
   import { auth } from '$lib/stores/auth.js';
+  import VerificationRecovery from './VerificationRecovery.svelte';
   import { authErrorMessage, isEmailNotVerifiedError, validatePassword } from '$lib/authClient.js';
 
   let email = '';
@@ -51,7 +52,7 @@
         if (mode === 'login' && isEmailNotVerifiedError(res.status, data)) {
           showUnverified = true;
         }
-        error = authErrorMessage(res.status, data, mode);
+        error = authErrorMessage(res.status, data, mode === 'signup' ? 'signup' : 'login');
         return;
       }
 
@@ -61,6 +62,7 @@
       }
 
       auth.setSession(data.token, data.user, data.refresh_token);
+      password = '';
 
       if (mode === 'signup') {
         signupSuccess = true;
@@ -98,7 +100,8 @@
 
       {#if signupSuccess}
         <h2 class="card-title">Account created</h2>
-        <p class="card-sub">Your Nalana account is ready. Use the same email in the IDE and on the website.</p>
+        <p class="card-sub">You are signed in and can use Nalana now. Use the same account in the app.</p>
+        <VerificationRecovery policy={$auth.user?.verification} />
         <a href="/account" class="submit-btn" style="text-decoration:none;text-align:center;">Go to account</a>
         <button type="button" class="skip-btn" on:click={closeAuthModal}>Close</button>
       {:else}
