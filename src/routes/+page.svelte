@@ -150,7 +150,6 @@
           </a>
         {/if}
       </div>
-      <p class="download-linking"><a href="/connect-download" data-sveltekit-reload>Already downloading? Optionally link your download to the app.</a></p>
     </section>
 
     <!-- VALIDATION STRIP -->
@@ -261,6 +260,7 @@
         <div class="legal-links">
           <a href="/terms">Terms</a>
           <a href="/privacy">Privacy</a>
+          <button type="button" on:click={() => window.dispatchEvent(new Event('nalana:privacy-settings'))}>Privacy settings</button>
           <a href="/eula">EULA</a>
           <a href="/refund">Refund</a>
           <a href="/cookies">Cookies</a>
@@ -396,8 +396,9 @@
   .footer-legal { display: flex; align-items: center; justify-content: flex-start; gap: 16px; flex-wrap: wrap; margin-top: 20px; padding: 0 36px; }
   .legal-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a4a7b0; }
   .legal-links { display: flex; gap: 18px; flex-wrap: wrap; }
-  .legal-links a { color: #8a8a93; text-decoration: none; font-size: 13px; }
-  .legal-links a:hover { color: #1085ef; }
+  .legal-links a, .legal-links button { color: #8a8a93; text-decoration: none; font-size: 13px; }
+  .legal-links button { background: none; border: 0; padding: 0; font-family: inherit; cursor: pointer; }
+  .legal-links a:hover, .legal-links button:hover { color: #1085ef; }
 
   @keyframes nlGlow { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.06); } }
   @keyframes ftCollapse { 0%, 12% { transform: translate(0, 0) scale(1); opacity: 1; } 75% { transform: translate(calc(var(--fx, 0) * 0.9), calc(var(--fy, 0) * 0.9)) scale(0.34); opacity: 0.95; } 100% { transform: translate(var(--fx, 0), var(--fy, 0)) scale(0.06); opacity: 0; } }

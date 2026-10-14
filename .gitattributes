@@ -1,0 +1,2 @@
+# This shared contract is verified by its exact SHA-256 on every platform.
+tests/fixtures/acquisition_contract_v1.json text eol=lf
