@@ -10,6 +10,12 @@ export const authModal = writable({
 });
 
 export function openAuthModal(platform = null, mode = 'signup') {
+  // Account entry uses a fresh sensitive document, so previously loaded vendor
+  // scripts cannot observe credentials inside an inline marketing-page modal.
+  if (typeof window !== 'undefined') {
+    window.location.assign(`/login${mode === 'signup' ? '?mode=signup' : ''}`);
+    return;
+  }
   authModal.set({ open: true, platform, mode });
 }
 

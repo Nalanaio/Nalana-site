@@ -1,95 +1,60 @@
 <script>
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
-  import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
+  import { afterNavigate, goto } from '$app/navigation';
+  import { auth } from '$lib/stores/auth.js';
+  import { createRecoveryProof } from '$lib/verification/recovery.js';
   import { resendVerificationEmail, RESEND_SUCCESS_MESSAGE } from '$lib/authClient.js';
-
-  /** @type {'loading' | 'success' | 'error' | 'missing' | 'resend'} */
   let state = 'loading';
+  let proof;
   let errorDetail = '';
   let emailForResend = '';
   let resendEmailInput = '';
   let resendMsg = '';
   let resendError = '';
   let resending = false;
-
-  $: token = $page.url.searchParams.get('token') ?? '';
-  $: emailParam = $page.url.searchParams.get('email') ?? '';
-  $: actionParam = $page.url.searchParams.get('action') ?? '';
-  $: isResendAction =
-    actionParam === 'resend' ||
-    $page.url.searchParams.get('resend') === 'true' ||
-    $page.url.searchParams.get('resend') === '1';
-
   onMount(() => {
-    if (emailParam) {
-      resendEmailInput = emailParam;
-      emailForResend = emailParam;
-    }
-    if (isResendAction && !token) {
-      state = 'resend';
-      return;
-    }
-    if (!token) {
-      state = 'missing';
-      return;
-    }
-    verify(token, emailParam);
+    proof = createRecoveryProof(window.location.href);
+    state = proof.hasToken ? 'confirm' : proof.resend ? 'resend' : 'missing';
   });
-
-  async function verify(verificationToken, email = '') {
-    state = 'loading';
-    errorDetail = '';
-    try {
-      const payload = { token: verificationToken };
-      if (email) payload.email = email;
-      const res = await fetch('/api/auth/verify-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        state = 'error';
-        errorDetail = data.error ?? data.detail ?? 'Invalid or expired verification token.';
-        return;
+  // Initial hydration invokes onMount before the SvelteKit router is ready.
+  // Keep the proof in memory, then scrub it once navigation initialization ends.
+  afterNavigate(({ complete, to }) => {
+    void complete.then(() => {
+      const current = new URL(window.location.href);
+      if (current.href === to?.url.href && current.searchParams.get('token')) {
+        void goto(current.pathname, { replaceState: true, noScroll: true, keepFocus: true });
       }
-      state = 'success';
-      emailForResend = data.user?.email ?? email;
-      setTimeout(() => goto('/login'), 3000);
-    } catch {
-      state = 'error';
-      errorDetail = 'Network error. Please try again.';
+    });
+  });
+  async function verify() {
+    if (state === 'loading') return;
+    state = 'loading';
+    const result = await proof.confirm();
+    if (!result.ok) {
+      state = 'error'; errorDetail = result.data.error ?? 'Invalid or expired verification token.'; return;
     }
+    if (auth.current.token) await auth.refreshSession();
+    state = 'success';
   }
-
   async function handleResend() {
     const target = resendEmailInput.trim() || emailForResend;
     if (!target || resending) return;
-    resending = true;
-    resendMsg = '';
-    resendError = '';
+    resending = true; resendMsg = ''; resendError = '';
     try {
       const result = await resendVerificationEmail(target);
-      if (result.ok) {
-        resendMsg = result.message || RESEND_SUCCESS_MESSAGE;
-      } else {
-        resendError = result.message || 'Could not send email. Try again.';
-      }
-    } catch {
-      resendError = 'Network error. Please try again.';
-    } finally {
-      resending = false;
-    }
+      if (result.ok) resendMsg = result.message || RESEND_SUCCESS_MESSAGE;
+      else resendError = result.message;
+    } catch { resendError = 'Network error. Please try again.'; }
+    finally { resending = false; }
   }
 </script>
 
 <svelte:head>
   <title>Verify email — Nalana</title>
+  <meta name="referrer" content="no-referrer" />
 </svelte:head>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 <style>
   :global(body) { cursor: auto; background: #fafafa; }
@@ -214,11 +179,16 @@
       <h1>Verifying your email…</h1>
       <p class="sub">Please wait a moment.</p>
 
+    {:else if state === 'confirm'}
+      <h1>Confirm your email</h1>
+      <p class="sub">Press the button below to verify your email address.</p>
+      <button type="button" class="btn-primary" on:click={verify}>Verify my email</button>
+
     {:else if state === 'success'}
       <div class="success-icon" aria-hidden="true">✦</div>
       <h1>Email verified!</h1>
-      <p class="sub">Your account is ready. Redirecting to login in a few seconds…</p>
-      <a href="/login" class="btn-primary">Go to login →</a>
+      <p class="sub">Your email is verified. You can return to Nalana.</p>
+      <a href={auth.current.token ? "/account" : "/login"} class="btn-primary">Continue →</a>
 
     {:else if state === 'resend'}
       <div class="success-icon" aria-hidden="true">✉</div>
@@ -246,6 +216,7 @@
     {:else if state === 'error'}
       <h1>Verification failed</h1>
       <div class="error-box">{errorDetail}</div>
+      {#if proof?.hasToken}<button type="button" class="btn-primary" on:click={verify}>Try verification again</button>{/if}
       <input class="field" type="email" placeholder="your@email.com" bind:value={resendEmailInput} />
       <button type="button" class="btn-primary" disabled={resending} on:click={handleResend}>
         {resending ? 'Sending…' : 'Resend verification email'}

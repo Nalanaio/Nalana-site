@@ -41,7 +41,7 @@ test('manifest failures keep the homepage and configured fallback downloads avai
     async () => ({ ok: false }), async () => ({ ok: true, json: async () => { throw new Error('invalid JSON'); } })]) {
     const manifest = await loadStableManifest(fetch);
     assert.equal(stableReleaseLabel(manifest), 'Nalana');
-    assert.equal(resolveStableDownload({ platform: 'windows', manifest, fallbackUrls: { windows: 'https://downloads.example.test/nalana.exe' } }), 'https://downloads.example.test/nalana.exe');
+    assert.equal(resolveStableDownload({ platform: 'windows', manifest, fallbackUrls: { windows: 'https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana.exe' } }), 'https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana.exe');
   }
 });
 
@@ -69,9 +69,9 @@ test('falls back to the configured installer when the public manifest is unavail
     resolveStableDownload({
       platform: 'windows',
       manifest: null,
-      fallbackUrls: { windows: 'https://downloads.example.test/nalana.exe' },
+      fallbackUrls: { windows: 'https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana.exe' },
     }),
-    'https://downloads.example.test/nalana.exe',
+    'https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana.exe',
   );
 });
 

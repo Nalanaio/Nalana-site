@@ -5,6 +5,7 @@
   import { get } from 'svelte/store';
   import { auth } from '$lib/stores/auth.js';
   import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
+  import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
   import {
     authErrorMessage,
     isEmailNotVerifiedError,
@@ -72,7 +73,7 @@
         if (mode === 'login' && isEmailNotVerifiedError(res.status, data)) {
           showUnverified = true;
         }
-        error = authErrorMessage(res.status, data, mode);
+        error = authErrorMessage(res.status, data, mode === 'signup' ? 'signup' : 'login');
         return;
       }
 
@@ -82,6 +83,7 @@
       }
 
       auth.setSession(data.token, data.user, data.refresh_token);
+      password = '';
 
       if (mode === 'signup') {
         signupSuccess = true;
@@ -109,7 +111,7 @@
   <title>{signupSuccess ? 'Account created' : mode === 'signup' ? 'Create account' : 'Log in'} — Nalana</title>
 </svelte:head>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 <style>
   :global(body) { cursor: auto; background: #fafafa; }
@@ -154,12 +156,12 @@
     </a>
 
     {#if signupSuccess}
-      <EmailVerifyPanel variant="signup" {email} title="Account created">
+      <h1>Account created</h1>
+      <VerificationRecovery policy={$auth.user?.verification} />
+      <EmailVerifyPanel variant="signup" {email} title="You can use Nalana now" subtitle="Your account is signed in. Use the same email and password in the Nalana app.">
         <svelte:fragment slot="actions">
           <a href="/account" class="btn-secondary">Go to my account</a>
-          <button type="button" class="switch-link" style="display:block;width:100%;margin-top:16px;" on:click={() => { signupSuccess = false; mode = 'login'; }}>
-            Log in instead
-          </button>
+
         </svelte:fragment>
       </EmailVerifyPanel>
     {:else}

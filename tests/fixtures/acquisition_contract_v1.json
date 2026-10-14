@@ -1,0 +1,702 @@
+{
+  "canonical_uuid_examples": {
+    "app_session": "22222222-2222-4222-8222-222222222222",
+    "download": "44444444-4444-4444-8444-444444444444",
+    "enrollment": "66666666-6666-4666-8666-666666666666",
+    "event": "11111111-1111-4111-8111-111111111111",
+    "install": "77777777-7777-4777-8777-777777777777",
+    "request": "55555555-5555-4555-8555-555555555555",
+    "web_session": "33333333-3333-4333-8333-333333333333",
+    "web_visitor": "88888888-8888-4888-8888-888888888888"
+  },
+  "contract": "nalana-acquisition-contract-v1",
+  "events": {
+    "ack_example": {
+      "accepted": [
+        "11111111-1111-4111-8111-111111111111"
+      ],
+      "duplicates": [],
+      "rejected": [],
+      "schema_version": 1
+    },
+    "client_keys": [
+      "event_id",
+      "event_name",
+      "occurred_at",
+      "app_session_id",
+      "web_session_id",
+      "association_epoch",
+      "operation_id",
+      "download_id",
+      "request_id",
+      "properties"
+    ],
+    "failure_code_values": [
+      "invalid_input",
+      "unauthorized",
+      "verification_required",
+      "quota_exceeded",
+      "rate_limited",
+      "timeout",
+      "network",
+      "provider_error",
+      "apply_failed",
+      "save_failed",
+      "delivery_unavailable",
+      "unknown"
+    ],
+    "invalid_examples": [
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "environment": "production",
+          "event_id": "11111111-1111-4111-8111-111111111111",
+          "event_name": "app_ui_ready",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {},
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "client_cannot_claim_environment"
+      },
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "event_id": "11111111-1111-4111-8111-111111111111",
+          "event_name": "app_ui_ready",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {
+            "email": "fixture@example.invalid"
+          },
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "no_arbitrary_property_bag"
+      },
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "event_id": "11111111111141118111111111111111",
+          "event_name": "app_ui_ready",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {},
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "schema_uses_uuid_v4"
+      },
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "event_id": "11111111-1111-4111-8111-111111111111",
+          "event_name": "app_installed",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {},
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "no_invented_milestone"
+      },
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "event_id": "11111111-1111-4111-8111-111111111111",
+          "event_name": "generation_result_visible",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {
+            "outcome": "succeeded",
+            "pipeline": "concept"
+          },
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "concept_substage_required"
+      },
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "event_id": "11111111-1111-4111-8111-111111111111",
+          "event_name": "generation_backend_failed",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {
+            "outcome": "cancelled"
+          },
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "backend_cancel_is_not_failure"
+      },
+      {
+        "event": {
+          "app_session_id": "22222222-2222-4222-8222-222222222222",
+          "association_epoch": 0,
+          "download_id": null,
+          "event_id": "11111111-1111-4111-8111-111111111111",
+          "event_name": "project_saved",
+          "occurred_at": "2026-10-12T18:00:00Z",
+          "operation_id": null,
+          "properties": {
+            "save_kind": "autosave"
+          },
+          "request_id": null,
+          "web_session_id": null
+        },
+        "name": "no_autosave_activation"
+      }
+    ],
+    "pipeline_values": [
+      "scratch",
+      "composer",
+      "concept",
+      "other",
+      "unknown"
+    ],
+    "registry": {
+      "account_created": {
+        "allowed_properties": [],
+        "required_properties": {}
+      },
+      "app_startup_observed": {
+        "allowed_properties": [],
+        "required_properties": {}
+      },
+      "app_ui_ready": {
+        "allowed_properties": [],
+        "required_properties": {}
+      },
+      "auth_login_failed": {
+        "allowed_properties": [
+          "outcome",
+          "failure_code"
+        ],
+        "required_properties": {
+          "outcome": [
+            "failed"
+          ]
+        }
+      },
+      "auth_login_succeeded": {
+        "allowed_properties": [
+          "outcome"
+        ],
+        "required_properties": {
+          "outcome": [
+            "succeeded"
+          ]
+        }
+      },
+      "download_handoff": {
+        "allowed_properties": [
+          "delivery_mode"
+        ],
+        "required_properties": {
+          "delivery_mode": [
+            "relay",
+            "direct_fallback"
+          ]
+        }
+      },
+      "download_transfer_started": {
+        "allowed_properties": [],
+        "required_properties": {}
+      },
+      "email_verification_completed": {
+        "allowed_properties": [],
+        "required_properties": {}
+      },
+      "generation_backend_completed": {
+        "allowed_properties": [
+          "outcome",
+          "pipeline"
+        ],
+        "required_properties": {
+          "outcome": [
+            "succeeded"
+          ]
+        }
+      },
+      "generation_backend_failed": {
+        "allowed_properties": [
+          "outcome",
+          "pipeline",
+          "stage",
+          "failure_code"
+        ],
+        "required_properties": {
+          "outcome": [
+            "failed"
+          ]
+        }
+      },
+      "generation_backend_terminal": {
+        "allowed_properties": [
+          "outcome",
+          "pipeline",
+          "stage"
+        ],
+        "required_properties": {
+          "outcome": [
+            "cancelled",
+            "abandoned",
+            "interrupted",
+            "unknown"
+          ]
+        }
+      },
+      "generation_requested": {
+        "allowed_properties": [
+          "pipeline"
+        ],
+        "required_properties": {}
+      },
+      "generation_result_failed": {
+        "allowed_properties": [
+          "outcome",
+          "pipeline",
+          "stage",
+          "failure_code"
+        ],
+        "required_properties": {
+          "outcome": [
+            "failed"
+          ]
+        }
+      },
+      "generation_result_revised": {
+        "allowed_properties": [
+          "revision_kind",
+          "pipeline"
+        ],
+        "required_properties": {
+          "revision_kind": [
+            "manual_edit",
+            "ai_revision"
+          ]
+        }
+      },
+      "generation_result_visible": {
+        "allowed_properties": [
+          "outcome",
+          "pipeline",
+          "stage"
+        ],
+        "required_properties": {
+          "outcome": [
+            "succeeded"
+          ]
+        }
+      },
+      "project_saved": {
+        "allowed_properties": [
+          "save_kind",
+          "pipeline"
+        ],
+        "required_properties": {
+          "save_kind": [
+            "explicit_save",
+            "save_as"
+          ]
+        }
+      },
+      "verification_gate_blocked": {
+        "allowed_properties": [
+          "phase",
+          "failure_code"
+        ],
+        "required_properties": {
+          "failure_code": [
+            "verification_required"
+          ],
+          "phase": [
+            "required"
+          ]
+        }
+      },
+      "verification_message_bounced": {
+        "allowed_properties": [
+          "stage",
+          "failure_code"
+        ],
+        "required_properties": {
+          "stage": [
+            "initial",
+            "reminder_1",
+            "reminder_2",
+            "manual",
+            "correction"
+          ]
+        }
+      },
+      "verification_message_delivered": {
+        "allowed_properties": [
+          "stage"
+        ],
+        "required_properties": {
+          "stage": [
+            "initial",
+            "reminder_1",
+            "reminder_2",
+            "manual",
+            "correction"
+          ]
+        }
+      },
+      "verification_message_queued": {
+        "allowed_properties": [
+          "stage"
+        ],
+        "required_properties": {
+          "stage": [
+            "initial",
+            "reminder_1",
+            "reminder_2",
+            "manual",
+            "correction"
+          ]
+        }
+      },
+      "verification_message_sent": {
+        "allowed_properties": [
+          "stage"
+        ],
+        "required_properties": {
+          "stage": [
+            "initial",
+            "reminder_1",
+            "reminder_2",
+            "manual",
+            "correction"
+          ]
+        }
+      },
+      "website_download_clicked": {
+        "allowed_properties": [],
+        "required_properties": {}
+      }
+    },
+    "server_only_keys": [
+      "received_at",
+      "source",
+      "authority",
+      "environment",
+      "channel",
+      "release_id",
+      "build_id",
+      "build_trust",
+      "platform",
+      "architecture",
+      "install_id",
+      "web_visitor_id",
+      "actor_ref",
+      "consent_state",
+      "coverage",
+      "traffic_class"
+    ],
+    "stage_values": [
+      "admission",
+      "generation",
+      "result_apply",
+      "result_reveal",
+      "concept_preview",
+      "concept_import",
+      "revision",
+      "save",
+      "unknown"
+    ],
+    "valid_examples": [
+      {
+        "app_session_id": "22222222-2222-4222-8222-222222222222",
+        "association_epoch": 0,
+        "download_id": null,
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_name": "app_ui_ready",
+        "occurred_at": "2026-10-12T18:00:00Z",
+        "operation_id": null,
+        "properties": {},
+        "request_id": null,
+        "web_session_id": null
+      },
+      {
+        "app_session_id": "22222222-2222-4222-8222-222222222222",
+        "association_epoch": 1,
+        "download_id": null,
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_name": "generation_result_visible",
+        "occurred_at": "2026-10-12T18:00:00Z",
+        "operation_id": "opaque-operation-1",
+        "properties": {
+          "outcome": "succeeded",
+          "pipeline": "concept",
+          "stage": "concept_preview"
+        },
+        "request_id": null,
+        "web_session_id": null
+      },
+      {
+        "app_session_id": "22222222-2222-4222-8222-222222222222",
+        "association_epoch": 1,
+        "download_id": null,
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_name": "generation_result_visible",
+        "occurred_at": "2026-10-12T18:00:00Z",
+        "operation_id": "opaque-operation-1",
+        "properties": {
+          "outcome": "succeeded",
+          "pipeline": "concept",
+          "stage": "concept_import"
+        },
+        "request_id": null,
+        "web_session_id": null
+      },
+      {
+        "app_session_id": "22222222-2222-4222-8222-222222222222",
+        "association_epoch": 0,
+        "download_id": null,
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_name": "project_saved",
+        "occurred_at": "2026-10-12T18:00:00Z",
+        "operation_id": null,
+        "properties": {
+          "save_kind": "save_as"
+        },
+        "request_id": null,
+        "web_session_id": null
+      }
+    ]
+  },
+  "limits": {
+    "alert_window_seconds": 86400,
+    "batch_bytes": 65536,
+    "batch_events": 50,
+    "enrollment_days": 30,
+    "future_skew_seconds": 300,
+    "max_age_days": 7,
+    "pairing_code_symbols": 16,
+    "pairing_ttl_seconds": 900,
+    "queue_bytes": 1048576,
+    "queue_events": 500,
+    "transfer_ticket_seconds": 900
+  },
+  "schema_version": 1,
+  "sessions": {
+    "anonymous_history_retroactively_linked": false,
+    "associated_response": {
+      "association_epoch": 1,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "status": "associated"
+    },
+    "closed_session_accepts_delayed_events": false,
+    "desktop_request": {
+      "app_session_id": "22222222-2222-4222-8222-222222222222",
+      "web_session_id": null
+    },
+    "invalid_both_clients": {
+      "app_session_id": "22222222-2222-4222-8222-222222222222",
+      "web_session_id": "33333333-3333-4333-8333-333333333333"
+    },
+    "registered_response": {
+      "association_epoch": 0,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "status": "registered"
+    },
+    "website_request": {
+      "app_session_id": null,
+      "web_session_id": "33333333-3333-4333-8333-333333333333"
+    }
+  },
+  "source": "SHARED-CONTRACT.md",
+  "transfer": {
+    "non_qualifying": [
+      "HEAD",
+      "304",
+      "416",
+      "empty_body",
+      "cancel_before_write",
+      "direct_fallback"
+    ],
+    "start_authority": "relay_server_write",
+    "start_proves_installation": false,
+    "valid_observation": {
+      "bytes_written_at_observation": 1,
+      "download_id": "44444444-4444-4444-8444-444444444444",
+      "event_id": "11111111-1111-4111-8111-111111111111",
+      "event_name": "download_transfer_started",
+      "http_status": 206,
+      "observed_at": "2026-10-12T18:00:00Z",
+      "range_start": 0,
+      "request_id": "55555555-5555-4555-8555-555555555555",
+      "schema_version": 1
+    }
+  },
+  "verification": {
+    "cases": [
+      {
+        "anchor": "2026-10-12T18:00:00Z",
+        "enforcement_enabled": true,
+        "expected_allowed": true,
+        "expected_state": "grace",
+        "name": "signup",
+        "now": "2026-10-12T18:00:00Z",
+        "verified": false
+      },
+      {
+        "anchor": "2026-10-12T18:00:00Z",
+        "enforcement_enabled": true,
+        "expected_allowed": true,
+        "expected_state": "grace",
+        "name": "one_microsecond_before_48h",
+        "now": "2026-10-14T17:59:59.999999Z",
+        "verified": false
+      },
+      {
+        "anchor": "2026-10-12T18:00:00Z",
+        "enforcement_enabled": true,
+        "expected_allowed": false,
+        "expected_state": "required",
+        "name": "exactly_48h",
+        "now": "2026-10-14T18:00:00Z",
+        "verified": false
+      },
+      {
+        "anchor": "2026-10-12T18:00:00Z",
+        "enforcement_enabled": true,
+        "expected_allowed": false,
+        "expected_state": "required",
+        "name": "after_48h",
+        "now": "2026-10-14T18:00:00.000001Z",
+        "verified": false
+      },
+      {
+        "anchor": "2026-10-12T18:00:00Z",
+        "enforcement_enabled": false,
+        "expected_allowed": true,
+        "expected_state": "required",
+        "name": "rollback_keeps_required_state_but_allows_cloud",
+        "now": "2026-10-14T18:00:00Z",
+        "verified": false
+      },
+      {
+        "anchor": "2026-10-12T18:00:00Z",
+        "enforcement_enabled": true,
+        "expected_allowed": true,
+        "expected_state": "verified",
+        "name": "verified_after_deadline",
+        "now": "2026-10-14T18:00:00Z",
+        "verified": true
+      }
+    ],
+    "error_example": {
+      "code": "EMAIL_VERIFICATION_REQUIRED",
+      "detail": "Please verify your email to continue using cloud features.",
+      "request_id": "55555555-5555-4555-8555-555555555555",
+      "verification": {
+        "cloud_actions_allowed": false,
+        "enforcement_enabled": true,
+        "grace_expires_at": "2026-10-14T18:00:00Z",
+        "grace_started_at": "2026-10-12T18:00:00Z",
+        "next_reminder_at": null,
+        "policy_version": 1,
+        "resend_available_at": "2026-10-12T18:01:00Z",
+        "server_time": "2026-10-14T18:00:00Z",
+        "state": "required"
+      }
+    },
+    "grace_hours": 48,
+    "invalid_policy_mutations": [
+      {
+        "policy_version": "1"
+      },
+      {
+        "cloud_actions_allowed": "true"
+      },
+      {
+        "state": "warning"
+      }
+    ],
+    "placement": {
+      "login": "user.verification",
+      "refresh": "verification",
+      "register": "user.verification",
+      "users_me": "verification",
+      "verify": "user.verification",
+      "verify_email": "verification"
+    },
+    "policy_example": {
+      "cloud_actions_allowed": true,
+      "enforcement_enabled": true,
+      "grace_expires_at": "2026-10-14T18:00:00Z",
+      "grace_started_at": "2026-10-12T18:00:00Z",
+      "next_reminder_at": "2026-10-12T19:00:00Z",
+      "policy_version": 1,
+      "resend_available_at": "2026-10-12T18:01:00Z",
+      "server_time": "2026-10-12T18:00:00Z",
+      "state": "grace"
+    },
+    "policy_fields": [
+      "policy_version",
+      "state",
+      "grace_started_at",
+      "grace_expires_at",
+      "server_time",
+      "enforcement_enabled",
+      "cloud_actions_allowed",
+      "next_reminder_at",
+      "resend_available_at"
+    ],
+    "refresh_example": {
+      "access_token": "fixture-access-token",
+      "refresh_token": "fixture-refresh-token",
+      "token_type": "bearer",
+      "verification": {
+        "cloud_actions_allowed": true,
+        "enforcement_enabled": true,
+        "grace_expires_at": "2026-10-14T18:00:00Z",
+        "grace_started_at": "2026-10-12T18:00:00Z",
+        "next_reminder_at": "2026-10-12T19:00:00Z",
+        "policy_version": 1,
+        "resend_available_at": "2026-10-12T18:01:00Z",
+        "server_time": "2026-10-12T18:00:00Z",
+        "state": "grace"
+      }
+    },
+    "reminder_hours": [
+      1,
+      5
+    ],
+    "warning_hours": 24,
+    "website_error_example": {
+      "code": "EMAIL_VERIFICATION_REQUIRED",
+      "error": "Please verify your email to continue using cloud features.",
+      "request_id": "55555555-5555-4555-8555-555555555555",
+      "verification": {
+        "cloud_actions_allowed": false,
+        "enforcement_enabled": true,
+        "grace_expires_at": "2026-10-14T18:00:00Z",
+        "grace_started_at": "2026-10-12T18:00:00Z",
+        "next_reminder_at": null,
+        "policy_version": 1,
+        "resend_available_at": "2026-10-12T18:01:00Z",
+        "server_time": "2026-10-14T18:00:00Z",
+        "state": "required"
+      }
+    }
+  }
+}
