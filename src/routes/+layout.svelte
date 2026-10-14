@@ -59,4 +59,7 @@
 <VerificationPrompt />
 
 <slot />
-<AnalyticsConsent onChoice={updateChoice} />
+<AnalyticsConsent
+  onChoice={updateChoice}
+  autoPrompt={env.PUBLIC_NALANA_FUNNEL_ENABLED === 'true' || env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true'}
+/>
