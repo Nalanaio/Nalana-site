@@ -11,6 +11,16 @@ function surface(search = '') {
 }
 const choice = { usage: true, identification: false };
 
+test('Google tag receives commands as Arguments objects, including download events', () => {
+  const s = surface();
+  analytics.loadAnalytics({ ...s, choice, pathname: '/', enabled: true });
+  analytics.trackDownloadClick({ window: s.window, platform: 'windows' });
+  assert.deepEqual(s.calls.map(call => call[0]), ['consent', 'js', 'config', 'event', 'event']);
+  for (const call of s.calls) {
+    assert.equal(Object.prototype.toString.call(call), '[object Arguments]');
+  }
+});
+
 test('GA receives campaign and creative tags without unrelated query data or fragments', () => {
   const s = surface('?utm_source=facebook&utm_medium=paid_social&utm_campaign=launch&utm_content=Just%20Start%20Creating&utm_id=123&token=private&email=private%40example.test&fbclid=private#private');
   analytics.loadAnalytics({ ...s, choice, pathname: '/', enabled: true });
@@ -80,8 +90,7 @@ test('the real CTA records a consented click and analytics failure cannot block 
     if (previousAnchor === undefined) delete globalThis.HTMLAnchorElement; else globalThis.HTMLAnchorElement = previousAnchor;
   });
   const s = surface();
-  globalThis.window = s.window;
-  globalThis.HTMLAnchorElement = class { href = ''; };
+  Object.assign(globalThis, { window: s.window, HTMLAnchorElement: class { href = ''; } });
   const anchor = new globalThis.HTMLAnchorElement();
   analytics.loadAnalytics({ ...s, choice, pathname: '/', enabled: true });
   observeDownloadClick('windows', { currentTarget: anchor });
