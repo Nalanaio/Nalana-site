@@ -29,7 +29,8 @@ export function loadAnalytics({ document, window, choice, pathname, enabled = fa
   if (!enabled || sensitivePath(pathname)) return;
   if (choice.usage && !document.getElementById('nalana-ga')) {
     window.dataLayer = window.dataLayer || [];
-    window.gtag = (...args) => window.dataLayer.push(args);
+    // Google tag interprets Arguments objects as commands; arrays are data-layer method calls.
+    window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
     window.gtag('js', new Date());
     window.gtag('config', 'G-8XMNLBLH97', { send_page_view: false, page_location: pageLocation(window, pathname), page_referrer: '' });
