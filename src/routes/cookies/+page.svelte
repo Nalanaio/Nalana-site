@@ -12,7 +12,7 @@
 <div class="container">
   <div class="legal-header">
     <h1>Cookie Policy</h1>
-    <p class="updated">Last updated: October 12, 2026</p>
+    <p class="updated">Last updated: October 17, 2026</p>
   </div>
 
   <div class="legal-body">
@@ -22,7 +22,7 @@
     <p>Website account sessions and security controls use browser storage and private cookies as needed for authentication, recovery and restricted operator access. Operator cookies are HttpOnly, Secure and SameSite Strict, and expire after 15 minutes. Private backend credentials are not exposed to the browser.</p>
     <p>The download deduplication cookie is a signed random first-party value with a non-sliding lifetime of 24 hours. It is HttpOnly, Secure and SameSite Lax. It suppresses repeated notifications for the same browser, platform and release; it does not identify a unique person. Expiry, deletion, cookie blocking or another browser can produce a new identity. Cookies are not proof that a download finished or the application was installed.</p>
     <h2>Optional analytics and visitor identification</h2>
-    <p>Google Analytics measures permitted website activity. RB2B is a separate visitor-identification integration and requires its own permission. An analytics or app usage grant does not silently enable RB2B. Vendor storage and retention depend on the vendor and configured service. We do not promise that vendor data is anonymous or that revocation erases information already sent.</p>
+    <p>Google Analytics and Vercel Web Analytics measure permitted website activity under the usage analytics choice. Vercel Web Analytics runs only on our production website, with URL queries and fragments removed. RB2B is a separate visitor-identification integration and requires its own permission. An analytics or app usage grant does not silently enable RB2B. Vendor storage and retention depend on the vendor and configured service. We do not promise that vendor data is anonymous or that revocation erases information already sent.</p>
     <p>Optional first-party usage enrollment may use a pseudonymous browser visitor ID and session ID. Consented account association or an explicit pairing code can link a download with app activity. A pairing code expires after 15 minutes and does not authenticate an account, verify email or prove installation. Operational deduplication values, account email, passwords, verification tokens and pairing codes are not forwarded as analytics identities.</p>
     <p>Verification, password recovery, pairing and operator pages do not load optional third-party analytics or identification scripts. Changing optional choices stops new dispatch; a page reload may be needed to remove a vendor already loaded in the current document.</p>
     <h2>Change your choices</h2>

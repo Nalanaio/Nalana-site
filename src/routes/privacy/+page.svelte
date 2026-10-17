@@ -12,7 +12,7 @@
 <div class="container">
   <div class="legal-header">
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: October 12, 2026</p>
+    <p class="updated">Last updated: October 17, 2026</p>
   </div>
 
   <div class="legal-body">
@@ -26,7 +26,7 @@
     <p>A first-party random download cookie helps suppress repeated download notifications within 24 hours. It is not used to fingerprint you or shared as a Google Analytics or RB2B identity. Deleting cookies or using another browser can create another identity.</p>
     <h2>Optional usage measurement and linking</h2>
     <p>Website analytics and app usage measurement are default off until you choose to allow them. With permission, pseudonymous usage records can describe current app readiness, observed result presentation, intentional revisions and explicit saves. An optional account association or short-lived download pairing code can connect permitted activity across surfaces. We do not match people by IP address, email address or nearby timestamps to invent a funnel link. Without permission or a valid explicit link, coverage remains unknown or unlinked.</p>
-    <p>Google Analytics and RB2B visitor identification require separate website choices. RB2B is an identification service and its data must not be described as anonymous. Sensitive recovery, verification, pairing and operator pages do not load these vendors. Change your choices using <button type="button" on:click={() => window.dispatchEvent(new Event('nalana:privacy-settings'))}>Privacy settings</button>. In-app usage permission is controlled separately in Nalana Settings.</p>
+    <p>Google Analytics and Vercel Web Analytics use the optional usage analytics choice. Vercel Web Analytics runs only on our production website, with URL queries and fragments removed. RB2B visitor identification requires its own separate choice. RB2B is an identification service and its data must not be described as anonymous. Account, sign-in, recovery, verification, pairing and operator pages do not load these vendors. Change your choices using <button type="button" on:click={() => window.dispatchEvent(new Event('nalana:privacy-settings'))}>Privacy settings</button>. In-app usage permission is controlled separately in Nalana Settings.</p>
     <h2>Retention</h2>
     <ul>
       <li>Optional raw usage events, enrollments and links: up to 90 days.</li>
