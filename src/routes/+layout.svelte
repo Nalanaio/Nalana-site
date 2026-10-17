@@ -10,22 +10,26 @@
   import { auth } from '$lib/stores/auth.js';
   import { needsDocumentBoundary, sensitivePath, browserStorage } from '$lib/analytics/consent.js';
   import { loadAnalytics, trackPageView } from '$lib/analytics/loaders.js';
+  import { createVercelAnalytics } from '$lib/analytics/vercel.js';
   import { createFunnelSession } from '$lib/funnel/session.js';
   import { cleanAttribution } from '$lib/funnel/attribution.js';
   import { setActiveFunnel } from '$lib/funnel/permission.js';
   let funnel;
+  let vercelAnalytics;
   let choice;
   function updateChoice(value) {
     choice = value;
     if (!funnel) return;
     if (value.usage && env.PUBLIC_NALANA_FUNNEL_ENABLED === 'true') void funnel.grant(); else void funnel.revoke();
     loadAnalytics({ document, window, choice: value, pathname: window.location.pathname, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' });
+    void vercelAnalytics?.update({ choice: value, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' });
   }
   beforeNavigate(({ from, to, cancel }) => {
     if (from && to && !to.route.id?.startsWith('/api') && needsDocumentBoundary(from.url.href, to.url.href)) { cancel(); window.location.assign(to.url.href); }
   });
   afterNavigate(({ to }) => { if (choice && to) trackPageView({ window, choice, pathname: to.url.pathname, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' }); });
   onMount(() => {
+    vercelAnalytics = createVercelAnalytics({ window });
     const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('nalana-usage-v1') : null;
     funnel = createFunnelSession({ storage: browserStorage(window), broadcast: message => channel?.postMessage(message), attribution: () => cleanAttribution(new URLSearchParams(window.location.search)) });
     setActiveFunnel(funnel);
