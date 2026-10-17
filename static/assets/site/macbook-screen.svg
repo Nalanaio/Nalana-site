@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="1000.5" height="685" viewBox="0 0 1000.5 685" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Screen body">
+<path id="Body" d="M500.5 2H970.5C985.964 2 998.5 14.536 998.5 30V683H500.5H500H2V30C2 14.536 14.536 2 30 2H500H500.5Z" fill="black"/>
+<path id="Inner border" fill-rule="evenodd" clip-rule="evenodd" d="M970.5 4H30C15.6406 4 4 15.6406 4 30V681H996.5V30C996.5 15.6406 984.859 4 970.5 4ZM970.5 2H30C14.536 2 2 14.536 2 30V683H998.5V30C998.5 14.536 985.964 2 970.5 2Z" fill="#201F24"/>
+<path id="Outer border" fill-rule="evenodd" clip-rule="evenodd" d="M1000.5 685H0V30C0 13.4315 13.4315 0 30 0H970.5C987.069 0 1000.5 13.4315 1000.5 30V685ZM970.5 2H30C14.536 2 2 14.536 2 30V683H998.5V30C998.5 14.536 985.964 2 970.5 2Z" fill="#7D7D7F"/>
+<path id="Rectangle" d="M4.84619 657H995.501V676C995.501 678.209 993.71 680 991.501 680H8.8462C6.63706 680 4.84619 678.209 4.84619 676V657Z" fill="url(#paint0_linear_0_182)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_182" x1="499.5" y1="657" x2="499.5" y2="680" gradientUnits="userSpaceOnUse">
+<stop stop-color="#222222"/>
+<stop offset="0.0852114" stop-color="#242424"/>
+<stop offset="0.830431" stop-color="#242424"/>
+<stop offset="1" stop-color="#201F24"/>
+</linearGradient>
+</defs>
+</svg>

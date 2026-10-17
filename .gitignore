@@ -5,6 +5,8 @@ node_modules
 .svelte-kit
 .vercel
 build
+playwright-report
+test-results
 
 # FigJam files (too large for GitHub)
 *.jam

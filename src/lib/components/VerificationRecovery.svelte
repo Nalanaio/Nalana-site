@@ -53,7 +53,7 @@
   <p>{verificationMessage(policy)}</p>
   <p class="email">{$auth.user?.email ?? ''}</p>
   <div class="actions">
-    <button type="button" disabled={busy || wait > 0} on:click={resend} on:mouseenter={tick}>{wait > 0 ? `Resend available in ${wait}s` : 'Resend verification email'}</button>
+    <button class="resend-button" type="button" disabled={busy || wait > 0} on:click={resend} on:mouseenter={tick}>{wait > 0 ? `Resend available in ${wait}s` : 'Resend verification email'}</button>
     <button type="button" disabled={busy || $auth.loading} on:click={() => auth.refreshSession()}>Check again</button>
     {#if !$auth.user?.email_verified}<button type="button" disabled={busy} on:click={() => { correcting = !correcting; password = ''; }}>Correct email address</button>{/if}
     <a href="mailto:support@nalana.io">Contact support</a>
@@ -73,6 +73,8 @@
   .verification { border: 1px solid #bddafb; border-radius: 16px; padding: 20px; background: #f4f8ff; margin-bottom: 24px; color: #173653; }
   p { line-height: 1.5; } .email { overflow-wrap: anywhere; margin: 8px 0; }
   .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  /* Keep adjacent controls still as the countdown changes or crosses 10s. */
+  .resend-button { min-inline-size: min(100%, 16rem); font-variant-numeric: tabular-nums; }
   button, a { font: inherit; font-size: 14px; } button { padding: 9px 13px; background: white; color: #174d82; border: 1px solid #a7c9ec; border-radius: 8px; cursor: pointer; }
   button:disabled { opacity: .6; cursor: default; } label { display: block; margin: 14px 0; } input { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 10px; border: 1px solid #a7c9ec; border-radius: 6px; }
   .error { color: #a61b1b; }
