@@ -1,12 +1,18 @@
 <script>
   import { onMount, onDestroy, tick } from 'svelte';
+  import { createDemoClock } from '$lib/animations/demo-clock.js';
 
   // Accepted for API compatibility with the prototype (visual is fixed).
   export let theme = 'color';
   export let productLabel = 'Nalana';
+  export let paused = false;
   void theme;
 
-  let rootEl, vpEl, messagesEl;
+  let rootEl, vpEl, messagesEl, demoEl;
+  let mounted=false, visible=false, hidden=false, reducedMotion=false, demoReady=false, unavailable=false, initializing=false;
+  let motionQuery, onMotion, onVisibility, resizeObserver, renderFrame;
+  const clock=createDemoClock();
+  $: if(mounted){paused;visible;hidden;reducedMotion;syncPlayback();}
 
   let messages = [];
   let input = '';
@@ -16,7 +22,6 @@
   let dead = false;
   let userActed = false;
   let autoStarted = false;
-  let timers = [];
   let io;
 
   // three.js refs
@@ -53,9 +58,9 @@
   $: faces = objCount ? (objCount * 1280).toLocaleString() : '0';
   $: tris = objCount ? (objCount * 2560).toLocaleString() : '0';
 
-  const sleep = (ms) => new Promise((res) => { const id = setTimeout(res, ms); timers.push(id); });
+  const sleep = clock.sleep;
   function scrollDown() { if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight; }
-  function scrollSoon() { tick().then(scrollDown); }
+  function scrollSoon() { tick().then(() => { if(!dead)scrollDown(); }); }
 
   function markActed() { userActed = true; typing = false; }
 
@@ -95,7 +100,7 @@
     typing = false;
     scrollSoon();
     try { r.act && r.act(); } catch (e) {}
-    const t1 = setTimeout(() => {
+    clock.after(() => {
       if (dead) return;
       const ops = r.ops || [];
       const reply = { who: 'nalana', text: r.text, ops, revealed: ops.length ? 1 : 0 };
@@ -103,17 +108,16 @@
       scrollSoon();
       if (ops.length > 1) {
         let rev = 1;
-        const iv = setInterval(() => {
-          if (dead) { clearInterval(iv); return; }
+        const reveal = () => {
+          if (dead) return;
           rev++;
           messages = messages.map((m, i, a) => (i === a.length - 1 && m.who === 'nalana' ? { ...m, revealed: rev } : m));
           scrollSoon();
-          if (rev >= ops.length) clearInterval(iv);
-        }, 470);
-        timers.push(iv);
+          if (rev < ops.length) clock.after(reveal,470);
+        };
+        clock.after(reveal,470);
       }
     }, 620);
-    timers.push(t1);
   }
 
   // ── autoplay ──
@@ -169,7 +173,8 @@
 
   // ── three.js ──
   async function initThree() {
-    if (three || !vpEl) return;
+    if (three || initializing || !vpEl || dead || unavailable) return;
+    initializing=true;
     const mod = await import('three');
     if (dead) return;
     THREE = mod;
@@ -204,7 +209,9 @@
     const group = new THREE.Group(); scene.add(group);
     three = { scene, cam, renderer, group, host, objs: [] };
 
-    const tickFn = () => {
+    renderFrame = () => {
+      raf=null;
+      if(dead||!three)return;
       group.rotation.y += 0.0038;
       three.objs.forEach((o, i) => { o.position.y = 0.25 + Math.sin(Date.now() * 0.0011 + i * 1.6) * 0.1; });
       if (vac) {
@@ -218,11 +225,23 @@
         });
       }
       renderer.render(scene, cam);
-      raf = requestAnimationFrame(tickFn);
+      if(canAnimate())raf = requestAnimationFrame(renderFrame);
     };
-    tickFn();
-    onResize = () => { if (!host.clientWidth) return; cam.aspect = host.clientWidth / host.clientHeight; cam.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); };
+    if(reducedMotion){buildVacuum();applyMaterials();}
+    renderer.render(scene,cam);demoReady=true;initializing=false;
+    onResize = () => { if (dead || !host.clientWidth || !host.clientHeight) return; cam.aspect = host.clientWidth / host.clientHeight; cam.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight);renderer.render(scene,cam); };
     window.addEventListener('resize', onResize);
+    if(window.ResizeObserver){resizeObserver=new ResizeObserver(onResize);resizeObserver.observe(host);}
+    syncPlayback();
+  }
+
+  function canAnimate(){return mounted&&visible&&!hidden&&!reducedMotion&&!paused&&!dead;}
+  function syncPlayback(){
+    if(!mounted||dead)return;
+    const running=canAnimate();clock.setPaused(!running);
+    if(visible&&!three&&!initializing&&!unavailable)initThree().catch(()=>{initializing=false;unavailable=true;});
+    if(!running&&raf!==null){cancelAnimationFrame(raf);raf=null;}
+    if(running&&three){if(raf===null)raf=requestAnimationFrame(renderFrame);startAutoplay();}
   }
 
   function setColor(hex) { if (vac && vac.mats.magenta) vac.mats.magenta.color.set(hex); }
@@ -291,13 +310,13 @@
   // vert counter ticking up as each part lands
   function revealVacuumPart(i) {
     if (dead || !vac || i >= vac.meshes.length) return;
+    if(reducedMotion){vac.meshes.forEach(m=>{m.visible=true;m.scale.setScalar(1);});objCount=vac.meshes.length;return;}
     const m = vac.meshes[i];
     m.visible = true;
     m.scale.setScalar(0.001);
     m.userData.appearStart = (typeof performance !== 'undefined' ? performance.now() : Date.now());
     objCount = i + 1;
-    const id = setTimeout(() => revealVacuumPart(i + 1), 55);
-    timers.push(id);
+    clock.after(() => revealVacuumPart(i + 1), 55);
   }
 
   function deleteCommand() {
@@ -344,11 +363,11 @@
   // "painted" sequentially rather than all at once
   function applyMaterialPart(i) {
     if (dead || !vac || i >= vac.meshes.length) return;
+    if(reducedMotion){vac.meshes.forEach(m=>{if(vac.mats[m.userData.mat])m.material=vac.mats[m.userData.mat];});return;}
     const m = vac.meshes[i];
     const mt = vac.mats[m.userData.mat];
     if (mt) m.material = mt;
-    const id = setTimeout(() => applyMaterialPart(i + 1), 45);
-    timers.push(id);
+    clock.after(() => applyMaterialPart(i + 1), 45);
   }
 
   function onInputEvt() { markActed(); }
@@ -356,26 +375,32 @@
   function onKeyEvt(e) { if (e.key === 'Enter') { e.preventDefault(); submit(); } }
 
   onMount(() => {
-    initThree();
-    if (rootEl && 'IntersectionObserver' in window) {
-      io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) startAutoplay(); }); }, { threshold: 0 });
-      io.observe(rootEl);
-    }
-    const id = setTimeout(startAutoplay, 2000);
-    timers.push(id);
+    mounted=true;motionQuery=window.matchMedia('(prefers-reduced-motion: reduce)');
+    onMotion=()=>reducedMotion=motionQuery.matches;
+    onVisibility=()=>hidden=document.hidden;
+    onMotion();onVisibility();motionQuery.addEventListener('change',onMotion);document.addEventListener('visibilitychange',onVisibility);
+    if ('IntersectionObserver' in window) {
+      io=new IntersectionObserver(entries=>visible=entries.some(entry=>entry.isIntersecting),{threshold:0});io.observe(demoEl);
+    }else visible=true;
   });
 
   onDestroy(() => {
     dead = true;
-    timers.forEach((id) => { clearTimeout(id); clearInterval(id); });
+    clock.destroy();
     if (io) io.disconnect();
     if (raf) cancelAnimationFrame(raf);
     if (onResize) window.removeEventListener('resize', onResize);
-    if (three && three.renderer) three.renderer.dispose();
+    resizeObserver?.disconnect();motionQuery?.removeEventListener('change',onMotion);
+    if(onVisibility)document.removeEventListener('visibilitychange',onVisibility);
+    if(three){
+      deleteScene();
+      three.scene.traverse(object=>{object.geometry?.dispose();const mats=Array.isArray(object.material)?object.material:[object.material];mats.forEach(material=>material?.dispose());});
+      three.renderer.dispose();three.renderer.forceContextLoss();three.renderer.domElement.remove();three=null;
+    }
   });
 </script>
 
-<div class="ide">
+<div class="ide" bind:this={demoEl}>
   <!-- title bar -->
   <div class="titlebar">
     <svg width="12" height="15" viewBox="0 0 69 82" fill="none"><path d="M68.5 69.33C68.5 71.51 66.73 73.29 64.54 73.29C62.67 73.29 61.07 71.97 60.52 70.18C59 65.25 56.25 59.81 52.4 54.57C42.79 41.47 29.98 34.54 23.78 39.09C17.59 43.63 20.36 57.93 29.97 71.03C30.65 71.95 30.01 73.29 28.86 73.29H11.75C9.54 73.29 7.75 71.5 7.75 69.29V4C7.75 1.79 9.54 0 11.75 0H15.14C17 0 18.6 1.29 19.17 3.05C20.73 7.8 23.41 12.98 27.08 17.99C36.69 31.09 49.5 38.02 55.7 33.47C61.89 28.93 59.12 14.63 49.51 1.53C49.04 0.9 49.49 0 50.27 0H64.5C66.71 0 68.5 1.79 68.5 4V69.33Z" fill="#FF8C69"/><path d="M61.75 69.33C61.75 71.51 59.98 73.29 57.79 73.29C55.92 73.29 54.32 71.97 53.77 70.18C52.25 65.25 49.5 59.81 45.65 54.57C36.04 41.47 23.23 34.54 17.03 39.09C10.84 43.63 13.61 57.93 23.22 71.03C23.9 71.95 23.26 73.29 22.11 73.29H5C2.79 73.29 1 71.5 1 69.29V4C1 1.79 2.79 0 5 0H8.39C10.25 0 11.85 1.29 12.42 3.05C13.98 7.8 16.66 12.98 20.33 17.99C29.94 31.09 42.75 38.02 48.95 33.47C55.14 28.93 52.37 14.63 42.76 1.53C42.29 0.9 42.74 0 43.52 0H57.75C59.96 0 61.75 1.79 61.75 4V69.33Z" fill="#1085EF"/></svg>
@@ -415,7 +440,7 @@
 
   <!-- main -->
   <div class="main">
-    <div class="viewport" bind:this={vpEl}></div>
+    <div class="viewport" bind:this={vpEl}><img class="demo-poster" class:ready={demoReady} src="/assets/site/workflow-screenshot.png" loading="lazy" alt="Nalana workspace with a vacuum model beside the chat that built it" /></div>
     <span class="vp-label vp-persp">User Perspective</span>
     <span class="vp-label vp-coll">(1) Collection</span>
 
@@ -542,6 +567,8 @@
   .hbtn-dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; }
   .main { flex: 1; position: relative; min-height: 360px; background: linear-gradient(180deg, #5c5c5c, #373737); overflow: hidden; }
   .viewport { position: absolute; inset: 0; }
+  .demo-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .demo-poster.ready{display:none}
   .vp-label { position: absolute; left: 14px; font-size: 11px; }
   .vp-persp { top: 10px; color: #d8d8d8; font-weight: 500; }
   .vp-coll { top: 28px; color: #bcbcbc; }
@@ -607,4 +634,11 @@
   .status-spacer { margin-left: auto; }
   @keyframes ndBlink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
   @keyframes ndCaret { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+  @media(max-width:820px){
+    .main{min-height:0;display:flex;flex-direction:column}
+    .viewport{position:relative;flex:1;min-height:260px}
+    .panel{position:relative;top:auto;right:auto;width:auto;min-width:0;max-width:none;aspect-ratio:auto;height:310px;margin:0 10px 10px;flex-shrink:0}
+    .hdr{gap:8px}.hdr-right,.mode-pill.global{display:none}
+    .statusbar{gap:8px;overflow:hidden;white-space:nowrap}.status-spacer,.statusbar>span:nth-last-child(2){display:none}
+  }
 </style>

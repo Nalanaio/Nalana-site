@@ -51,7 +51,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
   overflow-x: hidden;
-  cursor: none;
+  cursor: auto;
 }
 h1,h2,h3,h4 { font-family: 'Amulya', sans-serif; }
 
@@ -110,6 +110,8 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px; pointer-events: none;
 }
+/* Legal-page navigation uses an inner row rather than the landing pill links. */
+nav .nav-inner { pointer-events: auto; }
 .nav-logo-pill {
   pointer-events: auto;
   display: flex; align-items: center; gap: 10px;

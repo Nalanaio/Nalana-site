@@ -1,5 +1,6 @@
 <script>
   import { FORGOT_PASSWORD_SUCCESS } from '$lib/authClient.js';
+  import AccountShell from '$lib/components/site/AccountShell.svelte';
 
   let email = '';
   let loading = false;
@@ -7,6 +8,7 @@
   let sent = false;
 
   async function submit() {
+    if (loading) return;
     if (!email) {
       error = 'Please enter your email address.';
       return;
@@ -43,45 +45,19 @@
 
 
 
-<style>
-  :global(body) { cursor: auto; background: #fafafa; }
-  .page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; font-family: 'Inter', sans-serif; }
-  .card { width: 100%; max-width: 400px; background: #fff; border-radius: 28px; padding: 48px 36px 40px; box-shadow: 0 24px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04); }
-  .logo-text { font-family: 'KonkhmerSleokchher', sans-serif; font-size: 20px; color: #1085EF; text-decoration: none; display: block; margin-bottom: 36px; }
-  h1 { font-family: 'Amulya', sans-serif; font-size: 28px; font-weight: 700; color: #0a0a0a; margin-bottom: 8px; }
-  .subtitle { font-size: 14px; color: #888; margin-bottom: 32px; line-height: 1.5; }
-  .field { display: block; width: 100%; padding: 13px 18px; border-radius: 100px; border: 1.5px solid rgba(228,228,231,0.8); background: #fafafa; font-size: 15px; outline: none; margin-bottom: 10px; box-sizing: border-box; }
-  .error { font-size: 13px; color: #e53e3e; text-align: center; margin-bottom: 10px; }
-  .success { font-size: 14px; color: #166534; background: rgba(34,197,94,0.12); border-radius: 12px; padding: 14px; line-height: 1.5; }
-  .submit { width: 100%; padding: 15px; border-radius: 100px; border: none; background: linear-gradient(135deg,#1085EF,#6366F1); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
-  .submit:disabled { opacity: 0.5; }
-  .link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: #1085EF; font-weight: 600; text-decoration: none; }
-  .back { display: block; text-align: center; margin-top: 16px; font-size: 13px; color: #bbb; text-decoration: none; }
-</style>
-
-<div class="page">
-  <div class="card">
-    <a href="/" class="logo-text">Nalana</a>
-
+<AccountShell>
+  <div class="acct-card signin-card">
     {#if sent}
-      <h1>Check your email</h1>
-      <p class="success">{FORGOT_PASSWORD_SUCCESS}</p>
-      <a href="/login" class="link">Back to login</a>
+      <div class="signin-head"><h1>Check your email</h1></div>
+      <p class="success-message" role="status">{FORGOT_PASSWORD_SUCCESS}</p>
     {:else}
-      <h1>Forgot password?</h1>
-      <p class="subtitle">Enter your email and we will send a reset link if an account exists.</p>
-
-      <form on:submit|preventDefault={submit}>
-        <input class="field" type="email" placeholder="your@email.com" bind:value={email} autocomplete="email" disabled={loading} />
-        {#if error}<p class="error">{error}</p>{/if}
-        <button class="submit" type="submit" disabled={loading}>
-          {loading ? 'Sending…' : 'Send reset link'}
-        </button>
+      <div class="signin-head"><h1>Forgot password?</h1><p>Enter your email and we will send a reset link if an account exists.</p></div>
+      <form class="account-form" method="POST" on:submit|preventDefault={submit} aria-busy={loading}>
+        <label class="field"><span>Email</span><input type="email" name="email" placeholder="you@example.com" bind:value={email} autocomplete="email" disabled={loading} required /></label>
+        {#if error}<p class="form-error" role="alert">{error}</p>{/if}
+        <button class="acct-primary" type="submit" disabled={loading}>{loading ? 'Sending…' : 'Send reset link'}</button>
       </form>
-
-      <a href="/login" class="link">Back to login</a>
     {/if}
-
-    <a href="/" class="back">← Back to nalana.io</a>
+    <a href="/login" class="account-link">Back to login</a>
   </div>
-  </div>
+</AccountShell>

@@ -1,0 +1,91 @@
+/* Grace's sign-in and profile design. Every rule is owned by the account shell. */
+@font-face { font-family: 'GraceAccountInter'; src: url('/assets/site/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'GraceAccountAmulya'; src: url('/assets/site/fonts/Amulya-Variable.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'GraceAccountCode'; src: url('/assets/site/fonts/GoogleSansCode[wght].ttf') format('truetype'); font-weight: 300 800; font-display: swap; }
+.grace-account-page {
+  --water: #1085ef; --lav: #a78ade; --lav-soft: #dbccf9; --muted: #595959;
+  --account-ease: cubic-bezier(.2,.8,.2,1);
+  min-height: 100vh; position: relative; isolation: isolate; background: #fff;
+  color: #000; font: 400 16px/1.5 'GraceAccountInter', 'Inter', sans-serif; cursor: auto;
+}
+.grace-account-page *, .grace-account-page *::before, .grace-account-page *::after { box-sizing: border-box; }
+.grace-account-page a { color: var(--water); text-decoration: none; }
+.grace-account-page button, .grace-account-page input { font: inherit; }
+.grace-account-page button, .grace-account-page a { touch-action: manipulation; }
+.grace-account-page :is(button, a, input):focus-visible { outline: 3px solid #6849a2; outline-offset: 3px; }
+.grace-account-page .account-nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 67px; z-index: 50;
+  background: rgba(217,217,217,.2); backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+.grace-account-page .account-logo { position: absolute; left: 23.6px; top: 15.5px; }
+.grace-account-page .account-logo img { display: block; }
+.grace-account-page .account-home { position: absolute; right: 10px; top: 14px; width: 115px; height: 39px; display: flex; align-items: center; justify-content: center; border-radius: 29.5px; color: #fff; background: var(--lav); }
+.grace-account-page .account-home:hover { background: #8a6cc7; }
+.grace-account-page .acct-main { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: min(227px,24vh) 20px 80px; }
+.grace-account-page .acct-main.profile { padding-top: min(134px,14vh); gap: 20px; align-items: stretch; width: min(560px,100%); margin: 0 auto; }
+.grace-account-page .acct-card { width: 100%; margin: 0; background: rgba(255,255,255,.91); border-radius: 6px; box-shadow: 2px 4px 6px rgba(0,0,0,.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.grace-account-page .signin-card { width: min(460px,100%); padding: 48px; display: flex; flex-direction: column; gap: 28px; }
+.grace-account-page h1 { margin: 0; font: 700 36px/1.2 'GraceAccountAmulya', 'Amulya', sans-serif; color: #000; letter-spacing: normal; }
+.grace-account-page .signin-head p { margin: 8px 0 0; font-size: 16px; line-height: 1.4; color: var(--muted); }
+.grace-account-page .account-form, .grace-account-page .signin-fields { display: flex; flex-direction: column; gap: 20px; }
+.grace-account-page .account-form { gap: 28px; }
+.grace-account-page .field { display: flex; flex-direction: column; gap: 8px; width: 100%; font-size: 16px; color: #000; }
+.grace-account-page .field input { width: 100%; min-width: 0; height: 56px; padding: 0 16px; border: 1px solid #d9d9d9; border-radius: 6px; background: #fff; font-size: 16px; color: #000; }
+.grace-account-page .field input::placeholder { color: #777; }
+.grace-account-page .field input:focus { border-color: var(--water); box-shadow: 0 0 0 3px rgba(16,133,239,.15); }
+.grace-account-page .field input:disabled { background: #f4f4f4; color: #595959; }
+.grace-account-page .field-pw { position: relative; display: block; }
+.grace-account-page .field-pw input { padding-right: 58px; }
+.grace-account-page .pw-toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 42px; height: 40px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; border-radius: 6px; }
+.grace-account-page .pw-toggle:hover { background: #f2f2f2; }
+.grace-account-page .pw-toggle[aria-pressed='true']::after { content: ''; position: absolute; width: 22px; height: 1.5px; background: #595959; transform: rotate(-35deg); }
+.grace-account-page .forgot { display: flex; justify-content: flex-end; margin: 0; }
+.grace-account-page .forgot a:hover, .grace-account-page .account-link:hover { text-decoration: underline; }
+.grace-account-page .acct-primary { display: inline-flex; align-items: center; justify-content: center; padding: 14px 28px; border: 0; border-radius: 6px; cursor: pointer; background: var(--water); color: #fff; box-shadow: 1px 4px 5.5px rgba(0,0,0,.25); font-weight: 700; text-align: center; text-decoration: none; }
+.grace-account-page .acct-primary:hover:not(:disabled) { background: #0b6fcc; }
+.grace-account-page .acct-primary:disabled, .grace-account-page button:disabled { opacity: .55; cursor: not-allowed; }
+.grace-account-page .signin-btn { min-height: 64px; width: 100%; font: 700 24px/1.2 'GraceAccountAmulya', 'Amulya', sans-serif; }
+.grace-account-page .signup-row { margin: 0; text-align: center; font-size: 16px; color: var(--muted); }
+.grace-account-page .switch-link { padding: 0 0 0 4px; border: 0; background: none; color: #6849a2; font-weight: 500; cursor: pointer; text-decoration: underline; }
+.grace-account-page .account-link { color: var(--water); font-size: 14px; text-align: center; }
+.grace-account-page .banner, .grace-account-page .banner-ok, .grace-account-page .success-message { margin: 0; padding: 14px; background: #edf8ee; border: 1px solid #bbddc0; border-radius: 6px; font-size: 14px; color: #245d2e; overflow-wrap: anywhere; }
+.grace-account-page .form-error { margin: 0; color: #a61b1b; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.grace-account-page .about-card, .grace-account-page .plan-card { padding: 40px; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.grace-account-page .plan-card { gap: 20px; }
+.grace-account-page .acct-label { margin: 0; font: 700 12px/1.5 'GraceAccountInter', sans-serif; letter-spacing: 1.44px; color: #707070; }
+.grace-account-page .profile-head { display: flex; align-items: center; gap: 24px; width: 100%; }
+.grace-account-page .avatar { width: 80px; height: 80px; border-radius: 40px; flex: none; display: grid; place-items: center; overflow: hidden; background: linear-gradient(126.87deg,#1085ef 0%,#a78ade 71.43%); font: 700 36px/1 'GraceAccountInter', sans-serif; color: #fff; }
+.grace-account-page .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.grace-account-page .identity { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.grace-account-page .identity h1 { font: 700 28px/1.2 'GraceAccountInter', sans-serif; overflow-wrap: anywhere; }
+.grace-account-page .identity-email { margin: 0; font-size: 16px; color: var(--muted); overflow-wrap: anywhere; }
+.grace-account-page .identity-id { margin: 0; font: 400 12px/1.5 'GraceAccountCode', ui-monospace, monospace; color: #707070; overflow-wrap: anywhere; }
+.grace-account-page .details { width: 100%; margin: 0; }
+.grace-account-page .details > div { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid #d9d9d9; font-size: 16px; }
+.grace-account-page .details > div:last-child { border-bottom: 0; }
+.grace-account-page .details dt { color: var(--muted); flex: 0 0 auto; }
+.grace-account-page .details dd { margin: 0; min-width: 0; font-weight: 500; color: #000; text-align: right; overflow-wrap: anywhere; }
+.grace-account-page .edit-btn { font-size: 20px; }
+.grace-account-page .plan-badge { padding: 6px 12px; border-radius: 6px; background: var(--lav-soft); color: #6849a2; font: 700 12px/1.5 'GraceAccountInter', sans-serif; letter-spacing: .96px; text-transform: uppercase; overflow-wrap: anywhere; }
+.grace-account-page .credits { margin: 0; font: 700 36px/1.3 'GraceAccountInter', sans-serif; color: var(--water); overflow-wrap: anywhere; }
+.grace-account-page .usage-status { color: var(--muted); margin: 0; }
+.grace-account-page .logout, .grace-account-page .secondary-button { align-self: flex-start; padding: 12px 24px; border: 1px solid #d9d9d9; border-radius: 6px; background: rgba(255,255,255,.91); color: var(--muted); font-size: 16px; cursor: pointer; text-align: center; }
+.grace-account-page .logout:hover, .grace-account-page .secondary-button:hover { color: #000; border-color: #888; }
+.grace-account-page .avatar-block { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; width: 100%; }
+.grace-account-page .avatar-actions { display: flex; gap: 10px; flex-wrap: wrap; flex: 1 1 230px; }
+.grace-account-page .avatar-actions button { padding: 10px 16px; }
+.grace-account-page .file-input { display: none; }
+.grace-account-page .photo-hint { width: 100%; font-size: 13px; color: var(--muted); margin: 0; }
+.grace-account-page .edit-fields { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+.grace-account-page .form-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.grace-account-page .recovery-icon { color: var(--water); font-size: 40px; }
+@media (max-width: 560px) {
+  .grace-account-page .signin-card, .grace-account-page .about-card, .grace-account-page .plan-card { padding: 28px 22px; }
+  .grace-account-page .acct-main, .grace-account-page .acct-main.profile { padding-top: 110px; }
+  .grace-account-page .credits { font-size: 28px; }
+  .grace-account-page .profile-head { gap: 16px; flex-wrap: wrap; }
+  .grace-account-page .identity { flex: 1 1 200px; }
+  .grace-account-page h1 { font-size: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { .grace-account-page *, .grace-account-page *::before, .grace-account-page *::after { animation: none !important; transition: none !important; } }

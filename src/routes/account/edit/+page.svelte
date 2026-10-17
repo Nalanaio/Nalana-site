@@ -4,8 +4,11 @@
   import { get } from 'svelte/store';
   import { auth, currentUser, isLoggedIn } from '$lib/stores/auth.js';
   import { fileToAvatarDataUrl, validateAvatarFile } from '$lib/avatarUpload.js';
+  import AccountShell from '$lib/components/site/AccountShell.svelte';
 
   let verifying = true;
+  let mounted = false;
+  let checkedEpoch = -1;
   let displayName = '';
   /** @type {string} Saved or pending avatar (data URL or https URL) */
   let avatarUrl = '';
@@ -20,29 +23,39 @@
   $: initial = (displayName?.[0] ?? $currentUser?.email?.[0] ?? '?').toUpperCase();
   $: showPreview = previewUrl && !avatarImgError;
 
-  onMount(async () => {
-    if (!$isLoggedIn) {
-      goto('/login');
-      return;
-    }
+  onMount(() => {
+    mounted = true;
+    return () => { mounted = false; };
+  });
+
+  $: if (mounted && checkedEpoch !== $auth.sessionEpoch) {
+    checkedEpoch = $auth.sessionEpoch;
+    void verifySession(checkedEpoch);
+  }
+
+  async function verifySession(epoch) {
+    verifying = true;
+    displayName = ''; avatarUrl = ''; previewUrl = '';
+    avatarImgError = false;
+    saving = false; uploadingAvatar = false; saveError = '';
+    if (!$isLoggedIn) { goto('/login'); return; }
     const ok = await auth.refreshSession();
+    if (!mounted || auth.current.sessionEpoch !== epoch) return;
     verifying = false;
-    if (!ok) {
-      goto('/login');
-      return;
-    }
+    if (!ok) { goto('/login'); return; }
     const user = get(auth).user;
     if (user) {
       displayName = user.display_name ?? user.name ?? '';
       avatarUrl = user.avatar_url ?? '';
       previewUrl = avatarUrl;
     }
-  });
+  }
 
   /** @param {Event} e */
   async function onAvatarSelected(e) {
     const input = /** @type {HTMLInputElement} */ (e.currentTarget);
     const file = input.files?.[0];
+    const epoch = auth.current.sessionEpoch;
     if (!file) return;
 
     const err = validateAvatarFile(file);
@@ -58,13 +71,14 @@
 
     try {
       const dataUrl = await fileToAvatarDataUrl(file);
+      if (!mounted || auth.current.sessionEpoch !== epoch) return;
       avatarUrl = dataUrl;
       previewUrl = dataUrl;
     } catch (ex) {
+      if (!mounted || auth.current.sessionEpoch !== epoch) return;
       saveError = ex instanceof Error ? ex.message : 'Could not process image.';
     } finally {
-      uploadingAvatar = false;
-      input.value = '';
+      if (mounted && auth.current.sessionEpoch === epoch) { uploadingAvatar = false; input.value = ''; }
     }
   }
 
@@ -76,6 +90,7 @@
   }
 
   async function saveProfile() {
+    if (saving || uploadingAvatar) return;
     const session = get(auth);
     const header = auth.getAuthHeader();
     if (!header) {
@@ -100,6 +115,7 @@
       });
       const data = await res.json().catch(() => ({}));
 
+      if (!mounted || get(auth).sessionEpoch !== session.sessionEpoch) return;
       if (!res.ok) {
         saveError = data.error || 'Could not save profile.';
         return;
@@ -109,9 +125,10 @@
       auth.updateUser(data.user, session.sessionEpoch);
       goto('/account?saved=1');
     } catch {
+      if (!mounted || get(auth).sessionEpoch !== session.sessionEpoch) return;
       saveError = 'Network error. Please try again.';
     } finally {
-      saving = false;
+      if (mounted && get(auth).sessionEpoch === session.sessionEpoch) saving = false;
     }
   }
 </script>
@@ -120,138 +137,32 @@
   <title>Edit profile — Nalana</title>
 </svelte:head>
 
-<style>
-  :global(body) { cursor: auto; }
-  .page { min-height: 100vh; background: #fafafa; padding: 80px 24px; font-family: 'Inter', sans-serif; }
-  .container { max-width: 720px; margin: 0 auto; }
-  .back { display: inline-flex; text-decoration: none; color: #888; font-size: 14px; font-weight: 500; margin-bottom: 40px; }
-  .back:hover { color: #1085EF; }
-  h1 { font-family: 'Amulya', sans-serif; font-size: 36px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; margin-bottom: 8px; }
-  .subtitle { font-size: 16px; color: #888; margin-bottom: 32px; }
-
-  .card {
-    background: #fff; border-radius: 24px; padding: 32px;
-    border: 1px solid rgba(228,228,231,0.8);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-  }
-  .card-title { font-size: 11px; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px; }
-
-  .avatar-block { display: flex; align-items: center; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; }
-  .avatar {
-    width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 28px; color: #fff;
-    background: linear-gradient(135deg, #1085EF, #A78ADE);
-    overflow: hidden;
-  }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
-  .file-input { display: none; }
-
-  .photo-btn, .remove-btn {
-    padding: 10px 18px; border-radius: 100px; font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: inherit; border: none;
-  }
-  .photo-btn {
-    background: linear-gradient(135deg, #1085EF, #6366F1);
-    color: #fff;
-  }
-  .photo-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .remove-btn {
-    background: #fff; color: #888;
-    border: 1.5px solid rgba(228,228,231,0.8);
-  }
-  .remove-btn:hover { color: #e53e3e; border-color: #e53e3e; }
-  .photo-hint { font-size: 13px; color: #888; line-height: 1.45; max-width: 280px; }
-
-  .field-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; display: block; }
-  .field {
-    display: block; width: 100%; padding: 12px 16px; border-radius: 12px;
-    border: 1.5px solid rgba(228,228,231,0.8); background: #fafafa;
-    font-family: 'Inter', sans-serif; font-size: 15px; margin-bottom: 16px; box-sizing: border-box;
-  }
-  .field:disabled { color: #888; background: #f0f0f0; }
-  .field:focus { outline: none; border-color: rgba(16,133,239,0.5); background: #fff; }
-
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
-  .save-btn {
-    padding: 12px 24px; border-radius: 100px; border: none; cursor: pointer;
-    background: linear-gradient(135deg, #1085EF, #6366F1);
-    color: #fff; font-size: 14px; font-weight: 600;
-  }
-  .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .cancel-btn {
-    padding: 12px 24px; border-radius: 100px; border: 1.5px solid rgba(228,228,231,0.8);
-    background: #fff; color: #555; font-size: 14px; font-weight: 600;
-    text-decoration: none; cursor: pointer;
-  }
-  .msg-err { font-size: 13px; color: #e53e3e; margin-top: 8px; }
-</style>
-
-
-
-<div class="page">
-  <div class="container">
-    <a href="/account" class="back">← Back to profile</a>
-
-    {#if verifying}
-      <p style="color:#888;font-size:16px;">Loading…</p>
-    {:else if $currentUser}
-      <h1>Edit profile</h1>
-      <p class="subtitle">Update your photo and display name.</p>
-
-      <div class="card">
-        <div class="card-title">Profile</div>
-
-        <div class="avatar-block">
-          <div class="avatar">
-            {#if showPreview}
-              <img src={previewUrl} alt="" on:error={() => (avatarImgError = true)} />
-            {:else}
-              {initial}
-            {/if}
-          </div>
-          <div class="avatar-actions">
-            <input
-              bind:this={fileInput}
-              class="file-input"
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              on:change={onAvatarSelected}
-            />
-            <button
-              type="button"
-              class="photo-btn"
-              disabled={uploadingAvatar || saving}
-              on:click={() => fileInput?.click()}
-            >
-              {uploadingAvatar ? 'Processing…' : 'Upload photo'}
-            </button>
-            {#if previewUrl}
-              <button type="button" class="remove-btn" disabled={saving} on:click={removeAvatar}>
-                Remove photo
-              </button>
-            {/if}
-            <p class="photo-hint">JPG, PNG, WebP or GIF · max 5 MB. Photo is saved when you tap Save changes.</p>
-          </div>
+<AccountShell profile>
+  {#if verifying}
+    <div class="acct-card about-card" role="status">Loading profile…</div>
+  {:else if $currentUser}
+    <form class="acct-card about-card" method="POST" on:submit|preventDefault={saveProfile} aria-busy={saving || uploadingAvatar}>
+      <div class="signin-head"><h1>Edit profile</h1><p>Update your photo and display name.</p></div>
+      <div class="avatar-block">
+        <div class="avatar" aria-hidden="true">
+          {#if showPreview}<img src={previewUrl} alt="" on:error={() => avatarImgError = true} />{:else}{initial}{/if}
         </div>
-
-        <label class="field-label" for="email">Email</label>
-        <input id="email" class="field" type="email" value={$currentUser.email} disabled />
-
-        <label class="field-label" for="display-name">Display name</label>
-        <input id="display-name" class="field" type="text" bind:value={displayName} placeholder="Your name" />
-
-        {#if saveError}<p class="msg-err">{saveError}</p>{/if}
-
-        <div class="actions">
-          <button class="save-btn" type="button" disabled={saving || uploadingAvatar} on:click={saveProfile}>
-            {saving ? 'Saving…' : 'Save changes'}
-          </button>
-          <a href="/account" class="cancel-btn">Cancel</a>
+        <div class="avatar-actions">
+          <input bind:this={fileInput} class="file-input" type="file" aria-label="Profile photo" accept="image/jpeg,image/png,image/webp,image/gif" on:change={onAvatarSelected} disabled={uploadingAvatar || saving} />
+          <button type="button" class="acct-primary" disabled={uploadingAvatar || saving} on:click={() => fileInput?.click()}>{uploadingAvatar ? 'Processing…' : 'Upload photo'}</button>
+          {#if previewUrl}<button type="button" class="secondary-button" disabled={uploadingAvatar || saving} on:click={removeAvatar}>Remove photo</button>{/if}
+          <p class="photo-hint">JPG, PNG, WebP or GIF · max 5 MB. Photo is saved when you tap Save changes.</p>
         </div>
       </div>
-    {/if}
-  </div>
-</div>
+      <div class="edit-fields">
+        <label class="field"><span>Email</span><input type="email" value={$currentUser.email} autocomplete="email" disabled /></label>
+        <label class="field"><span>Display name</span><input name="display-name" type="text" bind:value={displayName} placeholder="Your name" autocomplete="nickname" disabled={saving} /></label>
+      </div>
+      {#if saveError}<p class="form-error" role="alert">{saveError}</p>{/if}
+      <div class="form-actions">
+        <button class="acct-primary" type="submit" disabled={saving || uploadingAvatar}>{saving ? 'Saving…' : 'Save changes'}</button>
+        <a href="/account" class="secondary-button">Cancel</a>
+      </div>
+    </form>
+  {/if}
+</AccountShell>

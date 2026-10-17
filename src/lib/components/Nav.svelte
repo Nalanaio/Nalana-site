@@ -36,6 +36,7 @@
   <div class="nav-downloads">
     <a
       href="/api/download?platform=mac"
+      data-sveltekit-reload
       class="dl-btn dl-btn-mac"
       on:click={e => handleDownloadClick(e, 'mac')}
       on:auxclick={e => e.button === 1 && handleDownloadClick(e, 'mac')}
@@ -45,6 +46,7 @@
     </a>
     <a
       href="/api/download?platform=windows"
+      data-sveltekit-reload
       class="dl-btn dl-btn-win"
       on:click={e => handleDownloadClick(e, 'windows')}
       on:auxclick={e => e.button === 1 && handleDownloadClick(e, 'windows')}

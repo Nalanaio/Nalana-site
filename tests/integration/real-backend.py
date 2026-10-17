@@ -38,6 +38,7 @@ from app.db.session import get_engine
 from app.db.models.verification_delivery import VerificationEmailOutbox
 from app.services.verification_delivery import payload_cipher
 from app.services.acquisition import register_artifact
+from app.services.usage_service import record_usage
 from app.main import app
 
 Base.metadata.create_all(get_engine())
@@ -61,6 +62,15 @@ def proof(user_id: str, x_fixture_key: str = Header()):
         payload = json.loads(payload_cipher().decrypt(row.payload_ciphertext.encode("ascii")))
         link = html.unescape(re.search(r'href="([^"]+)"', payload["html"]).group(1))
         return {"token": parse_qs(urlsplit(link).query)["token"][0]}
+
+@app.post("/_fixture/usage/{user_id}", include_in_schema=False)
+def seed_usage(user_id: str, x_fixture_key: str = Header()):
+    if x_fixture_key != os.environ["FIXTURE_CONTROL_KEY"]:
+        raise HTTPException(403)
+    # Exercise real accounting without calling a model or generation provider.
+    with Session(get_engine()) as db:
+        record_usage(db, user_id, credits_used=7, model="fixture-accounting", input_tokens=20, output_tokens=5)
+    return {"recorded": True}
 
 import uvicorn
 uvicorn.run(app, host="127.0.0.1", port=port, log_level="error", access_log=False)

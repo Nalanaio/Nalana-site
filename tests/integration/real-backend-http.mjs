@@ -94,6 +94,31 @@ try {
   let me=await (await call('/api/auth/me',undefined,account)).json();assert.equal(me.user.email_verified,false);checks++;
   const verify=await call('/api/auth/verify-email',{token});status(verify,200,'explicit verification POST');
   me=await (await call('/api/auth/me',undefined,account)).json();assert.equal(me.user.email_verified,true);checks++;
+  status(await call('/api/auth/login',{email:'fixture-user@example.com',password:'incorrect-fixture-password'}),401,'normal login rejects incorrect password');
+  const login=await call('/api/auth/login',{email:'fixture-user@example.com',password:'Fixture-password-123!'});
+  status(login,200,'normal account login');const signedIn=await login.json();
+  assert.ok(signedIn.token && signedIn.refresh_token);assert.equal(signedIn.user.id,auth.user.id);assert.equal(signedIn.user.email_verified,true);checks++;
+  const signedInAccount={authorization:`Bearer ${signedIn.token}`};
+  const patchProfile=body=>fetch(site+'/api/auth/me',{method:'PATCH',headers:{origin:site,'content-type':'application/json',...signedInAccount},body:JSON.stringify(body)});
+  const avatar='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR4nGMQaH1PEmIY1TCqYfhqAABmz4QQILdfjQAAAABJRU5ErkJggg==';
+  const profile=await patchProfile({display_name:'  Fixture Updated Designer  ',avatar_url:avatar});
+  status(profile,200,'real profile and avatar update');
+  me=await (await call('/api/auth/me',undefined,signedInAccount)).json();
+  assert.equal(me.user.display_name,'Fixture Updated Designer');assert.equal(me.user.avatar_url,avatar);checks++;
+  status(await patchProfile({avatar_url:null}),200,'real avatar removal');
+  me=await (await call('/api/auth/me',undefined,signedInAccount)).json();assert.equal(me.user.avatar_url,'');checks++;
+  const usage=await call('/api/usage/me',undefined,signedInAccount);status(usage,200,'real authenticated usage');
+  const summary=await usage.json();assert.equal(summary.credits_remaining,100);assert.equal(summary.credits_used,0);assert.equal(summary.total_requests,0);checks++;
+  // This backend currently returns a null compatibility plan. The UI must keep
+  // that state unknown rather than inventing a paid/free plan from auth storage.
+  assert.equal(summary.plan,null);checks++;
+  const recorded=await fetch(api+'/_fixture/usage/'+auth.user.id,{method:'POST',headers:{'x-fixture-key':control}});
+  status(recorded,200,'disposable usage ledger seed');
+  const updatedUsage=await call('/api/usage/me',undefined,signedInAccount);status(updatedUsage,200,'live usage after accounting');
+  const updatedSummary=await updatedUsage.json();
+  assert.equal(updatedSummary.credits_remaining,93);assert.equal(updatedSummary.credits_used,7);assert.equal(updatedSummary.total_requests,1);assert.equal(updatedSummary.total_tokens,25);checks++;
+  status(await call('/api/auth/me'),401,'signed-out account denied');
+  status(await call('/api/usage/me'),401,'signed-out credits denied');
   const visitor=randomUUID(), webSession=randomUUID();
   const enrollment=await call('/api/funnel/enrollments',{consent_state:'granted',consent_version:1,web_visitor_id:visitor,web_session_id:webSession});
   status(enrollment,201,'real enrollment');const enrolled=await enrollment.json();
