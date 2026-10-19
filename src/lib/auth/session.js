@@ -49,6 +49,12 @@ export function createSessionController(options = {}) {
     setLoading(loading) { state = { ...state, loading }; publish(); },
     setError(error) { state = { ...state, error, loading: false }; publish(); },
     getAuthHeader() { return state.token ? `Bearer ${state.token}` : null; },
+    canRestoreSession() {
+      try {
+        const saved = JSON.parse(storage?.getItem(SESSION_KEY) || 'null');
+        return Boolean(state.token && state.user?.id && saved?.token === state.token && saved?.user?.id === state.user.id);
+      } catch { return false; }
+    },
     refreshSession() {
       if (inFlight) return inFlight;
       if (!state.token) return Promise.resolve(false);

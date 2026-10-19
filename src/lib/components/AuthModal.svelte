@@ -1,6 +1,8 @@
 <script>
   import { authModal, closeAuthModal } from '$lib/stores/modal.js';
   import { auth } from '$lib/stores/auth.js';
+  import { env } from '$env/dynamic/public';
+  import { queueSignupMeasurement } from '$lib/analytics/attribution.js';
   import VerificationRecovery from './VerificationRecovery.svelte';
   import { authErrorMessage, isEmailNotVerifiedError, validatePassword } from '$lib/authClient.js';
 
@@ -66,6 +68,7 @@
 
       if (mode === 'signup') {
         signupSuccess = true;
+        if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' && auth.canRestoreSession() && queueSignupMeasurement(window)) window.location.replace('/signup-complete');
         return;
       }
 
