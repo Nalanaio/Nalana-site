@@ -10,6 +10,7 @@
   import { auth } from '$lib/stores/auth.js';
   import { needsDocumentBoundary, sensitivePath, browserStorage } from '$lib/analytics/consent.js';
   import { loadAnalytics, trackPageView } from '$lib/analytics/loaders.js';
+  import { captureCampaign } from '$lib/analytics/attribution.js';
   import { createVercelAnalytics } from '$lib/analytics/vercel.js';
   import { createFunnelSession } from '$lib/funnel/session.js';
   import { cleanAttribution } from '$lib/funnel/attribution.js';
@@ -19,6 +20,7 @@
   let choice;
   function updateChoice(value) {
     choice = value;
+    if (window.location.pathname === '/signup-complete') return;
     if (!funnel) return;
     if (value.usage && env.PUBLIC_NALANA_FUNNEL_ENABLED === 'true') void funnel.grant(); else void funnel.revoke();
     loadAnalytics({ document, window, choice: value, pathname: window.location.pathname, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' });
@@ -27,7 +29,10 @@
   beforeNavigate(({ from, to, cancel }) => {
     if (from && to && !to.route.id?.startsWith('/api') && needsDocumentBoundary(from.url.href, to.url.href)) { cancel(); window.location.assign(to.url.href); }
   });
-  afterNavigate(({ to }) => { if (choice && to) trackPageView({ window, choice, pathname: to.url.pathname, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' }); });
+  afterNavigate(({ to }) => {
+    if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true') captureCampaign(window);
+    if (choice && to && to.url.pathname !== '/signup-complete') trackPageView({ window, choice, pathname: to.url.pathname, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' });
+  });
   onMount(() => {
     vercelAnalytics = createVercelAnalytics({ window });
     const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('nalana-usage-v1') : null;
@@ -59,11 +64,15 @@
 </svelte:head>
 
 <!-- Auth modal overlay — available on every page -->
-<AuthModal />
-<VerificationPrompt />
+{#if $page.url.pathname !== '/signup-complete'}
+  <AuthModal />
+  <VerificationPrompt />
+{/if}
 
 <slot />
+{#if $page.url.pathname !== '/signup-complete'}
 <AnalyticsConsent
   onChoice={updateChoice}
   autoPrompt={env.PUBLIC_NALANA_FUNNEL_ENABLED === 'true' || env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true'}
 />
+{/if}

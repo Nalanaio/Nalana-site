@@ -3,6 +3,8 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { get } from 'svelte/store';
+  import { env } from '$env/dynamic/public';
+  import { queueSignupMeasurement } from '$lib/analytics/attribution.js';
   import { auth } from '$lib/stores/auth.js';
   import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
   import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
@@ -32,6 +34,13 @@
   onMount(() => {
     const session = get(auth);
     if (session.token && session.user) {
+      if (get(page).url.searchParams.get('created') === '1') {
+        email = session.user.email || '';
+        mode = 'signup';
+        signupSuccess = true;
+        void auth.refreshSession();
+        return;
+      }
       goto(postLoginPath());
       return;
     }
@@ -90,6 +99,7 @@
 
       if (mode === 'signup') {
         signupSuccess = true;
+        if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' && auth.canRestoreSession() && queueSignupMeasurement(window)) window.location.replace('/signup-complete');
         return;
       }
 
