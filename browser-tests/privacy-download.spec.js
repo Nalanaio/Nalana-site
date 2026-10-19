@@ -1,5 +1,63 @@
 import { test, expect, visit } from './fixtures.js';
 
+async function firstVisit(context) {
+  await context.addInitScript(() => {
+    if (sessionStorage.getItem('privacy-notice-seeded')) return;
+    sessionStorage.setItem('privacy-notice-seeded', 'true');
+    localStorage.setItem('nalana_privacy_v1', JSON.stringify({ version: 1, usage: false, identification: false, decided: false }));
+  });
+}
+
+test('first-visit notice stays compact on desktop and mobile, and decline persists', async ({ context, page }, testInfo) => {
+  await firstVisit(context);
+  await visit(page, '/');
+  const notice = page.getByRole('complementary', { name: 'Privacy choices' });
+  await expect(notice).toBeVisible();
+  await expect(notice.getByRole('checkbox')).toHaveCount(0);
+  await expect(page.locator('#nalana-ga, #nalana-identification')).toHaveCount(0);
+  for (const [name, width, height] of [['desktop', 1440, 900], ['mobile', 390, 844], ['small-mobile', 320, 568]]) {
+    await page.setViewportSize({ width, height });
+    const bounds = await notice.boundingBox();
+    expect(bounds.height).toBeLessThan(180);
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+    await page.screenshot({ path: testInfo.outputPath(`compact-${name}.png`) });
+  }
+  await notice.getByRole('button', { name: 'Decline', exact: true }).click();
+  await expect(notice).toHaveCount(0);
+  await page.reload();
+  await expect(notice).toHaveCount(0);
+  await expect(page.locator('#nalana-ga, #nalana-identification')).toHaveCount(0);
+  const settings = page.getByRole('button', { name: 'Privacy settings', exact: true });
+  await settings.click();
+  await expect(notice.getByRole('checkbox', { name: /usage analytics/i })).not.toBeChecked();
+  await expect(notice.getByRole('checkbox', { name: /visitor identification/i })).not.toBeChecked();
+  await notice.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(settings).toBeFocused();
+});
+
+test('compact analytics opt-in keeps identification off and customization can be canceled', async ({ context, page, audit }) => {
+  await firstVisit(context);
+  audit.allowedVendors.push(/^https:\/\/www\.googletagmanager\.com\//);
+  await visit(page, '/');
+  const notice = page.getByRole('complementary', { name: 'Privacy choices' });
+  await notice.getByRole('button', { name: 'Customize', exact: true }).click();
+  await expect(notice.getByRole('heading', { name: 'Your privacy choices' })).toBeFocused();
+  await notice.getByRole('checkbox', { name: /visitor identification/i }).check();
+  await notice.getByRole('button', { name: 'Back', exact: true }).click();
+  await expect(notice.getByRole('button', { name: 'Customize', exact: true })).toBeFocused();
+  await expect(page.locator('#nalana-ga, #nalana-identification')).toHaveCount(0);
+  await notice.getByRole('button', { name: 'Allow analytics', exact: true }).click();
+  await expect(page.locator('#nalana-ga')).toHaveCount(1);
+  await expect(page.locator('#nalana-identification')).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('nalana_privacy_v1')))).toMatchObject({ usage: true, identification: false, decided: true });
+  await page.getByRole('button', { name: 'Privacy settings', exact: true }).click();
+  await notice.getByRole('checkbox', { name: /visitor identification/i }).check();
+  await notice.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('button', { name: 'Privacy settings', exact: true }).click();
+  await expect(notice.getByRole('checkbox', { name: /visitor identification/i })).not.toBeChecked();
+});
+
 test('consent controls preserve distinct choices and vendor loading is isolated from account routes', async ({ context, page, audit }) => {
   const vendorRequests = [];
   audit.allowedVendors.push(/^https:\/\/www\.googletagmanager\.com\//, /^https:\/\/ddwl4m2hdecbv\.cloudfront\.net\//);

@@ -1,7 +1,7 @@
 <script>
   export let material=null;
   export let onMaterial=(_key)=>{};
-  function privacySettings(){window.dispatchEvent(new CustomEvent('nalana:privacy-settings'));}
+  function privacySettings(event){window.dispatchEvent(new CustomEvent('nalana:privacy-settings', { detail: { opener: event.currentTarget } }));}
 </script>
 <footer class="dsec footer" id="contact" style="--h:864">
   <div class="dstage">
