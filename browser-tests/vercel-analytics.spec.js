@@ -18,6 +18,9 @@ async function proxySite(context, origin) {
     const response = await context.request.fetch(local.href, {
       method: request.method(),
       headers,
+      // A native document reload can race a reused loopback connection. Retry
+      // only transport resets (Playwright does not retry HTTP error statuses).
+      maxRetries: 2,
       ...(body === null ? {} : { data: body }),
     });
     return route.fulfill({ response });
