@@ -1,6 +1,7 @@
 import { establishDownloadSubject, rememberDownload } from './download-cookie.js';
 import { createIntent, recordHandoff, flagEnabled } from './acquisition-api.js';
 import { loadStableManifest, resolveStableDownload } from './stable-release.js';
+import { notifyDownload } from './download-notification.js';
 
 export const downloadHeaders = { 'cache-control': 'no-store', 'referrer-policy': 'no-referrer' };
 const redirectResponse = (target, status = 302) => new Response(null, { status, headers: { ...downloadHeaders, location: target } });
@@ -29,7 +30,8 @@ export async function handleDownload({ fetch, url, request, cookies, enrollment 
   const manifest = await loadStableManifest(fetch);
   const fallback = resolveStableDownload({ platform, manifest, fallbackUrls: { mac: env.NALANA_MAC_URL, windows: env.NALANA_WIN_URL } });
   if (!fallback) return new Response('The latest Nalana download is temporarily unavailable.', { status: 503, headers: downloadHeaders });
-  // No intent means no manufactured backend handoff/start. This safe fallback
-  // is unobserved and can never produce a download-start email.
+  // A direct redirect is request evidence only; never manufacture a transfer start.
+  // Relay-backed downloads retain their separate backend notification owner.
+  await notifyDownload({ platform, request, fetch, env });
   return redirectResponse(fallback);
 }
