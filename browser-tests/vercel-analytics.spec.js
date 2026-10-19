@@ -14,10 +14,11 @@ async function proxySite(context, origin) {
     // Match the loopback transport's origin for same-origin API checks. Firefox
     // includes Host in request.headers(), unlike the other browser engines.
     if (headers.origin) headers.origin = local.origin;
+    const body = request.postDataBuffer();
     const response = await context.request.fetch(local.href, {
       method: request.method(),
       headers,
-      data: request.postDataBuffer(),
+      ...(body === null ? {} : { data: body }),
     });
     return route.fulfill({ response });
   });
