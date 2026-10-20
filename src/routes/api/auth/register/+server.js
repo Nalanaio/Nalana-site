@@ -1,5 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { proxyAuth } from '$lib/server/authApi.js';
+import { env } from '$env/dynamic/private';
+import { measureSignup } from '$lib/server/campaign-measurement.js';
 
 /**
  * POST /api/auth/register
@@ -16,5 +18,7 @@ export async function POST({ request }) {
     return json({ error: 'Password must be at least 8 characters.' }, { status: 400 });
   }
 
-  return proxyAuth('/v1/auth/register', { email, password }, { mode: 'signup' });
+  const response = await proxyAuth('/v1/auth/register', { email, password }, { mode: 'signup' });
+  await measureSignup({ response, campaign: body.campaign, request, env });
+  return response;
 }

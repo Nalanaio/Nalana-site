@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { OPERATOR_COOKIE, OPERATOR_CHALLENGE_COOKIE, OPERATOR_COOKIE_OPTIONS, OperatorError } from '$lib/server/operator-auth.js';
 import { operatorService } from '$lib/server/operator-runtime.js';
+import { env } from '$env/dynamic/private';
 
 export function load({ cookies }) {
   try {
@@ -20,7 +21,7 @@ export const actions = {
     }
     cookies.set(OPERATOR_COOKIE, result.cookie, OPERATOR_COOKIE_OPTIONS);
     cookies.delete(OPERATOR_CHALLENGE_COOKIE, { path: '/' });
-    redirect(303, '/operator/acquisition');
+    redirect(303, env.CAMPAIGN_TOTALS_ENABLED === 'true' ? '/operator/campaigns' : '/operator/acquisition');
   },
   logout: async ({ request, cookies }) => {
     try {

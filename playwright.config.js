@@ -35,6 +35,8 @@ export default defineConfig({
       NALANA_ACQUISITION_PAIRING: 'false',
       PUBLIC_NALANA_FUNNEL_ENABLED: 'false',
       PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED: 'true',
+      PUBLIC_CAMPAIGN_TOTALS_ENABLED: process.env.CAMPAIGN_BROWSER_TEST === 'true' ? 'true' : 'false',
+      PUBLIC_CAMPAIGN_ALLOWED_LABELS: '[{"source":"facebook","medium":"paid_social","campaign":"Autumn Creators"}]',
       PYTHON_DOTENV_DISABLED: '1',
     },
   }, {

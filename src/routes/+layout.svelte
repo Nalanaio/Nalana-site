@@ -15,6 +15,7 @@
   import { createFunnelSession } from '$lib/funnel/session.js';
   import { cleanAttribution } from '$lib/funnel/attribution.js';
   import { setActiveFunnel } from '$lib/funnel/permission.js';
+  import { currentCampaign, enableCampaignTotals, decorateCampaignLink, observeCampaignNavigation } from '$lib/campaigns/browser.js';
   let funnel;
   let vercelAnalytics;
   let choice;
@@ -29,11 +30,18 @@
   beforeNavigate(({ from, to, cancel }) => {
     if (from && to && !to.route.id?.startsWith('/api') && needsDocumentBoundary(from.url.href, to.url.href)) { cancel(); window.location.assign(to.url.href); }
   });
-  afterNavigate(({ to }) => {
+  afterNavigate((navigation) => {
+    const { to } = navigation;
+    if (env.PUBLIC_CAMPAIGN_TOTALS_ENABLED === 'true') enableCampaignTotals(window, env.PUBLIC_CAMPAIGN_ALLOWED_LABELS);
+    observeCampaignNavigation(window, navigation);
     if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true') captureCampaign(window);
     if (choice && to && to.url.pathname !== '/signup-complete') trackPageView({ window, choice, pathname: to.url.pathname, enabled: env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' });
   });
   onMount(() => {
+    if (env.PUBLIC_CAMPAIGN_TOTALS_ENABLED === 'true') { enableCampaignTotals(window, env.PUBLIC_CAMPAIGN_ALLOWED_LABELS); currentCampaign(window); }
+    const carryCampaign = event => decorateCampaignLink(event.target?.closest?.('a'), window);
+    document.addEventListener('click', carryCampaign, true);
+    document.addEventListener('auxclick', carryCampaign, true);
     vercelAnalytics = createVercelAnalytics({ window });
     const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('nalana-usage-v1') : null;
     funnel = createFunnelSession({ storage: browserStorage(window), broadcast: message => channel?.postMessage(message), attribution: () => cleanAttribution(new URLSearchParams(window.location.search)) });
@@ -55,7 +63,7 @@
     };
     window.addEventListener('online', flush); window.addEventListener('focus', flush);
     window.addEventListener('storage', accountStorage);
-    return () => { unsubscribe(); clearInterval(interval); window.removeEventListener('online', flush); window.removeEventListener('focus', flush); window.removeEventListener('storage', accountStorage); channel?.close(); setActiveFunnel(null); };
+    return () => { document.removeEventListener('click', carryCampaign, true); document.removeEventListener('auxclick', carryCampaign, true); unsubscribe(); clearInterval(interval); window.removeEventListener('online', flush); window.removeEventListener('focus', flush); window.removeEventListener('storage', accountStorage); channel?.close(); setActiveFunnel(null); };
   });
 </script>
 

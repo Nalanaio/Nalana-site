@@ -17,7 +17,7 @@
 
   <div class="legal-body">
 
-    <p>This policy describes website cookies and similar storage. Optional analytics and visitor identification are default off. These choices are separate from optional in-app usage measurement and diagnostics.</p>
+    <p>This policy describes website cookies and similar storage. Optional vendor analytics and visitor identification are default off. These choices are separate from optional in-app usage measurement and diagnostics. Daily campaign totals for public page views, download requests and website signups do not use cookies, browser storage or visitor IDs. See our <a href="/privacy">Privacy Policy</a> for details.</p>
     <h2>Operational storage</h2>
     <p>Website account sessions and security controls use browser storage and private cookies as needed for authentication, recovery and restricted operator access. Operator cookies are HttpOnly, Secure and SameSite Strict, and expire after 15 minutes. Private backend credentials are not exposed to the browser.</p>
     <p>The download deduplication cookie is a signed random first-party value with a non-sliding lifetime of 24 hours. It is HttpOnly, Secure and SameSite Lax. It suppresses repeated notifications for the same browser, platform and release; it does not identify a unique person. Expiry, deletion, cookie blocking or another browser can produce a new identity. Cookies are not proof that a download finished or the application was installed.</p>

@@ -52,7 +52,7 @@
         <h2 tabindex="-1" bind:this={detailsHeading}>Your privacy choices</h2>
         <button type="button" class="text-button" on:click={cancel}>{committed.decided ? 'Cancel' : 'Back'}</button>
       </div>
-      <p>Downloads and your account work with optional tracking turned off.</p>
+      <p>Downloads and your account work with optional tracking turned off. We keep daily campaign totals without visitor identities.</p>
       <label><input type="checkbox" bind:checked={choice.usage}> Allow usage analytics and optional website/app funnel linking</label>
       <label><input type="checkbox" bind:checked={choice.identification}> Allow visitor identification by RB2B</label>
       <p>App usage needs its own permission. Linking a download to the app is an additional, optional action. <a href="/privacy">Privacy details</a></p>

@@ -1,5 +1,6 @@
 import { recordDownloadClick } from './funnel/permission.js';
 import { trackDownloadClick } from './analytics/loaders.js';
+import { decorateCampaignLink } from './campaigns/browser.js';
 
 /** A best-effort activation signal. Navigation always uses the ordinary href. */
 export function observeDownloadClick(platform, event = null) {
@@ -11,5 +12,6 @@ export function observeDownloadClick(platform, event = null) {
   // their native behavior. Reset a previously consented href on every activation.
   if (event?.currentTarget instanceof HTMLAnchorElement) {
     event.currentTarget.href = `/api/download?platform=${platform}${clickId ? `&click_id=${encodeURIComponent(clickId)}` : ''}`;
+    decorateCampaignLink(event.currentTarget, window);
   }
 }
