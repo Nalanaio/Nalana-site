@@ -1,9 +1,10 @@
 import { sensitivePath } from './lib/analytics/consent.js';
-import { env } from '$env/dynamic/private';
+import { campaignEnvironment } from './lib/server/campaign-runtime.js';
 import { campaignPage } from './lib/campaigns/browser.js';
 import { allowedCampaigns, campaignFromUrl, eligibleTraffic } from './lib/campaigns/labels.js';
 import { recordCampaign } from './lib/server/campaign-store.js';
 export async function handle({ event, resolve }) {
+  const env = campaignEnvironment();
   const response = await resolve(event);
   if (env.CAMPAIGN_TOTALS_ENABLED === 'true' && campaignPage(event.url.pathname)) {
     // Public document responses must reach the server to increment request totals.
