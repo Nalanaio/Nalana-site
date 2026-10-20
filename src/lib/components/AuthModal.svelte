@@ -3,6 +3,7 @@
   import { auth } from '$lib/stores/auth.js';
   import { env } from '$env/dynamic/public';
   import { queueSignupMeasurement } from '$lib/analytics/attribution.js';
+  import { currentCampaign } from '$lib/campaigns/browser.js';
   import VerificationRecovery from './VerificationRecovery.svelte';
   import { authErrorMessage, isEmailNotVerifiedError, validatePassword } from '$lib/authClient.js';
 
@@ -45,7 +46,7 @@
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, ...(mode === 'signup' && env.PUBLIC_CAMPAIGN_TOTALS_ENABLED === 'true' ? { campaign: currentCampaign(window) } : {}) }),
       });
 
       const data = await res.json();

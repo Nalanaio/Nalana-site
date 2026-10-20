@@ -10,6 +10,7 @@
     <form method="POST" action="/operator/login?/logout"><input type="hidden" name="csrf" value={data.operator.csrf} /><button>Sign out of operator access</button></form>
   </header>
   <p>Generated {data.report.generated_at}. Access expires {data.operator.expiresAt}.</p>
+  <p><a href="/operator/campaigns" data-sveltekit-reload>View independent campaign totals</a></p>
   <form method="GET" class="filters">
     <label>Start (UTC) <input name="start" value={data.report.window.start} required /></label>
     <label>End (UTC) <input name="end" value={data.report.window.end} required /></label>

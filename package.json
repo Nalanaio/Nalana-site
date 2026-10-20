@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@vercel/analytics": "2.0.1",
+    "mssql": "12.7.10",
     "three": "^0.160.0"
   }
 }

@@ -1,4 +1,5 @@
 <script>
+  import { currentCampaign } from '$lib/campaigns/browser.js';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
@@ -77,7 +78,7 @@
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, ...(mode === 'signup' && env.PUBLIC_CAMPAIGN_TOTALS_ENABLED === 'true' ? { campaign: currentCampaign(window) } : {}) }),
       });
       const data = await res.json();
 
