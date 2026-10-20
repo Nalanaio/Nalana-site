@@ -14,7 +14,7 @@ test('real SvelteKit environment boundary supplies the public campaign catalog t
     assert.deepEqual(JSON.parse(env.PUBLIC_CAMPAIGN_ALLOWED_LABELS), [campaign]);
     const observations = [];
     const url = new URL('https://www.nalana.io/api/download?platform=mac&utm_source=facebook&utm_medium=paid_social&utm_campaign=Runtime+catalog+QA');
-    await measureDownload({ request: new Request(url), url, platform: 'mac', env, record: async value => observations.push(value.campaign) });
+    await measureDownload({ request: new Request(url), url, platform: 'mac', env, record: async value => { observations.push(value.campaign); return true; } });
     assert.deepEqual(observations, [campaign]);
   } finally {
     await server.close();
