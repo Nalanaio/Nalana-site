@@ -6,6 +6,9 @@
   import { billingRequest, openBillingPortal } from '$lib/billing/request.js';
   import { browserStorage } from '$lib/analytics/consent.js';
 
+  // Teams is sold by hand: custom price and credits, no self-serve checkout.
+  const TEAMS_CONTACT = 'mailto:clarence@nalana.io?subject=' + encodeURIComponent('Nalana Teams plan');
+
   let state = 'checking';
   let view = catalogView(null);
   let wallet = null;
@@ -122,7 +125,7 @@
             <h2 id="plan-{plan.product_key}">{plan.name}</h2>
             <p class="plan-price">{plan.price}<span> / month</span></p>
             <p class="plan-credits">{plan.credits} credits every month</p>
-            {#if plan.bonus}<span class="plan-badge plan-bonus">{plan.bonus}</span>{/if}
+            {#if plan.savingsPercent}<p class="plan-savings">Save {plan.savingsPercent}% per credit</p>{/if}
             {#if subscribed}
               <button class="acct-primary" type="button" on:click={manage} disabled={busyKey !== null}>{busyKey === 'portal' ? 'Opening…' : 'Manage subscription'}</button>
             {:else}
@@ -132,6 +135,13 @@
             {/if}
           </section>
         {/each}
+        <section class="acct-card plan-option" aria-labelledby="plan-teams">
+          <p class="acct-label">TEAMS</p>
+          <h2 id="plan-teams">Teams</h2>
+          <p class="plan-price">Custom</p>
+          <p class="plan-credits">Credits sized to your team</p>
+          <a class="acct-primary" href={TEAMS_CONTACT}>Contact us</a>
+        </section>
       </div>
     {/if}
     {#if view.topUps.length}

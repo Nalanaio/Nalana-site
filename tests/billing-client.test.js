@@ -22,7 +22,7 @@ test('prices format from minor units', () => {
   for (const bad of [-1, 1.5, '2000', null]) assert.equal(formatPrice(bad), null);
 });
 
-test('catalog splits plans, sorts by price, and labels the better rate', () => {
+test('catalog splits plans and sorts by price', () => {
   const view = catalogView({ checkout_enabled: true, products: [
     { product_key: 'super_monthly', purchase_kind: 'subscription', display_name: 'Super', currency: 'USD', price_minor: 5000, credits_decimal: '6250' },
     { product_key: 'pro_monthly', purchase_kind: 'subscription', display_name: 'Pro', currency: 'USD', price_minor: 2000, credits_decimal: '2000' },
@@ -30,10 +30,20 @@ test('catalog splits plans, sorts by price, and labels the better rate', () => {
     { product_key: 'broken', purchase_kind: 'subscription', currency: 'USD', price_minor: 'x', credits_decimal: '1' },
   ] });
   assert.equal(view.enabled, true);
-  assert.deepEqual(view.subscriptions.map((p) => [p.name, p.price, p.credits, p.bonus]), [
-    ['Pro', '$20', '2,000', null], ['Super', '$50', '6,250', '1.25× credits per dollar'],
+  assert.deepEqual(view.subscriptions.map((p) => [p.name, p.price, p.credits]), [
+    ['Pro', '$20', '2,000'], ['Super', '$50', '6,250'],
   ]);
+  assert.deepEqual(view.subscriptions.map((p) => p.savingsPercent), [null, 20]);
   assert.deepEqual(view.topUps.map((p) => p.name), ['pack_500']);
+});
+
+test('per-credit savings round down and skip plans that cost more per credit', () => {
+  const plan = (key, price_minor, credits_decimal) => ({ product_key: key, purchase_kind: 'subscription', currency: 'USD', price_minor, credits_decimal });
+  const view = catalogView({ checkout_enabled: true, products: [
+    plan('a', 1000, '1000'), plan('b', 3000, '3299.5'), plan('c', 4000, '3000'), plan('d', 5000, '5040'),
+  ] });
+  // b: 1 - 3000/3299.5 = 9.08% -> 9; c costs more per credit; d: 0.79% -> no badge.
+  assert.deepEqual(view.subscriptions.map((p) => p.savingsPercent), [null, 9, null, null]);
 });
 
 test('disabled or malformed catalog shows nothing purchasable', () => {

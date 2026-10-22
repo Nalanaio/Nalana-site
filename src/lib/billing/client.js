@@ -32,12 +32,6 @@ export function formatPrice(minor, currency = 'USD') {
   } catch { return null; }
 }
 
-/** Display ratio only; never used for money or credit math. */
-function creditsPerMinor(product) {
-  const credits = Number(product.credits_decimal);
-  return Number.isFinite(credits) && product.price_minor > 0 ? credits / product.price_minor : 0;
-}
-
 /**
  * Validates the catalog response into renderable plans. Malformed products are
  * dropped rather than shown with guessed prices.
@@ -54,17 +48,33 @@ export function catalogView(catalog) {
     const credits = formatCredits(entry.credits_decimal);
     if (!price || !credits || typeof entry.product_key !== 'string' || !['subscription', 'top_up'].includes(entry.purchase_kind)) return [];
     const name = typeof entry.display_name === 'string' && entry.display_name.trim() ? entry.display_name.trim() : entry.product_key;
-    return [{ ...entry, name, price, credits, bonus: null }];
+    return [{ ...entry, name, price, credits }];
   });
-  const subscriptions = products.filter((p) => p.purchase_kind === 'subscription').sort((a, b) => a.price_minor - b.price_minor);
+  const subscriptions = products.filter((p) => p.purchase_kind === 'subscription').sort((a, b) => a.price_minor - b.price_minor)
+    .map((plan, _, plans) => ({ ...plan, savingsPercent: savingsPercent(plans[0], plan) }));
   const topUps = products.filter((p) => p.purchase_kind === 'top_up').sort((a, b) => a.price_minor - b.price_minor);
-  const base = subscriptions.length ? creditsPerMinor(subscriptions[0]) : 0;
-  for (const plan of subscriptions.slice(1)) {
-    const ratio = base ? creditsPerMinor(plan) / base : 0;
-    // Only advertise a real, visible improvement, rounded down to two places.
-    if (ratio >= 1.01) plan.bonus = `${(Math.floor(ratio * 100) / 100).toString()}× credits per dollar`;
-  }
   return { enabled: products.length > 0, subscriptions, topUps };
+}
+
+/** @param {string} value credits decimal string, already validated */
+function microcredits(value) {
+  const [whole, frac = ''] = value.trim().split('.');
+  return BigInt(whole) * 1000000n + BigInt(frac.padEnd(6, '0'));
+}
+
+/**
+ * Whole-percent drop in price per credit versus the base plan, rounded down so
+ * the page never overstates the discount. Null when there is no saving.
+ * @param {{price_minor: number, credits_decimal: string}} base
+ * @param {{price_minor: number, credits_decimal: string}} plan
+ */
+function savingsPercent(base, plan) {
+  // base per-credit = Pa/Ca, plan per-credit = Pb/Cb; saving = 1 - (Pb*Ca)/(Pa*Cb).
+  const baseCost = BigInt(base.price_minor) * microcredits(plan.credits_decimal);
+  const planCost = BigInt(plan.price_minor) * microcredits(base.credits_decimal);
+  if (baseCost <= 0n || planCost >= baseCost) return null;
+  const percent = Number((100n * (baseCost - planCost)) / baseCost);
+  return percent >= 1 ? percent : null;
 }
 
 /** @param {unknown} balance */
