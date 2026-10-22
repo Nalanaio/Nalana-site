@@ -2,6 +2,7 @@
   import AccountVisuals from './AccountVisuals.svelte';
   import '$lib/styles/account.css';
   export let profile = false;
+  export let wide = false;
 </script>
 
 <div class="grace-account-page">
@@ -12,7 +13,7 @@
     </a>
     <a class="account-home" href="/">Home</a>
   </header>
-  <main class="acct-main" class:profile>
+  <main class="acct-main" class:profile class:wide>
     <slot />
   </main>
 </div>
