@@ -5,6 +5,7 @@
   import { auth, currentUser } from '$lib/stores/auth.js';
   import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
   import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import WalletCard from '$lib/components/site/WalletCard.svelte';
   import { usageDisplay } from '$lib/account/usage-display.js';
 
   let verifying = true;
@@ -109,6 +110,7 @@
         {#if entitlement.credits !== null}<p class="credits">{entitlement.credits} credits remaining</p>{:else}<p class="usage-status" role="status">Usage unavailable</p>{/if}
       {/if}
     </section>
+    {#key $auth.sessionEpoch}<WalletCard />{/key}
     <button class="logout" type="button" on:click={logout}>Log out</button>
   {/if}
 </AccountShell>

@@ -80,7 +80,30 @@
 .grace-account-page .edit-fields { width: 100%; display: flex; flex-direction: column; gap: 20px; }
 .grace-account-page .form-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .grace-account-page .recovery-icon { color: var(--water); font-size: 40px; }
+.grace-account-page .acct-main.wide { padding-top: min(134px,14vh); gap: 24px; align-items: stretch; width: min(960px,100%); margin: 0 auto; }
+.grace-account-page .pricing-head { display: flex; flex-direction: column; gap: 8px; }
+.grace-account-page .pricing-head p { margin: 0; color: var(--muted); }
+.grace-account-page .plan-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 20px; }
+.grace-account-page .plan-option { padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+.grace-account-page .plan-option.featured { outline: 2px solid var(--lav); }
+.grace-account-page .plan-option h2 { margin: 0; font: 700 24px/1.2 'GraceAccountInter', sans-serif; }
+.grace-account-page .plan-price { margin: 0; font: 700 40px/1.1 'GraceAccountInter', sans-serif; }
+.grace-account-page .plan-price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+.grace-account-page .plan-credits { margin: 0; font-size: 18px; font-weight: 500; color: var(--water); }
+.grace-account-page .plan-bonus { align-self: flex-start; }
+.grace-account-page .plan-option .acct-primary { margin-top: auto; width: 100%; }
+.grace-account-page .fine-print { margin: 0; font-size: 13px; color: var(--muted); }
+.grace-account-page .wallet-card { padding: 40px; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.grace-account-page .wallet-total { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.grace-account-page .wallet-total span { font-size: 14px; color: var(--muted); }
+.grace-account-page .wallet-actions, .grace-account-page .return-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.grace-account-page .wallet-actions .secondary-button { align-self: auto; }
+.grace-account-page .return-card { padding: 40px; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.grace-account-page .return-card h1 { font: 700 28px/1.2 'GraceAccountInter', sans-serif; }
+.grace-account-page .return-card p { margin: 0; color: var(--muted); }
 @media (max-width: 560px) {
+  .grace-account-page .acct-main.wide { padding-top: 110px; }
+  .grace-account-page .wallet-card, .grace-account-page .return-card, .grace-account-page .plan-option { padding: 28px 22px; }
   .grace-account-page .signin-card, .grace-account-page .about-card, .grace-account-page .plan-card { padding: 28px 22px; }
   .grace-account-page .acct-main, .grace-account-page .acct-main.profile { padding-top: 110px; }
   .grace-account-page .credits { font-size: 28px; }
