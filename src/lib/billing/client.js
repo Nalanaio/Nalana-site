@@ -115,7 +115,7 @@ export function trustedHostedUrl(url, hostname) {
   if (typeof url !== 'string') return false;
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'https:' && parsed.hostname === hostname && !parsed.port && !parsed.username && !parsed.password && !parsed.hash;
+    return parsed.protocol === 'https:' && parsed.hostname === hostname && !parsed.port && !parsed.username && !parsed.password;
   } catch { return false; }
 }
 

@@ -70,7 +70,9 @@ test('return kinds and purchase outcomes are closed sets', () => {
 
 test('hosted redirects must be exact https Stripe hosts', () => {
   assert.equal(trustedHostedUrl('https://checkout.stripe.com/c/pay/cs_test_1', 'checkout.stripe.com'), true);
-  for (const url of ['http://checkout.stripe.com/x', 'https://checkout.stripe.com.evil.io/x', 'https://evil.io/?checkout.stripe.com', 'https://u:p@checkout.stripe.com/', 'https://checkout.stripe.com:444/', 'https://checkout.stripe.com/#x', 'javascript:alert(1)', null]) {
+  // Real Checkout URLs carry a required "#..." fragment.
+  assert.equal(trustedHostedUrl('https://checkout.stripe.com/c/pay/cs_test_1#fidkdWxOYHwn', 'checkout.stripe.com'), true);
+  for (const url of ['http://checkout.stripe.com/x', 'https://checkout.stripe.com.evil.io/x', 'https://evil.io/?checkout.stripe.com', 'https://evil.io/#checkout.stripe.com', 'https://u:p@checkout.stripe.com/', 'https://checkout.stripe.com:444/', 'javascript:alert(1)', null]) {
     assert.equal(trustedHostedUrl(url, 'checkout.stripe.com'), false, String(url));
   }
 });
