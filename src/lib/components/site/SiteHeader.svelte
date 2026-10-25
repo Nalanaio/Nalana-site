@@ -7,6 +7,7 @@
     <a class="nav-link" href="#workflow" style="--x:34.72%">Workflow</a>
     <a class="nav-link" href="#vision" style="--x:46.27%">Features</a>
     <a class="nav-link" href="#contact" style="--x:57.82%">Contact</a>
+    <a class="nav-link" href="/pricing" style="--x:69.37%">Pricing</a>
   </nav>
   {#if $isLoggedIn}<a class="btn btn-sm" data-sveltekit-reload href="/account">Account</a>
   {:else}<a class="header-login" data-sveltekit-reload href="/login">Log in</a><a class="btn btn-sm" data-sveltekit-reload href="/login?mode=signup">Sign Up</a>{/if}

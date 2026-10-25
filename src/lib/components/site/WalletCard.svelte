@@ -55,6 +55,7 @@
     <dl class="details">
       <div><dt>Subscription credits</dt><dd>{wallet.subscription}</dd></div>
       <div><dt>Top-up credits</dt><dd>{wallet.topUp}</dd></div>
+      {#if wallet.free && wallet.free !== '0'}<div><dt>Free monthly credits</dt><dd>{wallet.free}</dd></div>{/if}
       {#if wallet.activeCycle && wallet.cycleEnd}
         <div><dt>Current cycle ends</dt><dd>{dateFormat.format(wallet.cycleEnd)}</dd></div>
       {/if}
