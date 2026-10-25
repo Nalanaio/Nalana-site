@@ -1,11 +1,11 @@
 <script>
-  import { authModal, closeAuthModal } from '$lib/stores/modal.js';
-  import { auth } from '$lib/stores/auth.js';
-  import { env } from '$env/dynamic/public';
-  import { queueSignupMeasurement } from '$lib/analytics/attribution.js';
-  import { currentCampaign } from '$lib/campaigns/browser.js';
+  import { authModal, closeAuthModal } from '#lib/stores/modal.js';
+  import { auth } from '#lib/stores/auth.js';
+  import * as env from '$app/env/public';
+  import { queueSignupMeasurement } from '#lib/analytics/attribution.js';
+  import { currentCampaign } from '#lib/campaigns/browser.js';
   import VerificationRecovery from './VerificationRecovery.svelte';
-  import { authErrorMessage, isEmailNotVerifiedError, validatePassword } from '$lib/authClient.js';
+  import { authErrorMessage, isEmailNotVerifiedError, validatePassword } from '#lib/authClient.js';
 
   let email = '';
   let password = '';

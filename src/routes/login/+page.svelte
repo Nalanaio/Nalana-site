@@ -1,21 +1,21 @@
 <script>
-  import { currentCampaign } from '$lib/campaigns/browser.js';
+  import { currentCampaign } from '#lib/campaigns/browser.js';
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
+  import { afterNavigate, goto } from '$app/navigation';
+  import { page } from '$app/state';
   import { get } from 'svelte/store';
-  import { env } from '$env/dynamic/public';
-  import { queueSignupMeasurement } from '$lib/analytics/attribution.js';
-  import { auth } from '$lib/stores/auth.js';
-  import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
-  import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import * as env from '$app/env/public';
+  import { queueSignupMeasurement } from '#lib/analytics/attribution.js';
+  import { auth } from '#lib/stores/auth.js';
+  import EmailVerifyPanel from '#lib/components/EmailVerifyPanel.svelte';
+  import VerificationRecovery from '#lib/components/VerificationRecovery.svelte';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
   import {
     authErrorMessage,
     isEmailNotVerifiedError,
     validatePassword,
     MIN_PASSWORD_LENGTH,
-  } from '$lib/authClient.js';
+  } from '#lib/authClient.js';
 
   let mode = 'login';
   let email = '';
@@ -28,14 +28,14 @@
   let showPassword = false;
 
   function postLoginPath() {
-    const next = get(page).url.searchParams.get('next');
+    const next = page.url.searchParams.get('next');
     return next?.startsWith('/') && !next.startsWith('//') ? next : '/account';
   }
 
   onMount(() => {
     const session = get(auth);
     if (session.token && session.user) {
-      if (get(page).url.searchParams.get('created') === '1') {
+      if (page.url.searchParams.get('created') === '1') {
         email = session.user.email || '';
         mode = 'signup';
         signupSuccess = true;
@@ -50,9 +50,10 @@
     if (params.get('reset') === 'success') resetBanner = true;
   });
 
-  $: if ($page.url.searchParams.get('reset') === 'success') {
-    resetBanner = true;
-  }
+  // A client-side return to /login?reset=success does not remount the page.
+  afterNavigate(({ to }) => {
+    if (to?.url.searchParams.get('reset') === 'success') resetBanner = true;
+  });
 
   async function submit() {
     if (loading) return;

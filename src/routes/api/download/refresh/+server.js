@@ -1,7 +1,7 @@
-import { env } from '$env/dynamic/private';
-import { ownedDownload, verifySubject, SUBJECT_COOKIE } from '$lib/server/download-cookie.js';
-import { refreshIntent, UUID } from '$lib/server/acquisition-api.js';
-import { downloadHeaders } from '$lib/server/download-handler.js';
+import * as env from '$app/env/private';
+import { ownedDownload, verifySubject, SUBJECT_COOKIE } from '#lib/server/download-cookie.js';
+import { refreshIntent, UUID } from '#lib/server/acquisition-api.js';
+import { downloadHeaders } from '#lib/server/download-handler.js';
 
 export async function POST({ request, url, cookies, fetch }) {
   if (request.headers.get('origin') !== url.origin) return new Response('Invalid request origin.', { status: 403, headers: downloadHeaders });

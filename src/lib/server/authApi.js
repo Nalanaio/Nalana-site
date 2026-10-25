@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import * as env from '$app/env/private';
 
 /**
  * Backend root URL — must match IDE NALANA_API_BASE exactly (no trailing slash).
