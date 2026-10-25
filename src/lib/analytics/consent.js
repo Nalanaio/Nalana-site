@@ -1,5 +1,5 @@
 export const CONSENT_KEY = 'nalana_privacy_v1';
-export const SENSITIVE_PATH = /^\/(?:verify-email|reset-password|forgot-password|login|account|connect-download|operator)(?:\/|$)/;
+export const SENSITIVE_PATH = /^\/(?:verify-email|reset-password|forgot-password|login|account|connect-download|operator|billing)(?:\/|$)/;
 export const emptyChoice = () => ({ version: 1, usage: false, identification: false, decided: false });
 export function parseChoice(value) {
   try {

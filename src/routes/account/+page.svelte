@@ -5,57 +5,31 @@
   import { auth, currentUser } from '$lib/stores/auth.js';
   import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
   import AccountShell from '$lib/components/site/AccountShell.svelte';
-  import { usageDisplay } from '$lib/account/usage-display.js';
+  import WalletCard from '$lib/components/site/WalletCard.svelte';
 
   let verifying = true;
   let mounted = false;
   let loggingOut = false;
   let checkedEpoch = -1;
-  let usage = null;
-  let usageState = 'loading';
   let failedAvatar = '';
-  /** @type {AbortController|null} */
-  let usageRequest = null;
 
   onMount(() => {
     mounted = true;
-    return () => { mounted = false; usageRequest?.abort(); };
+    return () => { mounted = false; };
   });
 
-  // A replacement session never inherits the previous account's usage response.
   $: if (mounted && !loggingOut && checkedEpoch !== $auth.sessionEpoch) {
     checkedEpoch = $auth.sessionEpoch;
     void verifySession(checkedEpoch);
   }
 
   async function verifySession(epoch) {
-    usageRequest?.abort();
-    usage = null;
-    usageState = 'loading';
     verifying = true;
     if (!auth.current.token) { goto('/login'); return; }
     const ok = await auth.refreshSession();
     if (!mounted || auth.current.sessionEpoch !== epoch) return;
     verifying = false;
     if (!ok) { goto('/login'); return; }
-    void loadUsage(epoch);
-  }
-
-  async function loadUsage(epoch) {
-    const header = auth.getAuthHeader();
-    if (!header) { usageState = 'error'; return; }
-    const request = new AbortController();
-    usageRequest = request;
-    try {
-      const res = await fetch('/api/usage/me', { headers: { Authorization: header }, signal: request.signal });
-      const data = await res.json().catch(() => null);
-      if (!mounted || request.signal.aborted || auth.current.sessionEpoch !== epoch) return;
-      usage = res.ok ? data : null;
-      usageState = res.ok ? 'ready' : 'error';
-    } catch {
-      if (!mounted || request.signal.aborted || auth.current.sessionEpoch !== epoch) return;
-      usageState = 'error';
-    }
   }
 
   function logout() {
@@ -65,7 +39,6 @@
     auth.logout();
     goto('/');
   }
-  $: entitlement = usageDisplay(usage);
   $: displayName = $currentUser?.display_name ?? $currentUser?.name ?? '';
   $: avatarUrl = $currentUser?.avatar_url ?? '';
   $: initial = (displayName?.[0] ?? $currentUser?.email?.[0] ?? '?').toUpperCase();
@@ -100,15 +73,7 @@
       </dl>
       <a href="/account/edit" class="acct-primary edit-btn">Edit profile</a>
     </section>
-    <section class="acct-card plan-card" aria-labelledby="plan-label" aria-busy={usageState === 'loading'}>
-      <p class="acct-label" id="plan-label">PLAN &amp; CREDITS</p>
-      {#if usageState === 'loading'}
-        <p class="usage-status" role="status">Loading plan and credits…</p>
-      {:else}
-        {#if entitlement.plan}<span class="plan-badge">{entitlement.plan}</span>{:else}<p class="usage-status">Plan unavailable</p>{/if}
-        {#if entitlement.credits !== null}<p class="credits">{entitlement.credits} credits remaining</p>{:else}<p class="usage-status" role="status">Usage unavailable</p>{/if}
-      {/if}
-    </section>
+    {#key $auth.sessionEpoch}<WalletCard />{/key}
     <button class="logout" type="button" on:click={logout}>Log out</button>
   {/if}
 </AccountShell>
