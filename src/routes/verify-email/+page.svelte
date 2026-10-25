@@ -1,10 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import { afterNavigate, goto } from '$app/navigation';
-  import { auth } from '$lib/stores/auth.js';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
-  import { createRecoveryProof } from '$lib/verification/recovery.js';
-  import { resendVerificationEmail, RESEND_SUCCESS_MESSAGE } from '$lib/authClient.js';
+  import { auth } from '#lib/stores/auth.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
+  import { createRecoveryProof } from '#lib/verification/recovery.js';
+  import { resendVerificationEmail, RESEND_SUCCESS_MESSAGE } from '#lib/authClient.js';
   let state = 'loading';
   let proof;
   let errorDetail = '';
@@ -23,7 +23,7 @@
     void complete.then(() => {
       const current = new URL(window.location.href);
       if (current.href === to?.url.href && current.searchParams.get('token')) {
-        void goto(current.pathname, { replaceState: true, noScroll: true, keepFocus: true });
+        void goto(current.pathname, { replace: true, reset: false });
       }
     });
   });

@@ -1,5 +1,5 @@
-import { loadStableManifest, stableReleaseLabel } from '$lib/server/stable-release.js';
-import { downloadPlatform } from '$lib/download-platform.js';
+import { loadStableManifest, stableReleaseLabel } from '#lib/server/stable-release.js';
+import { downloadPlatform } from '#lib/download-platform.js';
 
 export async function load({ fetch, setHeaders, request }) {
   setHeaders({ 'cache-control': 'no-store' });

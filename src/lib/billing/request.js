@@ -1,4 +1,4 @@
-import { auth } from '$lib/stores/auth.js';
+import { auth } from '#lib/stores/auth.js';
 import { newIdempotencyKey, trustedHostedUrl } from './client.js';
 
 /**

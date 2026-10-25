@@ -1,6 +1,6 @@
 <script>
   import AccountVisuals from './AccountVisuals.svelte';
-  import '$lib/styles/account.css';
+  import '#lib/styles/account.css';
   export let profile = false;
   export let wide = false;
 </script>

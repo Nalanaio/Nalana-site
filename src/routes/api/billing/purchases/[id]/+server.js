@@ -1,5 +1,5 @@
-import { getApiBase } from '$lib/server/authApi.js';
-import { billingFailure, proxyBilling, validPurchaseId } from '$lib/server/billingApi.js';
+import { getApiBase } from '#lib/server/authApi.js';
+import { billingFailure, proxyBilling, validPurchaseId } from '#lib/server/billingApi.js';
 
 /** GET /api/billing/purchases/:id — read-only purchase status for the return page. */
 export function GET({ request, params }) {

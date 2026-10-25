@@ -1,5 +1,5 @@
 <script>
-  import { isLoggedIn } from '$lib/stores/auth.js';
+  import { isLoggedIn } from '#lib/stores/auth.js';
 </script>
 <header class="nav">
   <a class="nav-logo" href="/" aria-label="Nalana home"><img src="/assets/site/logo.svg" width="30" height="36" alt="Nalana" /></a>

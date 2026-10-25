@@ -1,4 +1,4 @@
-import { EMAIL_NOT_VERIFIED_DETAIL, RESEND_SUCCESS_MESSAGE } from '$lib/auth/constants.js';
+import { EMAIL_NOT_VERIFIED_DETAIL, RESEND_SUCCESS_MESSAGE } from '#lib/auth/constants.js';
 
 export { RESEND_SUCCESS_MESSAGE };
 

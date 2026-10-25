@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { OPERATOR_COOKIE, OPERATOR_CHALLENGE_COOKIE } from '$lib/server/operator-auth.js';
+import { OPERATOR_COOKIE, OPERATOR_CHALLENGE_COOKIE } from '#lib/server/operator-auth.js';
 
 /** Ordinary account logout can clear its private operator browser session too. Exact Origin is the CSRF boundary. */
 export function POST({ request, cookies, setHeaders }) {

@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
-import { OPERATOR_COOKIE, OperatorError } from '$lib/server/operator-auth.js';
-import { operatorService } from '$lib/server/operator-runtime.js';
+import { OPERATOR_COOKIE, OperatorError } from '#lib/server/operator-auth.js';
+import { operatorService } from '#lib/server/operator-runtime.js';
 
 export async function load({ url, cookies, setHeaders }) {
   setHeaders({ 'cache-control': 'private, no-store', 'referrer-policy': 'no-referrer', 'x-robots-tag': 'noindex, nofollow' });

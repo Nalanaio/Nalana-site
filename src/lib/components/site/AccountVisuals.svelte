@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { mountAccountVisuals } from '$lib/animations/account.js';
+  import { mountAccountVisuals } from '#lib/animations/account.js';
   let root,handle,userPaused=false;
   onMount(()=>{handle=mountAccountVisuals(root,{userPaused});return ()=>handle.destroy();});
   $: handle?.updateOptions({userPaused});
