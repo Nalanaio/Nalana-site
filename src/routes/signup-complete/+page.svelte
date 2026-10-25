@@ -1,10 +1,10 @@
 <script>
   import { onMount } from 'svelte';
-  import { env } from '$env/dynamic/public';
-  import { auth } from '$lib/stores/auth.js';
-  import { browserStorage, readChoice, CONSENT_KEY } from '$lib/analytics/consent.js';
-  import { consumeSignupMeasurement, clearCampaign } from '$lib/analytics/attribution.js';
-  import { loadAnalytics, trackSignup, stopAnalytics } from '$lib/analytics/loaders.js';
+  import * as env from '$app/env/public';
+  import { auth } from '#lib/stores/auth.js';
+  import { browserStorage, readChoice, CONSENT_KEY } from '#lib/analytics/consent.js';
+  import { consumeSignupMeasurement, clearCampaign } from '#lib/analytics/attribution.js';
+  import { loadAnalytics, trackSignup, stopAnalytics } from '#lib/analytics/loaders.js';
 
   onMount(() => {
     let finished = false;

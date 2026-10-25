@@ -1,8 +1,8 @@
 import { error, redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { OPERATOR_COOKIE, OperatorError } from '$lib/server/operator-auth.js';
-import { operatorService } from '$lib/server/operator-runtime.js';
-import { campaignWindow, readCampaignTotals } from '$lib/server/campaign-store.js';
+import * as env from '$app/env/private';
+import { OPERATOR_COOKIE, OperatorError } from '#lib/server/operator-auth.js';
+import { operatorService } from '#lib/server/operator-runtime.js';
+import { campaignWindow, readCampaignTotals } from '#lib/server/campaign-store.js';
 
 export async function load({ url, cookies }) {
   let operator;

@@ -2,20 +2,20 @@
   import '../app.css';
   import { onMount } from 'svelte';
   import { beforeNavigate, afterNavigate } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { env } from '$env/dynamic/public';
-  import AuthModal from '$lib/components/AuthModal.svelte';
-  import VerificationPrompt from '$lib/components/VerificationPrompt.svelte';
-  import AnalyticsConsent from '$lib/components/AnalyticsConsent.svelte';
-  import { auth } from '$lib/stores/auth.js';
-  import { needsDocumentBoundary, sensitivePath, browserStorage } from '$lib/analytics/consent.js';
-  import { loadAnalytics, trackPageView } from '$lib/analytics/loaders.js';
-  import { captureCampaign } from '$lib/analytics/attribution.js';
-  import { createVercelAnalytics } from '$lib/analytics/vercel.js';
-  import { createFunnelSession } from '$lib/funnel/session.js';
-  import { cleanAttribution } from '$lib/funnel/attribution.js';
-  import { setActiveFunnel } from '$lib/funnel/permission.js';
-  import { currentCampaign, enableCampaignTotals, decorateCampaignLink, observeCampaignNavigation } from '$lib/campaigns/browser.js';
+  import { page } from '$app/state';
+  import * as env from '$app/env/public';
+  import AuthModal from '#lib/components/AuthModal.svelte';
+  import VerificationPrompt from '#lib/components/VerificationPrompt.svelte';
+  import AnalyticsConsent from '#lib/components/AnalyticsConsent.svelte';
+  import { auth } from '#lib/stores/auth.js';
+  import { needsDocumentBoundary, sensitivePath, browserStorage } from '#lib/analytics/consent.js';
+  import { loadAnalytics, trackPageView } from '#lib/analytics/loaders.js';
+  import { captureCampaign } from '#lib/analytics/attribution.js';
+  import { createVercelAnalytics } from '#lib/analytics/vercel.js';
+  import { createFunnelSession } from '#lib/funnel/session.js';
+  import { cleanAttribution } from '#lib/funnel/attribution.js';
+  import { setActiveFunnel } from '#lib/funnel/permission.js';
+  import { currentCampaign, enableCampaignTotals, decorateCampaignLink, observeCampaignNavigation } from '#lib/campaigns/browser.js';
   let funnel;
   let vercelAnalytics;
   let choice;
@@ -68,17 +68,17 @@
 </script>
 
 <svelte:head>
-  <meta name="referrer" content={sensitivePath($page.url.pathname) ? 'no-referrer' : 'strict-origin'}>
+  <meta name="referrer" content={sensitivePath(page.url.pathname) ? 'no-referrer' : 'strict-origin'}>
 </svelte:head>
 
 <!-- Auth modal overlay — available on every page -->
-{#if $page.url.pathname !== '/signup-complete'}
+{#if page.url.pathname !== '/signup-complete'}
   <AuthModal />
   <VerificationPrompt />
 {/if}
 
 <slot />
-{#if $page.url.pathname !== '/signup-complete'}
+{#if page.url.pathname !== '/signup-complete'}
 <AnalyticsConsent
   onChoice={updateChoice}
   autoPrompt={env.PUBLIC_NALANA_FUNNEL_ENABLED === 'true' || env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true'}

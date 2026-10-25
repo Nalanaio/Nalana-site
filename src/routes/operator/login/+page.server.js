@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { OPERATOR_COOKIE, OPERATOR_CHALLENGE_COOKIE, OPERATOR_COOKIE_OPTIONS, OperatorError } from '$lib/server/operator-auth.js';
-import { operatorService } from '$lib/server/operator-runtime.js';
-import { env } from '$env/dynamic/private';
+import { OPERATOR_COOKIE, OPERATOR_CHALLENGE_COOKIE, OPERATOR_COOKIE_OPTIONS, OperatorError } from '#lib/server/operator-auth.js';
+import { operatorService } from '#lib/server/operator-runtime.js';
+import * as env from '$app/env/private';
 
 export function load({ cookies }) {
   try {
