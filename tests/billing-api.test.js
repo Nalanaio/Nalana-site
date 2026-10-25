@@ -52,3 +52,18 @@ test('input validators', () => {
   assert.equal(validPurchaseId('3f0c9a4e-1b2d-4c5e-8f90-123456789abc'), true);
   assert.equal(validPurchaseId('../../v1/admin'), false);
 });
+
+test('public catalog proxy never forwards credentials and is cacheable', async () => {
+  const { proxyPublicBilling } = await import('../src/lib/server/billingApi.js');
+  const seen = [];
+  const res = await proxyPublicBilling({ base: 'https://api.test', path: '/v1/billing/public-catalog',
+    fetch: backend(200, { checkout_enabled: true, products: [], free_monthly_credits: 200 }, seen) });
+  assert.equal(res.status, 200);
+  assert.equal(seen[0].url, 'https://api.test/v1/billing/public-catalog');
+  assert.equal(seen[0].init.headers.Authorization, undefined);
+  assert.equal(res.headers.get('cache-control'), 'public, max-age=60');
+  assert.equal((await res.json()).free_monthly_credits, 200);
+  assert.equal((await proxyPublicBilling({ base: null, path: '/v1/x', fetch: backend(200, {}) })).status, 503);
+  const down = await proxyPublicBilling({ base: 'https://api.test', path: '/v1/x', fetch: async () => { throw new Error('down'); } });
+  assert.equal(down.status, 503);
+});

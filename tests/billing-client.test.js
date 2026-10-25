@@ -117,3 +117,36 @@ test('poll reports attention, not_found, unauthorized, timeout, and cancel', asy
   assert.equal(await pollPurchase({ sleep: noSleep, cancelled: () => true, read: reads({ ok: true, status: 200, data: { status: 'granted' } }) }), 'cancelled');
   assert.equal(await pollPurchase({ sleep: noSleep, delays: [], read: async () => { throw new Error('net'); } }), 'pending');
 });
+
+test('public plans use the live catalog and fall back to static copy', async () => {
+  const { publicPlansView, STATIC_PLANS } = await import('../src/lib/billing/client.js');
+  const live = publicPlansView({ checkout_enabled: true, free_monthly_credits: 200, products: [
+    { product_key: 'super_monthly', purchase_kind: 'subscription', display_name: 'Nalana Super', currency: 'USD', price_minor: 2000, credits_decimal: '2000' },
+  ] });
+  assert.equal(live.live, true);
+  assert.equal(live.freeMonthlyCredits, 200);
+  assert.equal(live.subscriptions[0].price, '$20');
+  assert.equal(live.subscriptions[0].credits, '2,000');
+  for (const bad of [null, { checkout_enabled: false, products: [] }, { checkout_enabled: true, products: [] }]) {
+    const fallback = publicPlansView(bad);
+    assert.equal(fallback.live, false);
+    assert.equal(fallback.freeMonthlyCredits, STATIC_PLANS.freeMonthlyCredits);
+    assert.equal(fallback.subscriptions[0].product_key, 'super_monthly');
+  }
+  assert.equal(publicPlansView({ ...{ checkout_enabled: true, products: live.subscriptions } }).freeMonthlyCredits, 0);
+});
+
+test('resume paths and next values stay on this site', async () => {
+  const { pricingResumePath, safeNextPath, validProductKey } = await import('../src/lib/billing/client.js');
+  assert.equal(pricingResumePath('super_monthly'), '/pricing?plan=super_monthly');
+  assert.equal(safeNextPath('/pricing?plan=super_monthly'), '/pricing?plan=super_monthly');
+  for (const bad of ['//evil.io', '/\\evil.io', 'https://evil.io', '', null]) assert.equal(safeNextPath(bad), null);
+  assert.equal(validProductKey('super_monthly'), true);
+  for (const bad of ['', 'a b', '<x>', null]) assert.equal(validProductKey(bad), false);
+});
+
+test('wallet exposes free credits and tolerates older balances without them', () => {
+  const base = { subscription_available: '0.000000', top_up_available: '0.000000', available_to_start: '200.000000', billing_mode: 'enforced' };
+  assert.equal(walletView({ ...base, free_available: '200.000000' }).free, '200');
+  assert.equal(walletView(base).free, '0');
+});
