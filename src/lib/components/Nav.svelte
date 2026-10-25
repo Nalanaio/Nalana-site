@@ -1,6 +1,6 @@
 <script>
-  import { observeDownloadClick } from '$lib/download.js';
-  import { isLoggedIn, currentUser } from '$lib/stores/auth.js';
+  import { observeDownloadClick } from '#lib/download.js';
+  import { isLoggedIn, currentUser } from '#lib/stores/auth.js';
 
   /** @param {Event} e @param {'mac'|'windows'} platform */
   function handleDownloadClick(e, platform) {

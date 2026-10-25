@@ -1,5 +1,5 @@
 <script>
-  import { resendVerificationEmail, RESEND_SUCCESS_MESSAGE } from '$lib/authClient.js';
+  import { resendVerificationEmail, RESEND_SUCCESS_MESSAGE } from '#lib/authClient.js';
 
   /** @type {'signup' | 'error' | 'banner'} */
   export let variant = 'signup';

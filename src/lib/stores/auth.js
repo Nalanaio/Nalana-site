@@ -1,5 +1,5 @@
 import { derived } from 'svelte/store';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { createSessionController } from '../auth/session.js';
 let storage;
 try { storage = browser ? window.localStorage : undefined; } catch { /* blocked */ }

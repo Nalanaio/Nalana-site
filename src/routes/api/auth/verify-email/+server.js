@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { proxyBackend, normalizeUser } from '$lib/server/authApi.js';
-import { readAuthRecoveryRequest } from '$lib/server/auth-request.js';
+import { proxyBackend, normalizeUser } from '#lib/server/authApi.js';
+import { readAuthRecoveryRequest } from '#lib/server/auth-request.js';
 
 /**
  * POST /api/auth/verify-email

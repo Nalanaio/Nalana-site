@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-  import { observeDownloadClick } from '$lib/download.js';
-  import { downloadPlatform } from '$lib/download-platform.js';
+  import { observeDownloadClick } from '#lib/download.js';
+  import { downloadPlatform } from '#lib/download-platform.js';
   export let platform='both';
   onMount(()=>{
     const browser=/** @type {Navigator & {userAgentData?:{platform?:string,mobile?:boolean}}} */(navigator);

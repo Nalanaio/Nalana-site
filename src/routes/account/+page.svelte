@@ -1,11 +1,11 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { auth, currentUser } from '$lib/stores/auth.js';
-  import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
-  import WalletCard from '$lib/components/site/WalletCard.svelte';
+  import { page } from '$app/state';
+  import { auth, currentUser } from '#lib/stores/auth.js';
+  import VerificationRecovery from '#lib/components/VerificationRecovery.svelte';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
+  import WalletCard from '#lib/components/site/WalletCard.svelte';
 
   let verifying = true;
   let mounted = false;
@@ -42,7 +42,6 @@
   $: displayName = $currentUser?.display_name ?? $currentUser?.name ?? '';
   $: avatarUrl = $currentUser?.avatar_url ?? '';
   $: initial = (displayName?.[0] ?? $currentUser?.email?.[0] ?? '?').toUpperCase();
-  $: savedBanner = $page.url.searchParams.get('saved') === '1';
 </script>
 
 <svelte:head><title>Profile — Nalana</title></svelte:head>
@@ -51,7 +50,7 @@
   {#if verifying}
     <div class="acct-card about-card" role="status">Loading profile…</div>
   {:else if $currentUser}
-    {#if savedBanner}<p class="banner-ok" role="status">Profile updated successfully.</p>{/if}
+    {#if page.url.searchParams.get('saved') === '1'}<p class="banner-ok" role="status">Profile updated successfully.</p>{/if}
     {#if $auth.error}<p class="banner" role="status">{$auth.error}</p>{/if}
     {#if $currentUser.email_verified === false}<VerificationRecovery policy={$currentUser.verification} />{/if}
     <section class="acct-card about-card" aria-labelledby="about-label">

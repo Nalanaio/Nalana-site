@@ -1,11 +1,11 @@
 <script>
-  import MarketingVisuals from '$lib/components/site/MarketingVisuals.svelte';
-  import SiteHeader from '$lib/components/site/SiteHeader.svelte';
-  import DownloadActions from '$lib/components/site/DownloadActions.svelte';
-  import WorkflowSection from '$lib/components/site/WorkflowSection.svelte';
-  import VisionSection from '$lib/components/site/VisionSection.svelte';
-  import SiteFooter from '$lib/components/site/SiteFooter.svelte';
-  import { HERO_OBJECTS } from '$lib/animations/hero.js';
+  import MarketingVisuals from '#lib/components/site/MarketingVisuals.svelte';
+  import SiteHeader from '#lib/components/site/SiteHeader.svelte';
+  import DownloadActions from '#lib/components/site/DownloadActions.svelte';
+  import WorkflowSection from '#lib/components/site/WorkflowSection.svelte';
+  import VisionSection from '#lib/components/site/VisionSection.svelte';
+  import SiteFooter from '#lib/components/site/SiteFooter.svelte';
+  import { HERO_OBJECTS } from '#lib/animations/hero.js';
   export let data;
   $: productLabel=data?.productLabel||'Nalana';
   $: downloadPlatform=data?.downloadPlatform||'both';

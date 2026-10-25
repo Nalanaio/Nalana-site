@@ -1,8 +1,8 @@
-import { env } from '$env/dynamic/private';
-import { readEnrollment } from '$lib/server/funnel-api.js';
-import { ownedDownload } from '$lib/server/download-cookie.js';
-import { downloadHeaders } from '$lib/server/download-handler.js';
-import { flagEnabled } from '$lib/server/acquisition-api.js';
+import * as env from '$app/env/private';
+import { readEnrollment } from '#lib/server/funnel-api.js';
+import { ownedDownload } from '#lib/server/download-cookie.js';
+import { downloadHeaders } from '#lib/server/download-handler.js';
+import { flagEnabled } from '#lib/server/acquisition-api.js';
 
 export function load({ cookies, setHeaders }) {
   setHeaders(downloadHeaders);

@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { get } from 'svelte/store';
-  import { auth, currentUser, isLoggedIn } from '$lib/stores/auth.js';
-  import { fileToAvatarDataUrl, validateAvatarFile } from '$lib/avatarUpload.js';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import { auth, currentUser, isLoggedIn } from '#lib/stores/auth.js';
+  import { fileToAvatarDataUrl, validateAvatarFile } from '#lib/avatarUpload.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
 
   let verifying = true;
   let mounted = false;

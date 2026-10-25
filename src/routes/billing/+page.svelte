@@ -1,17 +1,17 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { auth, currentUser } from '$lib/stores/auth.js';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
-  import WalletCard from '$lib/components/site/WalletCard.svelte';
-  import { clearPendingPurchase, pollPurchase, readPendingPurchase, returnKind } from '$lib/billing/client.js';
-  import { billingRequest } from '$lib/billing/request.js';
-  import { browserStorage } from '$lib/analytics/consent.js';
+  import { page } from '$app/state';
+  import { auth, currentUser } from '#lib/stores/auth.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
+  import WalletCard from '#lib/components/site/WalletCard.svelte';
+  import { clearPendingPurchase, pollPurchase, readPendingPurchase, returnKind } from '#lib/billing/client.js';
+  import { billingRequest } from '#lib/billing/request.js';
+  import { browserStorage } from '#lib/analytics/consent.js';
 
   // Stripe return target for ?billing=success|cancel|portal. This page only
   // reads purchase status; the backend grants credits from verified webhooks.
-  let kind = returnKind($page.url.searchParams.get('billing'));
+  let kind = returnKind(page.url.searchParams.get('billing'));
   /** checking | signed-out | polling | granted | attention | slow | untracked | not_found | cancel | portal */
   let state = 'checking';
   let mounted = false;
@@ -37,7 +37,7 @@
   onMount(() => {
     mounted = true;
     void (async () => {
-      if (!kind) { goto('/account', { replaceState: true }); return; }
+      if (!kind) { goto('/account', { replace: true }); return; }
       if (kind === 'cancel') clearPendingPurchase(browserStorage(window));
       if (!auth.current.token) { state = kind === 'cancel' ? 'cancel' : 'signed-out'; return; }
       const ok = await auth.refreshSession();

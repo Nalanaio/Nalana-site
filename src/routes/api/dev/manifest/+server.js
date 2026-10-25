@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { proxyMe } from '$lib/server/authApi.js';
-import { loadDevManifest } from '$lib/server/dev-release.js';
-import { isDevAllowedEmail } from '$lib/server/dev-access.js';
+import { proxyMe } from '#lib/server/authApi.js';
+import { loadDevManifest } from '#lib/server/dev-release.js';
+import { isDevAllowedEmail } from '#lib/server/dev-access.js';
 
 export async function GET({ request, fetch, setHeaders }) {
   setHeaders({ 'cache-control': 'no-store' });
