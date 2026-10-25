@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { mountVisualOwner } from '$lib/animations/owner.js';
+  import { mountVisualOwner } from '#lib/animations/owner.js';
   export let name;
   export let register;
   export let update;

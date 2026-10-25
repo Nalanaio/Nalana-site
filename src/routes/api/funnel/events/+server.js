@@ -1,2 +1,2 @@
-import { ingestWeb } from '$lib/server/funnel-api.js';
+import { ingestWeb } from '#lib/server/funnel-api.js';
 export const POST = ingestWeb;

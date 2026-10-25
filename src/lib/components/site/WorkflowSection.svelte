@@ -1,6 +1,6 @@
 <script>
   import HeadingLetters from './HeadingLetters.svelte';
-  import NalanaDemo from '$lib/components/NalanaDemo.svelte';
+  import NalanaDemo from '#lib/components/NalanaDemo.svelte';
   export let productLabel='Nalana';
   export let paused=false;
   export let selected=0;

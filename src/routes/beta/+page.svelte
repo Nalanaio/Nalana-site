@@ -1,7 +1,7 @@
 <script>
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
-  import { auth } from '$lib/stores/auth.js';
+  import { auth } from '#lib/stores/auth.js';
 
   export let data;
 

@@ -1,4 +1,4 @@
-import { proxyAuthenticated } from '$lib/server/authApi.js';
+import { proxyAuthenticated } from '#lib/server/authApi.js';
 
 /**
  * GET /api/usage/me

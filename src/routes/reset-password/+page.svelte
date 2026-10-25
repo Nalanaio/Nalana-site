@@ -1,9 +1,9 @@
 <script>
   import { onMount } from 'svelte';
   import { afterNavigate, goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { apiDetail, validatePassword, MIN_PASSWORD_LENGTH } from '$lib/authClient.js';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import { page } from '$app/state';
+  import { apiDetail, validatePassword, MIN_PASSWORD_LENGTH } from '#lib/authClient.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
 
   let token = '';
   let password = '';
@@ -12,7 +12,7 @@
   let error = '';
 
   onMount(() => {
-    token = $page.url.searchParams.get('token') ?? '';
+    token = page.url.searchParams.get('token') ?? '';
     if (!token) {
       error = 'Reset link is invalid or missing. Request a new link below.';
     }
@@ -21,7 +21,7 @@
     void complete.then(() => {
       const current = new URL(window.location.href);
       if (current.href === to?.url.href && current.searchParams.get('token')) {
-        void goto(current.pathname, { replaceState: true, noScroll: true, keepFocus: true });
+        void goto(current.pathname, { replace: true, reset: false });
       }
     });
   });

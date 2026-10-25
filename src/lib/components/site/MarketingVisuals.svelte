@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-  import { mountMarketingVisuals } from '$lib/animations/marketing.js';
-  import '$lib/styles/grace-site.css';
+  import { mountMarketingVisuals } from '#lib/animations/marketing.js';
+  import '#lib/styles/grace-site.css';
   export let workflowStep=0;
   export let workflowInteracting=false;
   export let featureIndex=0;

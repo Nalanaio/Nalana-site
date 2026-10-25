@@ -1,5 +1,5 @@
-import { getApiBase } from '$lib/server/authApi.js';
-import { billingFailure, checkoutBody, proxyBilling, validIdempotencyKey } from '$lib/server/billingApi.js';
+import { getApiBase } from '#lib/server/authApi.js';
+import { billingFailure, checkoutBody, proxyBilling, validIdempotencyKey } from '#lib/server/billingApi.js';
 
 /**
  * POST /api/billing/checkouts — POST {NALANA_API_BASE}/v1/billing/checkouts

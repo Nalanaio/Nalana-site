@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { proxyAuth } from '$lib/server/authApi.js';
-import { campaignEnvironment } from '$lib/server/campaign-runtime.js';
-import { measureSignup } from '$lib/server/campaign-measurement.js';
+import { proxyAuth } from '#lib/server/authApi.js';
+import { campaignEnvironment } from '#lib/server/campaign-runtime.js';
+import { measureSignup } from '#lib/server/campaign-measurement.js';
 
 /**
  * POST /api/auth/register
