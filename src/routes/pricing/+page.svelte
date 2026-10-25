@@ -2,7 +2,10 @@
   import { onMount } from 'svelte';
   import { auth, currentUser } from '$lib/stores/auth.js';
   import AccountShell from '$lib/components/site/AccountShell.svelte';
-  import { catalogView, newIdempotencyKey, savePendingPurchase, trustedHostedUrl, walletView } from '$lib/billing/client.js';
+  import {
+    STATIC_PLANS, catalogView, newIdempotencyKey, pricingResumePath, publicPlansView, savePendingPurchase,
+    trustedHostedUrl, validProductKey, walletView,
+  } from '$lib/billing/client.js';
   import { billingRequest, openBillingPortal } from '$lib/billing/request.js';
   import { browserStorage } from '$lib/analytics/consent.js';
 
@@ -11,6 +14,8 @@
 
   let state = 'checking';
   let view = catalogView(null);
+  // Plan copy anyone can see; the live catalog drives checkout once signed in.
+  let plans = publicPlansView(null);
   let wallet = null;
   let error = '';
   /** @type {string|null} */
@@ -21,16 +26,26 @@
   /** @type {Record<string, string>} */
   const intentKeys = {};
 
+  async function loadPublic() {
+    try {
+      const res = await fetch('/api/billing/public-catalog', { signal: AbortSignal.timeout(10000) });
+      const data = res.ok ? await res.json() : null;
+      if (mounted) plans = publicPlansView(data);
+    } catch { /* static plan copy stays */ }
+  }
+
   async function load() {
     error = '';
-    if (!auth.current.token) { state = 'signed-out'; return; }
+    const publicPlans = loadPublic();
+    if (!auth.current.token) { await publicPlans; state = 'signed-out'; return; }
     state = 'loading';
     const ok = await auth.refreshSession();
     if (!mounted) return;
-    if (!ok || !auth.current.token) { state = 'signed-out'; return; }
+    if (!ok || !auth.current.token) { await publicPlans; state = 'signed-out'; return; }
     const [catalog, balance] = await Promise.all([
       billingRequest('/api/billing/catalog'),
       billingRequest('/api/credits/balance'),
+      publicPlans,
     ]);
     if (!mounted) return;
     if (catalog.status === 401) { state = 'signed-out'; return; }
@@ -38,6 +53,26 @@
     if (!catalog.ok) { error = catalog.data?.error ?? 'Plans are unavailable right now.'; state = 'error'; return; }
     view = catalogView(catalog.data);
     state = view.enabled ? 'ready' : 'unavailable';
+    if (state === 'ready') resumeChosenPlan();
+  }
+
+  // A signed-out "Get Super" click comes back here as /pricing?plan=<key> after
+  // sign-up or log-in: start that checkout once, then drop the parameter so a
+  // back navigation from Stripe does not reopen it.
+  function resumeChosenPlan() {
+    const url = new URL(window.location.href);
+    const key = url.searchParams.get('plan');
+    if (!key) return;
+    url.searchParams.delete('plan');
+    history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+    const plan = validProductKey(key) ? [...view.subscriptions, ...view.topUps].find((p) => p.product_key === key) : null;
+    if (plan && !(subscribed && plan.purchase_kind === 'subscription')) void buy(plan);
+  }
+
+  /** @param {string} productKey @param {'signup'|'login'} mode */
+  function authPath(productKey, mode) {
+    const next = encodeURIComponent(pricingResumePath(productKey));
+    return mode === 'signup' ? `/login?mode=signup&next=${next}` : `/login?next=${next}`;
   }
 
   /** @param {{product_key: string, purchase_kind: string}} product */
@@ -75,30 +110,55 @@
 
   $: subscribed = Boolean(wallet?.activeCycle);
   $: subscribedNotice = `You already have an active subscription${wallet?.cycleEnd ? ` through ${wallet.cycleEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}` : ''}. Change or cancel it from the billing portal.`;
-  $: featured = view.subscriptions.length > 1 ? view.subscriptions[view.subscriptions.length - 1].product_key : null;
+  $: featured = view.subscriptions.length ? view.subscriptions[view.subscriptions.length - 1].product_key : null;
+  $: freeCredits = plans.freeMonthlyCredits;
 </script>
 
 <svelte:head>
   <title>Pricing — Nalana</title>
-  <meta name="description" content="Nalana plans and credits." />
+  <meta name="description" content="Nalana pricing: free credits every month, or 2,000 credits a month with Nalana Super for $20." />
 </svelte:head>
 
 <AccountShell wide>
   <header class="pricing-head">
     <h1>Pricing</h1>
-    <p>Credits power Nalana's AI features. Subscribe for a monthly allowance; checkout is handled securely by Stripe.</p>
+    <p>Credits power Nalana's AI features. {freeCredits ? 'Every account gets free credits each month; subscribe' : 'Subscribe'} for a bigger monthly allowance. Checkout is handled securely by Stripe.</p>
   </header>
 
   {#if state === 'checking' || state === 'loading'}
     <div class="acct-card return-card" role="status">Loading plans…</div>
   {:else if state === 'signed-out'}
-    <section class="acct-card return-card">
-      <h1>Sign in to see plans</h1>
-      <p>Plans and checkout are tied to your Nalana account, so your credits land in the same wallet the app uses.</p>
-      <div class="return-actions">
-        <a class="acct-primary" href="/login?next=%2Fpricing">Sign in or create an account</a>
-      </div>
-    </section>
+    <div class="plan-grid">
+      {#if freeCredits}
+        <section class="acct-card plan-option" aria-labelledby="plan-free">
+          <p class="acct-label">FREE</p>
+          <h2 id="plan-free">Free</h2>
+          <p class="plan-price">$0</p>
+          <p class="plan-credits">{freeCredits} credits every month</p>
+          <p class="plan-note">Refills to {freeCredits} each month. No card needed.</p>
+          <a class="acct-primary" href="/login?mode=signup">Create a free account</a>
+        </section>
+      {/if}
+      {#each plans.subscriptions as plan (plan.product_key)}
+        <section class="acct-card plan-option featured" aria-labelledby="plan-{plan.product_key}">
+          <p class="acct-label">MONTHLY</p>
+          <h2 id="plan-{plan.product_key}">{plan.name}</h2>
+          <p class="plan-price">{plan.price}<span> / month</span></p>
+          <p class="plan-credits">{plan.credits} credits every month</p>
+          <p class="plan-note">{freeCredits ? 'On top of your free credits. ' : ''}Cancel anytime.</p>
+          <a class="acct-primary" href={authPath(plan.product_key, 'signup')}>Get {plan.name}</a>
+          <p class="plan-note">Have an account? <a href={authPath(plan.product_key, 'login')}>Log in to subscribe</a></p>
+        </section>
+      {/each}
+      <section class="acct-card plan-option" aria-labelledby="plan-teams">
+        <p class="acct-label">TEAMS</p>
+        <h2 id="plan-teams">Teams</h2>
+        <p class="plan-price">Custom</p>
+        <p class="plan-credits">Credits sized to your team</p>
+        <a class="acct-primary" href={TEAMS_CONTACT}>Contact us</a>
+      </section>
+    </div>
+    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled.{freeCredits ? ` Unused free credits roll over but never exceed ${freeCredits}.` : ''} See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
   {:else if state === 'error'}
     <section class="acct-card return-card">
       <p class="form-error" role="alert">{error}</p>
@@ -119,6 +179,16 @@
     {/if}
     {#if view.subscriptions.length}
       <div class="plan-grid">
+        {#if freeCredits}
+          <section class="acct-card plan-option" aria-labelledby="plan-free">
+            <p class="acct-label">FREE</p>
+            <h2 id="plan-free">Free</h2>
+            <p class="plan-price">$0</p>
+            <p class="plan-credits">{freeCredits} credits every month</p>
+            <p class="plan-note">Included with your account and refilled each month.</p>
+            {#if wallet?.free}<p class="plan-note">You have {wallet.free} free credits right now.</p>{/if}
+          </section>
+        {/if}
         {#each view.subscriptions as plan (plan.product_key)}
           <section class="acct-card plan-option" class:featured={plan.product_key === featured} aria-labelledby="plan-{plan.product_key}">
             <p class="acct-label">MONTHLY</p>
@@ -159,6 +229,6 @@
         {/each}
       </div>
     {/if}
-    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled. See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
+    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled.{freeCredits ? ` Free credits refill monthly up to ${freeCredits}.` : ''} See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
   {/if}
 </AccountShell>

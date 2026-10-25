@@ -56,6 +56,45 @@ export function catalogView(catalog) {
   return { enabled: products.length > 0, subscriptions, topUps };
 }
 
+/**
+ * Plan copy shown to signed-out visitors when the live public catalog is not
+ * reachable. Mirrors the production catalog; checkout always re-reads the live
+ * catalog after sign-in, so this never sets a charged price.
+ */
+export const STATIC_PLANS = Object.freeze({
+  freeMonthlyCredits: 200,
+  subscriptions: [{ product_key: 'super_monthly', purchase_kind: 'subscription', name: 'Nalana Super', price: '$20', credits: '2,000', price_minor: 2000, credits_decimal: '2000', savingsPercent: null }],
+});
+
+/**
+ * Public pricing view: the live catalog when it validates, otherwise static copy.
+ * @param {unknown} catalog
+ */
+export function publicPlansView(catalog) {
+  const view = catalogView(catalog);
+  const free = /** @type {any} */ (catalog)?.free_monthly_credits;
+  const freeCredits = Number.isSafeInteger(free) && free >= 0 ? free : null;
+  if (view.enabled && view.subscriptions.length) {
+    return { live: true, subscriptions: view.subscriptions, freeMonthlyCredits: freeCredits ?? 0 };
+  }
+  return { live: false, subscriptions: STATIC_PLANS.subscriptions, freeMonthlyCredits: STATIC_PLANS.freeMonthlyCredits };
+}
+
+const PRODUCT_KEY = /^[A-Za-z0-9_.-]{1,128}$/;
+
+/** @param {unknown} key */
+export const validProductKey = (key) => typeof key === 'string' && PRODUCT_KEY.test(key);
+
+/** Where a signed-out "Subscribe" click returns after sign-up or log-in. @param {string} productKey */
+export function pricingResumePath(productKey) {
+  return `/pricing?plan=${encodeURIComponent(productKey)}`;
+}
+
+/** @param {string|null} value a `next` query value; only same-site paths count */
+export function safeNextPath(value) {
+  return typeof value === 'string' && value.startsWith('/') && !value.startsWith('//') && !value.startsWith('/\\') ? value : null;
+}
+
 /** @param {string} value credits decimal string, already validated */
 function microcredits(value) {
   const [whole, frac = ''] = value.trim().split('.');
@@ -84,11 +123,13 @@ export function walletView(balance, now = Date.now()) {
   const subscription = formatCredits(data.subscription_available);
   const topUp = formatCredits(data.top_up_available);
   if (subscription === null || topUp === null) return null;
+  // Older backends omit the free bucket; treat it as none rather than failing.
+  const free = data.free_available === undefined ? '0' : formatCredits(data.free_available);
   const total = formatCredits(data.available_to_start) ?? formatCredits(data.unspent_total);
   const end = typeof data.cycle_end === 'string' ? new Date(data.cycle_end) : null;
   const cycleEnd = end && !Number.isNaN(end.getTime()) ? end : null;
   return {
-    subscription, topUp, total,
+    subscription, topUp, free, total,
     cycleEnd,
     // A subscription grant whose period has not ended. Inferred from the ledger,
     // not from Stripe; the portal remains the authority on subscription state.

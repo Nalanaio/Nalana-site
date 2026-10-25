@@ -70,6 +70,26 @@ export async function proxyBilling({ base, request, path, method = 'GET', body, 
   }
 }
 
+/**
+ * Reads one public, unauthenticated billing document (plan copy only). The
+ * visitor's credentials are never forwarded.
+ * @param {{ base: string|null, path: string, fetch?: typeof fetch }} options
+ */
+export async function proxyPublicBilling({ base, path, fetch: fetcher = fetch }) {
+  if (!base) return fail(503, 'Billing is temporarily unavailable. Please try again shortly.');
+  try {
+    const res = await fetcher(`${base}${path}`, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10000) });
+    const text = await res.text();
+    let data = {};
+    try { data = text ? JSON.parse(text) : {}; } catch { data = {}; }
+    if (!res.ok) return json(billingError(res.status, data), { status: res.status, headers: NO_STORE });
+    return json(data, { status: 200, headers: { 'cache-control': 'public, max-age=60' } });
+  } catch {
+    console.error(`[billing] GET ${path} failed`);
+    return fail(503, 'Billing is temporarily unavailable. Please try again shortly.');
+  }
+}
+
 /** @param {unknown} value */
 export function checkoutBody(value) {
   const body = /** @type {any} */ (value);
