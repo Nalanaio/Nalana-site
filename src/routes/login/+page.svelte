@@ -10,6 +10,7 @@
   import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
   import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
   import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import { safeNextPath } from '$lib/billing/client.js';
   import {
     authErrorMessage,
     isEmailNotVerifiedError,
@@ -26,10 +27,21 @@
   let signupSuccess = false;
   let resetBanner = false;
   let showPassword = false;
+  /** Where "Continue" goes after sign-up, e.g. back to a chosen plan. */
+  let continuePath = null;
+  // /signup-complete drops the query string, so a pending `next` rides there in session storage.
+  const SIGNUP_NEXT_KEY = 'nalana_signup_next_v1';
 
   function postLoginPath() {
-    const next = get(page).url.searchParams.get('next');
-    return next?.startsWith('/') && !next.startsWith('//') ? next : '/account';
+    return safeNextPath(get(page).url.searchParams.get('next')) ?? '/account';
+  }
+
+  function takeSignupNext() {
+    try {
+      const value = safeNextPath(window.sessionStorage.getItem(SIGNUP_NEXT_KEY));
+      window.sessionStorage.removeItem(SIGNUP_NEXT_KEY);
+      return value;
+    } catch { return null; }
   }
 
   onMount(() => {
@@ -39,6 +51,7 @@
         email = session.user.email || '';
         mode = 'signup';
         signupSuccess = true;
+        continuePath = takeSignupNext();
         void auth.refreshSession();
         return;
       }
@@ -100,7 +113,13 @@
 
       if (mode === 'signup') {
         signupSuccess = true;
-        if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' && auth.canRestoreSession() && queueSignupMeasurement(window)) window.location.replace('/signup-complete');
+        continuePath = safeNextPath(get(page).url.searchParams.get('next'));
+        if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' && auth.canRestoreSession() && queueSignupMeasurement(window)) {
+          if (continuePath) {
+            try { window.sessionStorage.setItem(SIGNUP_NEXT_KEY, continuePath); } catch { /* best effort */ }
+          }
+          window.location.replace('/signup-complete');
+        }
         return;
       }
 
@@ -136,7 +155,11 @@
       <VerificationRecovery policy={$auth.user?.verification} />
       <EmailVerifyPanel variant="signup" {email} title="You can use Nalana now" subtitle="Your account is signed in. Use the same email and password in the Nalana app.">
         <svelte:fragment slot="actions">
-          <a href="/account" class="acct-primary">Go to my account</a>
+          {#if continuePath}
+            <a href={continuePath} class="acct-primary">{continuePath.startsWith('/pricing') ? 'Continue to checkout' : 'Continue'}</a>
+          {:else}
+            <a href="/account" class="acct-primary">Go to my account</a>
+          {/if}
         </svelte:fragment>
       </EmailVerifyPanel>
     {:else}
