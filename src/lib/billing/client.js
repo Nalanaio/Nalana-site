@@ -135,6 +135,8 @@ export function walletView(balance, now = Date.now()) {
     // not from Stripe; the portal remains the authority on subscription state.
     activeCycle: Boolean(cycleEnd && cycleEnd.getTime() > now),
     enforced: data.billing_mode === 'enforced',
+    // Free credits are withheld until the inbox is verified.
+    needsVerification: data.free_requires_verification === true,
   };
 }
 
