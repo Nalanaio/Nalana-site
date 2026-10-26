@@ -186,7 +186,8 @@
             <p class="plan-price">$0</p>
             <p class="plan-credits">{freeCredits} credits every month</p>
             <p class="plan-note">Included with your account and refilled each month.</p>
-            {#if wallet?.free}<p class="plan-note">You have {wallet.free} free credits right now.</p>{/if}
+            {#if wallet?.needsVerification}<p class="plan-note">Verify your email to get these credits. <a href="/account">Resend the link</a></p>
+            {:else if wallet?.free}<p class="plan-note">You have {wallet.free} free credits right now.</p>{/if}
           </section>
         {/if}
         {#each view.subscriptions as plan (plan.product_key)}

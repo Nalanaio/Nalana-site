@@ -63,6 +63,13 @@ test('wallet reads balance fields and infers an active cycle only from a future 
   assert.equal(walletView(null), null);
 });
 
+test('wallet flags free credits held back for an unverified inbox', () => {
+  const base = { subscription_available: '0', top_up_available: '0', free_available: '0', available_to_start: '0' };
+  assert.equal(walletView({ ...base, free_requires_verification: true }).needsVerification, true);
+  assert.equal(walletView(base).needsVerification, false);
+  assert.equal(walletView({ ...base, free_requires_verification: 'true' }).needsVerification, false);
+});
+
 test('return kinds and purchase outcomes are closed sets', () => {
   assert.deepEqual(['success', 'cancel', 'portal', 'x', null].map(returnKind), ['success', 'cancel', 'portal', null, null]);
   assert.deepEqual(['granted', 'needs_reconciliation', 'pending_checkout', 'awaiting_payment', 'weird'].map(purchaseOutcome), ['granted', 'attention', 'pending', 'pending', 'unknown']);
