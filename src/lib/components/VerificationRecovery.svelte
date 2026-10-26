@@ -49,7 +49,7 @@
 </script>
 
 <svelte:window on:focus={() => auth.refreshSession()} />
-<section aria-label="Email verification" class="verification">
+<section id="verify-email" aria-label="Email verification" class="verification">
   <p>{verificationMessage(policy)}</p>
   <p class="email">{$auth.user?.email ?? ''}</p>
   <div class="actions">
@@ -70,7 +70,7 @@
   {#if error}<p role="alert" class="error">{error}</p>{/if}
 </section>
 <style>
-  .verification { border: 1px solid #bddafb; border-radius: 16px; padding: 20px; background: #f4f8ff; margin-bottom: 24px; color: #173653; }
+  .verification { scroll-margin-top: 96px; border: 1px solid #bddafb; border-radius: 16px; padding: 20px; background: #f4f8ff; margin-bottom: 24px; color: #173653; }
   p { line-height: 1.5; } .email { overflow-wrap: anywhere; margin: 8px 0; }
   .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   /* Keep adjacent controls still as the countdown changes or crosses 10s. */

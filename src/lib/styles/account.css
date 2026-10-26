@@ -91,7 +91,7 @@
 .grace-account-page .plan-savings { margin: 0; align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: var(--lav); font-size: 13px; font-weight: 600; }
 .grace-account-page .plan-option .acct-primary { margin-top: auto; width: 100%; }
 .grace-account-page .plan-note { margin: 0; font-size: 14px; color: var(--muted); }
-.grace-account-page .plan-note a { color: inherit; }
+.grace-account-page .plan-note a { color: inherit; text-decoration: underline; }
 .grace-account-page .fine-print { margin: 0; font-size: 13px; color: var(--muted); }
 .grace-account-page .wallet-card { padding: 40px; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
 .grace-account-page .wallet-total { margin: 0; display: flex; flex-direction: column; gap: 2px; }
