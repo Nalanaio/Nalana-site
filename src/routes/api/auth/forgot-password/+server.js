@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { proxyBackend } from '$lib/server/authApi.js';
+import { proxyBackend } from '#lib/server/authApi.js';
 
 /**
  * POST /api/auth/forgot-password

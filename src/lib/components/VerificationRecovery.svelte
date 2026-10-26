@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { auth } from '$lib/stores/auth.js';
-  import { resendVerificationEmail } from '$lib/authClient.js';
-  import { verificationMessage } from '$lib/verification/policy.js';
+  import { auth } from '#lib/stores/auth.js';
+  import { resendVerificationEmail } from '#lib/authClient.js';
+  import { verificationMessage } from '#lib/verification/policy.js';
   /** @type {{server_time: string, resend_available_at: string|null, [key: string]: any}|null} */
   export let policy = null;
   let busy = false;

@@ -1,13 +1,13 @@
 <script>
   import { onMount } from 'svelte';
-  import { auth, currentUser } from '$lib/stores/auth.js';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import { auth, currentUser } from '#lib/stores/auth.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
   import {
     STATIC_PLANS, catalogView, newIdempotencyKey, pricingResumePath, publicPlansView, savePendingPurchase,
     trustedHostedUrl, validProductKey, walletView,
-  } from '$lib/billing/client.js';
-  import { billingRequest, openBillingPortal } from '$lib/billing/request.js';
-  import { browserStorage } from '$lib/analytics/consent.js';
+  } from '#lib/billing/client.js';
+  import { billingRequest, openBillingPortal } from '#lib/billing/request.js';
+  import { browserStorage } from '#lib/analytics/consent.js';
 
   // Teams is sold by hand: custom price and credits, no self-serve checkout.
   const TEAMS_CONTACT = 'mailto:clarence@nalana.io?subject=' + encodeURIComponent('Nalana Teams plan');

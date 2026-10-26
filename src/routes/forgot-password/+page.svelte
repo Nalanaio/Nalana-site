@@ -1,6 +1,6 @@
 <script>
-  import { FORGOT_PASSWORD_SUCCESS } from '$lib/authClient.js';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
+  import { FORGOT_PASSWORD_SUCCESS } from '#lib/authClient.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
 
   let email = '';
   let loading = false;

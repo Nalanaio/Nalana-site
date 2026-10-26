@@ -1,5 +1,5 @@
-import { getApiBase } from '$lib/server/authApi.js';
-import { billingFailure, proxyBilling, validIdempotencyKey } from '$lib/server/billingApi.js';
+import { getApiBase } from '#lib/server/authApi.js';
+import { billingFailure, proxyBilling, validIdempotencyKey } from '#lib/server/billingApi.js';
 
 /** POST /api/billing/portal-sessions — hosted Stripe customer portal URL. */
 export function POST({ request }) {

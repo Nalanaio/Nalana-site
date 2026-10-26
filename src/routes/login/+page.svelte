@@ -1,22 +1,22 @@
 <script>
-  import { currentCampaign } from '$lib/campaigns/browser.js';
+  import { currentCampaign } from '#lib/campaigns/browser.js';
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
+  import { afterNavigate, goto } from '$app/navigation';
+  import { page } from '$app/state';
   import { get } from 'svelte/store';
-  import { env } from '$env/dynamic/public';
-  import { queueSignupMeasurement } from '$lib/analytics/attribution.js';
-  import { auth } from '$lib/stores/auth.js';
-  import EmailVerifyPanel from '$lib/components/EmailVerifyPanel.svelte';
-  import VerificationRecovery from '$lib/components/VerificationRecovery.svelte';
-  import AccountShell from '$lib/components/site/AccountShell.svelte';
-  import { safeNextPath } from '$lib/billing/client.js';
+  import * as env from '$app/env/public';
+  import { queueSignupMeasurement } from '#lib/analytics/attribution.js';
+  import { auth } from '#lib/stores/auth.js';
+  import EmailVerifyPanel from '#lib/components/EmailVerifyPanel.svelte';
+  import VerificationRecovery from '#lib/components/VerificationRecovery.svelte';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
+  import { safeNextPath } from '#lib/billing/client.js';
   import {
     authErrorMessage,
     isEmailNotVerifiedError,
     validatePassword,
     MIN_PASSWORD_LENGTH,
-  } from '$lib/authClient.js';
+  } from '#lib/authClient.js';
 
   let mode = 'login';
   let email = '';
@@ -33,7 +33,7 @@
   const SIGNUP_NEXT_KEY = 'nalana_signup_next_v1';
 
   function postLoginPath() {
-    return safeNextPath(get(page).url.searchParams.get('next')) ?? '/account';
+    return safeNextPath(page.url.searchParams.get('next')) ?? '/account';
   }
 
   function takeSignupNext() {
@@ -47,7 +47,7 @@
   onMount(() => {
     const session = get(auth);
     if (session.token && session.user) {
-      if (get(page).url.searchParams.get('created') === '1') {
+      if (page.url.searchParams.get('created') === '1') {
         email = session.user.email || '';
         mode = 'signup';
         signupSuccess = true;
@@ -63,9 +63,10 @@
     if (params.get('reset') === 'success') resetBanner = true;
   });
 
-  $: if ($page.url.searchParams.get('reset') === 'success') {
-    resetBanner = true;
-  }
+  // A client-side return to /login?reset=success does not remount the page.
+  afterNavigate(({ to }) => {
+    if (to?.url.searchParams.get('reset') === 'success') resetBanner = true;
+  });
 
   async function submit() {
     if (loading) return;
@@ -113,7 +114,7 @@
 
       if (mode === 'signup') {
         signupSuccess = true;
-        continuePath = safeNextPath(get(page).url.searchParams.get('next'));
+        continuePath = safeNextPath(page.url.searchParams.get('next'));
         if (env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true' && auth.canRestoreSession() && queueSignupMeasurement(window)) {
           if (continuePath) {
             try { window.sessionStorage.setItem(SIGNUP_NEXT_KEY, continuePath); } catch { /* best effort */ }

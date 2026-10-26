@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy, tick } from 'svelte';
-  import { createDemoClock } from '$lib/animations/demo-clock.js';
+  import { createDemoClock } from '#lib/animations/demo-clock.js';
 
   // Accepted for API compatibility with the prototype (visual is fixed).
   export let theme = 'color';

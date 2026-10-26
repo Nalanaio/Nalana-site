@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { auth } from '$lib/stores/auth.js';
-  import { walletView } from '$lib/billing/client.js';
-  import { billingRequest, openBillingPortal } from '$lib/billing/request.js';
+  import { auth } from '#lib/stores/auth.js';
+  import { walletView } from '#lib/billing/client.js';
+  import { billingRequest, openBillingPortal } from '#lib/billing/request.js';
 
   /** Shown above the wallet, e.g. after a return from Stripe. */
   export let notice = '';

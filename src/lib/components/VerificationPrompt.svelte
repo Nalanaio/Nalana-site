@@ -1,8 +1,8 @@
 <script>
   import { onMount, tick } from 'svelte';
-  import { auth } from '$lib/stores/auth.js';
-  import { verificationPhase } from '$lib/verification/policy.js';
-  import { claimVerificationPrompt } from '$lib/verification/prompts.js';
+  import { auth } from '#lib/stores/auth.js';
+  import { verificationPhase } from '#lib/verification/policy.js';
+  import { claimVerificationPrompt } from '#lib/verification/prompts.js';
   import VerificationRecovery from './VerificationRecovery.svelte';
   let mounted = false;
   let visible = false;

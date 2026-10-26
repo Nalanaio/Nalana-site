@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { proxyAuth } from '$lib/server/authApi.js';
+import { proxyAuth } from '#lib/server/authApi.js';
 
 /**
  * POST /api/auth/login

@@ -1,6 +1,6 @@
 <script>
   import { onMount, tick } from 'svelte';
-  import { readChoice, writeChoice, sanitizedLocation, browserStorage, permissionsRevoked } from '$lib/analytics/consent.js';
+  import { readChoice, writeChoice, sanitizedLocation, browserStorage, permissionsRevoked } from '#lib/analytics/consent.js';
   export let onChoice = (_choice) => {};
   export let autoPrompt = false;
   let choice = { version: 1, usage: false, identification: false, decided: false };

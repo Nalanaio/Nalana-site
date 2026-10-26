@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { proxyAuthenticated, proxyMe } from '$lib/server/authApi.js';
+import { proxyAuthenticated, proxyMe } from '#lib/server/authApi.js';
 
 /**
  * GET /api/auth/me — GET {NALANA_API_BASE}/v1/users/me
