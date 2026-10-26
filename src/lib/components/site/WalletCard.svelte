@@ -61,7 +61,7 @@
       {/if}
     </dl>
     {#if wallet.needsVerification}
-      <p class="plan-note" role="status">Verify your email to get your free monthly credits. <a href="/account">Resend the link</a></p>
+      <p class="plan-note" role="status">Verify your email to get your free monthly credits. <a href="/account#verify-email">Resend the link</a></p>
     {/if}
     {#if portalError}<p class="form-error" role="alert">{portalError}</p>{/if}
     <div class="wallet-actions">
