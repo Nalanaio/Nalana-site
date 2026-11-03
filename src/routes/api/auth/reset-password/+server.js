@@ -1,3 +1,4 @@
+import { readAuthRecoveryRequest } from '#lib/server/auth-request.js';
 import { json } from '@sveltejs/kit';
 import { proxyBackend } from '#lib/server/authApi.js';
 
@@ -6,7 +7,9 @@ import { proxyBackend } from '#lib/server/authApi.js';
  * Proxies to POST {NALANA_API_BASE}/v1/auth/reset-password
  */
 export async function POST({ request }) {
-  const body = await request.json().catch(() => ({}));
+  const parsed = await readAuthRecoveryRequest(request);
+  if (parsed.response) return parsed.response;
+  const body = parsed.body;
   const { token, password } = body;
 
   if (!token) {

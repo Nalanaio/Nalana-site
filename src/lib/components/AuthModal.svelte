@@ -1,4 +1,6 @@
 <script>
+  import GoogleSignIn from '#lib/components/GoogleSignIn.svelte';
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { authModal, closeAuthModal } from '#lib/stores/modal.js';
   import { auth } from '#lib/stores/auth.js';
   import * as env from '$app/env/public';
@@ -36,6 +38,7 @@
       return;
     }
 
+    const sessionEpoch = auth.current.sessionEpoch;
     loading = true;
     error = '';
     showUnverified = false;
@@ -43,13 +46,14 @@
 
     try {
       const endpoint = mode === 'signup' ? '/api/auth/register' : '/api/auth/login';
-      const res = await fetch(endpoint, {
+      const res = await cookieRequest(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, ...(mode === 'signup' && env.PUBLIC_CAMPAIGN_TOTALS_ENABLED === 'true' ? { campaign: currentCampaign(window) } : {}) }),
       });
 
       const data = await res.json();
+      if (auth.current.sessionEpoch !== sessionEpoch) return;
 
       if (!res.ok) {
         if (mode === 'login' && isEmailNotVerifiedError(res.status, data)) {
@@ -59,12 +63,12 @@
         return;
       }
 
-      if (!data.token || !data.user?.id) {
+      if (!data.user?.id) {
         error = 'Invalid response from server. Please try again.';
         return;
       }
 
-      auth.setSession(data.token, data.user, data.refresh_token);
+      auth.setSession(data.user, data.csrf_token);
       password = '';
 
       if (mode === 'signup') {
@@ -114,6 +118,7 @@
           {mode === 'signup' ? 'One account for the website and IDE.' : 'Pick up where you left off.'}
         </p>
 
+        <GoogleSignIn />
         <form on:submit|preventDefault={handleSubmit}>
           <input class="field" type="email" placeholder="your@email.com" bind:value={email} autocomplete="email" disabled={loading} />
           <input class="field" type="password" placeholder="Password (min 8 characters)" bind:value={password} autocomplete={mode === 'signup' ? 'new-password' : 'current-password'} disabled={loading} />

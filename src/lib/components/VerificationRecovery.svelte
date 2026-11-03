@@ -1,4 +1,5 @@
 <script>
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { onMount } from 'svelte';
   import { auth } from '#lib/stores/auth.js';
   import { resendVerificationEmail } from '#lib/authClient.js';
@@ -20,7 +21,7 @@
     busy = true; message = ''; error = '';
     const epoch = auth.current.sessionEpoch;
     try {
-      const result = await resendVerificationEmail('', auth.getAuthHeader());
+      const result = await resendVerificationEmail('', true);
       if (auth.current.sessionEpoch !== epoch) return;
       if (result.data.verification) auth.updateVerification(result.data.verification);
       if (result.ok) message = result.data.status === 'already_verified' ? 'Your email is already verified.' : result.data.status === 'cooldown' ? 'Please wait before requesting another verification email.' : 'Verification email queued. Check your inbox and spam folder.';
@@ -33,12 +34,12 @@
     busy = true; message = ''; error = '';
     const epoch = auth.current.sessionEpoch;
     try {
-      const response = await fetch('/api/auth/change-email', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: auth.getAuthHeader() }, body: JSON.stringify({ new_email: newEmail, current_password: password }), signal: AbortSignal.timeout(10000) });
+      const response = await cookieRequest('/api/auth/change-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ new_email: newEmail, current_password: password }), signal: AbortSignal.timeout(10000) });
       const data = await response.json().catch(() => ({}));
       if (auth.current.sessionEpoch !== epoch) return;
       if (!response.ok) { error = data.error ?? 'Could not update your email. Your current session remains available.'; return; }
-      if (!data.token || !data.user?.id || !data.refresh_token) { error = 'The account response was incomplete. Check your account status again.'; return; }
-      auth.setSession(data.token, data.user, data.refresh_token);
+      if (!data.user?.id) { error = 'The account response was incomplete. Check your account status again.'; return; }
+      auth.setSession(data.user, data.csrf_token);
       correcting = false; newEmail = '';
       message = 'Email updated and verification email queued. Your original verification deadline still applies.';
     } catch { error = 'Network error. Please try again.'; }

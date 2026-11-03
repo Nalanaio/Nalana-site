@@ -39,10 +39,11 @@
     void (async () => {
       if (!kind) { goto('/account', { replace: true }); return; }
       if (kind === 'cancel') clearPendingPurchase(browserStorage(window));
-      if (!auth.current.token) { state = kind === 'cancel' ? 'cancel' : 'signed-out'; return; }
+      if (!auth.current.initialized) await auth.refreshSession();
+    if (!auth.current.signedIn) { state = kind === 'cancel' ? 'cancel' : 'signed-out'; return; }
       const ok = await auth.refreshSession();
       if (!mounted) return;
-      if (!ok || !auth.current.token) { state = kind === 'cancel' ? 'cancel' : 'signed-out'; return; }
+      if (!ok || !auth.current.signedIn) { state = kind === 'cancel' ? 'cancel' : 'signed-out'; return; }
       if (kind === 'success') await confirmPurchase();
       else state = kind;
     })();

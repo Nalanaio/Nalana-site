@@ -1,3 +1,4 @@
+import { authorization } from './authSession.js';
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 import { UUID, validBrowserEvent } from '../funnel/contract.js';
 import { cleanAttribution } from '../funnel/attribution.js';
@@ -90,7 +91,7 @@ export async function lifecycle(event) {
   if (action === 'sessions' && (Object.keys(body).sort().join(',') !== 'app_session_id,web_session_id' || body.app_session_id !== null || !UUID.test(body.web_session_id))) return json({ error: 'Invalid session.' }, 400);
   if (['associate', 'dissociate'].includes(action) && (Object.keys(body).join(',') !== 'session_id' || body.session_id !== enrollment.session_id)) return json({ error: 'Session ownership denied.' }, 403);
   if (action === 'renew' && Object.keys(body).length) return json({ error: 'Invalid request.' }, 400);
-  const auth = event.request.headers.get('authorization');
+  const auth = authorization(event);
   if (action === 'associate' && !auth?.startsWith('Bearer ')) return json({ error: 'Account authentication required.' }, 401);
   const response = await backendFetch(`/v1/funnel/enrollments/${enrollment.id}/${action}`, { body, authorization: action === 'associate' ? auth : `Funnel ${enrollment.token}`, headers: action === 'associate' ? { 'X-Funnel-Enrollment': enrollment.token } : {}, fetchImpl: event.fetch });
   if (!response.ok) return project(response);

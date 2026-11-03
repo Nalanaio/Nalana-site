@@ -82,18 +82,16 @@ test('blocked browser storage never prevents registration', () => {
   assert.equal(consumeSignupMeasurement(window), false);
 });
 
-test('measurement document navigation requires a session that survived a storage read-back', () => {
-  const saved = storage();
-  const auth = createSessionController({ storage: saved });
+test('measurement document navigation uses sanitized cookie-session state without token storage', () => {
+  const saved = storage(), auth = createSessionController({ storage: saved });
   assert.equal(auth.canRestoreSession(), false);
-  auth.setSession('synthetic-token', { id: 'synthetic-user' });
+  auth.setSession({ id: 'synthetic-user' });
   assert.equal(auth.canRestoreSession(), true);
-  saved.removeItem('nalana_session_v1');
-  assert.equal(auth.canRestoreSession(), false);
+  assert.equal(saved.getItem('nalana_session_v1'), null);
   const memoryOnly = createSessionController({ storage: { ...storage(), setItem() { throw new Error('quota'); } } });
-  memoryOnly.setSession('synthetic-token', { id: 'synthetic-user' });
-  assert.equal(memoryOnly.canRestoreSession(), false);
-  assert.equal(memoryOnly.current.token, 'synthetic-token');
+  memoryOnly.setSession({ id: 'synthetic-user' });
+  assert.equal(memoryOnly.canRestoreSession(), true);
+  assert.equal('token' in memoryOnly.current, false);
 });
 
 test('download and signup retain campaign after URL cleanup; signup cannot fire on credential pages', () => {

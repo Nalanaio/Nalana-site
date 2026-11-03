@@ -1,4 +1,5 @@
 <script>
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { get } from 'svelte/store';
@@ -38,6 +39,7 @@
     displayName = ''; avatarUrl = ''; previewUrl = '';
     avatarImgError = false;
     saving = false; uploadingAvatar = false; saveError = '';
+    if (!auth.current.initialized) await auth.refreshSession();
     if (!$isLoggedIn) { goto('/login'); return; }
     const ok = await auth.refreshSession();
     if (!mounted || auth.current.sessionEpoch !== epoch) return;
@@ -92,8 +94,8 @@
   async function saveProfile() {
     if (saving || uploadingAvatar) return;
     const session = get(auth);
-    const header = auth.getAuthHeader();
-    if (!header) {
+    const signedIn = auth.current.signedIn;
+    if (!signedIn) {
       goto('/login');
       return;
     }
@@ -102,10 +104,9 @@
     saveError = '';
 
     try {
-      const res = await fetch('/api/auth/me', {
+      const res = await cookieRequest('/api/auth/me', {
         method: 'PATCH',
         headers: {
-          Authorization: header,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

@@ -49,7 +49,7 @@ test('anonymous observations never inherit later login and account A to B closes
   await h.session.authChanged('A:1', 'A-token'); assert.equal(h.session.snapshot().association_epoch, 1);
   const switching = h.session.authChanged('B:2', 'B-token'); assert.equal(h.session.click(), null); await switching; const b = h.session.snapshot(); assert.notEqual(b.session_id, anonymous.session_id); assert.equal(b.association_epoch, 1);
   assert.equal(h.requests.filter(r => r.path.endsWith('/dissociate')).length, 1);
-  assert.equal(h.requests.filter(r => r.path.endsWith('/associate')).at(-1).auth, 'Bearer B-token');
+  assert.equal(h.requests.filter(r => r.path.endsWith('/associate')).at(-1).auth, undefined);
 });
 test('routine auth refresh preserves binding while correction epoch forces a fresh session', async () => {
   const h = harness(); await h.session.grant(); await h.session.authChanged('A:1', 'A-token'); const before = h.session.snapshot();
