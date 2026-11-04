@@ -15,7 +15,8 @@
   }
 </script>
 {#if enabled}
-  {#if intent === 'link'}<p>Connecting Google requires your current Nalana password and a separate confirmation in the browser.</p>{/if}
+  {#if intent === 'link'}<p>Connecting Google requires your current Nalana password and a separate confirmation in the browser.</p>
+  {:else}<p>Continue with Google to sign in or create an account. By continuing, you agree to Nalana’s <a href="/terms">Terms</a> and acknowledge the <a href="/privacy">Privacy Policy</a>.</p>{/if}
   <button class="google-button" type="button" disabled={busy} on:click={start} aria-busy={busy}><img src="/brand/google-g.png" alt="" width="20" height="20" /><span>{busy ? 'Opening Google…' : 'Continue with Google'}</span></button>
   {#if error}<p role="alert">{error}</p>{/if}
 {/if}

@@ -44,10 +44,22 @@ export async function startGoogle(event) {
   return reply({ authorization_url: launch });
 }
 export async function completeGoogle(event) {
-  const pending = attempt(event); if (!pending) return fail();
+  let pending = attempt(event); if (!pending) return fail();
+  const parsed = await readAuthRecoveryRequest(event.request);
+  if (parsed.response) return parsed.response;
+  const input = parsed.body, supplied = Object.keys(input).length > 0;
+  if (Object.keys(input).some(key => !['transaction_id', 'web_return_proof'].includes(key))) return fail();
+  if (supplied) {
+    if (input.transaction_id !== pending.id || typeof input.web_return_proof !== 'string' || input.web_return_proof.length > 1024 || !/^[A-Za-z0-9_-]{32,1024}={0,2}$/.test(input.web_return_proof)) return fail();
+    // A resumed backend page may mint another randomized proof for this same
+    // transaction. Preserve the captured proof for stable in-flight retries.
+    pending = { ...pending, webReturnProof: pending.webReturnProof ?? input.web_return_proof };
+    setCookie(event, 'google', pending, Math.max(1, Math.floor((pending.exp - Date.now()) / 1000)));
+  }
+  if (!pending.webReturnProof) return fail();
   if (installedSessionMatches(event, pending)) return reply({ installed: true });
-  if (!googleEnabled()) return reply({ error: 'Google sign-in is unavailable. Cancel and use your password.' }, 503);
-  const result = await backendRequest(`/v1/auth/google/transactions/${pending.id}/redemption`, { handoff_verifier: pending.verifier, request_id: pending.requestId, channel: 'web' });
+  if (!googleEnabled()) return reply({ error: 'Google sign-in is unavailable. Go back and use your password.' }, 503);
+  const result = await backendRequest(`/v1/auth/google/transactions/${pending.id}/redemption`, { handoff_verifier: pending.verifier, request_id: pending.requestId, channel: 'web', web_return_proof: pending.webReturnProof });
   if (result.status === 202 || result.status === 429) return reply({ pending: true, error: 'Finish the Google confirmation, then try again.' }, result.status);
   if (!result.ok) {
     if ([400, 401, 403, 409, 410].includes(result.status)) deleteCookie(event, 'google');
@@ -66,7 +78,10 @@ export async function acknowledgeGoogle(event) {
   const pending = attempt(event); if (!installedSessionMatches(event, pending)) return fail();
   const result = await backendRequest(`/v1/auth/google/transactions/${pending.id}/acknowledgment`, { handoff_verifier: pending.verifier, request_id: pending.requestId });
   if (!result.ok) return reply({ error: 'Sign-in was saved, but confirmation is pending. Retry.' }, 503);
-  deleteCookie(event, 'google'); return reply({ complete: true });
+  // Keep the existing <=60s installed receipt until natural expiry. If this
+  // response is lost, exact-pair readback and idempotent upstream acknowledgment
+  // remain available; deleting the marker here would make that retry impossible.
+  return reply({ complete: true });
 }
 export async function cancelGoogle(event) {
   const entries = pendingGoogleCleanup(event);

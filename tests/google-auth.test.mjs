@@ -8,6 +8,12 @@ process.env.NALANA_API_BASE = 'https://api.example.test';
 const googleKey = e => '__Host-nalana_google_' + browserContext(e).sid;
 const event = (jar = new Map(), intent = 'sign_in') => { const e = fixture('/api/auth/google/start', { method: 'POST', body: { intent }, jar }); browserContext(e, true); return e; };
 function backend(t, respond) { const old = globalThis.fetch, calls = []; globalThis.fetch = async (url, init) => { const body = init.body ? JSON.parse(init.body) : null; calls.push({ url, init, body }); return respond(url, body, init); }; t.after(() => { globalThis.fetch = old; }); return calls; }
+const returnProof = 'callback-browser-return-proof-fixture-at-least-32';
+async function complete(e, input) {
+  const pending = readCookie(e, 'google');
+  e.request = fixture('/api/auth/google/complete', { method: 'POST', body: input ?? { transaction_id: pending?.id, web_return_proof: returnProof } }).request;
+  return completeGoogle(e);
+}
 const startResponse = id => Response.json({ transaction_id: id, authorization_url: `https://api.example.test/v1/auth/google/browser?transaction_id=${id}&launch=one-use-launch`, channel: 'web', expires_at: new Date(Date.now() + 599000).toISOString(), poll_after_seconds: 2 });
 test('flag off by default; arbitrary upstream/return targets never accepted', async t => {
   delete process.env.NALANA_GOOGLE_AUTH_ENABLED; let calls = backend(t, () => { throw new Error('must not call'); }); assert.equal((await startGoogle(event())).status, 503); assert.equal(calls.length, 0);
@@ -24,6 +30,23 @@ test('start holds verifier/request UUID only in sealed HttpOnly transaction cook
   assert.equal(calls[0].body.handoff_challenge, createHash('sha256').update(pending.verifier).digest('base64url')); assert.equal(calls[0].body.return_to, '/auth/google/complete'); assert.equal(calls[0].body.channel, 'web'); assert.equal(calls[0].body.intent, 'sign_in');
   assert.equal((await startGoogle(event(new Map(), 'link'))).status, 401);
 });
+
+test('web completion requires callback browser proof and exact pending transaction before any upstream redemption', async t => {
+  process.env.NALANA_GOOGLE_AUTH_ENABLED = 'true'; const id = randomUUID();
+  const calls = backend(t, url => url.endsWith('/transactions') ? startResponse(id) : Response.json(tokens()));
+  const attacker = event(); await startGoogle(attacker);
+  assert.equal((await complete(attacker, {})).status, 400, 'launch owner lacks callback proof');
+  assert.equal((await complete(event(), { transaction_id: id, web_return_proof: returnProof })).status, 400, 'callback browser lacks initiating transaction');
+  assert.equal((await complete(attacker, { transaction_id: randomUUID(), web_return_proof: returnProof })).status, 400);
+  assert.equal(calls.filter(call => call.url.endsWith('/redemption')).length, 0);
+  const response = await complete(attacker), body = await response.json();
+  assert.equal(response.status, 200); assert.equal(JSON.stringify(body).includes(returnProof), false);
+  assert.equal(calls.at(-1).body.web_return_proof, returnProof);
+  assert.equal(readCookie(attacker, 'google').webReturnProof, returnProof);
+  assert.equal((await complete(attacker, { transaction_id: id, web_return_proof: 'different-callback-browser-proof-at-least-32' })).status, 200);
+  assert.equal(readCookie(attacker, 'google').webReturnProof, returnProof, 'same-transaction resume preserves the original proof');
+  assert.equal((await complete(attacker, {})).status, 200, 'sealed proof supports a refreshed completion page');
+});
 test('completion POST replays same request ID after pending/lost result and acknowledges only after browser receipt', async t => {
   process.env.NALANA_GOOGLE_AUTH_ENABLED = 'true'; const id = randomUUID(); let attempts = 0;
   const calls = backend(t, (url) => {
@@ -32,18 +55,26 @@ test('completion POST replays same request ID after pending/lost result and ackn
     return new Response(null, { status: 204 });
   });
   const e = event(); await startGoogle(e); const original = readCookie(e, 'google');
-  assert.equal((await acknowledgeGoogle(e)).status, 400); assert.equal((await completeGoogle(e)).status, 202); assert.equal((await completeGoogle(e)).status, 200);
+  assert.equal((await acknowledgeGoogle(e)).status, 400); assert.equal((await complete(e)).status, 202); assert.equal((await complete(e)).status, 200);
   assert.ok(authorization(e)); assert.equal(readCookie(e, 'google').installed, true); assert.equal(calls.some(call => call.url.endsWith('/acknowledgment')), false);
   const bodies = calls.filter(call => call.url.endsWith('/redemption')).map(call => call.body); assert.deepEqual(bodies[0], bodies[1]); assert.equal(bodies[0].request_id, original.requestId); assert.equal(bodies[0].channel, 'web');
-  assert.equal((await acknowledgeGoogle(e)).status, 200); assert.equal(readCookie(e, 'google'), null); assert.equal(calls.at(-1).body.request_id, original.requestId);
+  assert.equal((await acknowledgeGoogle(e)).status, 200); assert.equal(readCookie(e, 'google').installed, true); assert.equal(calls.at(-1).body.request_id, original.requestId);
+  const writesBeforeRetry = e.writes.length;
+  assert.equal((await acknowledgeGoogle(e)).status, 200, 'lost acknowledgment response retries the same exact-pair receipt');
+  assert.equal(e.writes.length, writesBeforeRetry, 'ack neither deletes nor extends the bounded marker');
+  assert.equal(calls.at(-1).body.request_id, original.requestId);
+  const acknowledgedCalls = calls.filter(call => call.url.endsWith('/acknowledgment')).length;
+  installSession(e, { ...tokens(), refresh_token: 'different-pair-for-the-same-account' });
+  assert.equal((await acknowledgeGoogle(e)).status, 400, 'same account metadata cannot replace exact credential receipt');
+  assert.equal(calls.filter(call => call.url.endsWith('/acknowledgment')).length, acknowledgedCalls);
 });
 test('wrong browser, home, expired/desktop transaction, cancellation and logout cannot adopt completion', async t => {
   process.env.NALANA_GOOGLE_AUTH_ENABLED = 'true'; const id = randomUUID(), calls = backend(t, url => url.endsWith('/transactions') ? startResponse(id) : new Response(null, { status: 204 }));
   const e = event(); await startGoogle(e); const pending = readCookie(e, 'google');
-  const foreign = event(); foreign.jar.set(googleKey(foreign), e.jar.get(googleKey(e))); assert.equal((await completeGoogle(foreign)).status, 400);
-  setCookie(e, 'google', { ...pending, channel: 'desktop' }, 600); assert.equal((await completeGoogle(e)).status, 400);
+  const foreign = event(); foreign.jar.set(googleKey(foreign), e.jar.get(googleKey(e))); assert.equal((await complete(foreign)).status, 400);
+  setCookie(e, 'google', { ...pending, channel: 'desktop' }, 600); assert.equal((await complete(e)).status, 400);
   setCookie(e, 'google', pending, 600); assert.equal((await cancelGoogle(e)).status, 200); assert.equal(calls.at(-1).url, `https://api.example.test/v1/auth/google/transactions/${id}/cancellation`); assert.equal(readCookie(e, 'google'), null);
-  setCookie(e, 'google', pending, 600); clearSession(e); assert.equal((await completeGoogle(e)).status, 400);
+  setCookie(e, 'google', pending, 600); clearSession(e); assert.equal((await complete(e)).status, 400);
 });
 test('settings disconnect requires password+explicit confirmation and preserves same user/entitlements', async t => {
   const calls = backend(t, url => url.endsWith('/disconnection') ? Response.json(tokens()) : new Response(null, { status: 204 }));
@@ -56,21 +87,21 @@ test('ack rejects partial-cookie delivery and old logged-in pair; exact replay r
   process.env.NALANA_GOOGLE_AUTH_ENABLED = 'true'; const id = randomUUID();
   const calls = backend(t, url => url.endsWith('/transactions') ? startResponse(id) : url.endsWith('/redemption') ? Response.json(tokens('google-account')) : new Response(null, { status: 204 }));
   const e = authenticated('/api/auth/google/start', { method: 'POST', body: { intent: 'link' } });
-  await startGoogle(e); const before = new Map(e.jar); await completeGoogle(e);
+  await startGoogle(e); const before = new Map(e.jar); await complete(e);
   const installed = e.jar.get(googleKey(e));
   e.jar.clear(); for (const [key, value] of before) e.jar.set(key, value); e.jar.set(googleKey(e), installed);
   assert.equal((await acknowledgeGoogle(e)).status, 400); assert.equal(calls.some(call => call.url.endsWith('/acknowledgment')), false);
-  assert.equal((await completeGoogle(e)).status, 200); assert.equal((await acknowledgeGoogle(e)).status, 200);
+  assert.equal((await complete(e)).status, 200); assert.equal((await acknowledgeGoogle(e)).status, 200);
   assert.equal(calls.filter(call => call.url.endsWith('/redemption')).length, 2);
 });
 
 test('a legitimate refresh before acknowledgment advances exact browser receipt proof', async t => {
   process.env.NALANA_GOOGLE_AUTH_ENABLED = 'true'; const id = randomUUID();
   const calls = backend(t, url => url.endsWith('/transactions') ? startResponse(id) : url.endsWith('/redemption') ? Response.json(tokens('google-account')) : new Response(null, { status: 204 }));
-  const e = event(); await startGoogle(e); await completeGoogle(e);
+  const e = event(); await startGoogle(e); await complete(e);
   const oldAccess = tokenCookie(e, 'access'), oldRefresh = tokenCookie(e, 'refresh'), rotated = tokens('rotated-google-account');
   installSession(e, rotated, { refresh: true }); advanceGoogleReceipt(e, oldAccess, oldRefresh, rotated);
-  assert.equal((await completeGoogle(e)).status, 200);
+  assert.equal((await complete(e)).status, 200);
   assert.equal(calls.filter(call => call.url.endsWith('/redemption')).length, 1, 'does not reinstall the pre-rotation pair');
   assert.equal((await acknowledgeGoogle(e)).status, 200);
 });
@@ -80,8 +111,8 @@ test('lost installed marker with accepted session cookies never revokes its issu
   const calls = backend(t, url => url.endsWith('/transactions') ? startResponse(id) : url.endsWith('/redemption') ? Response.json(tokens('issued-google')) : new Response(null, { status: 204 }));
   const e = authenticated('/api/auth/google/start', { method: 'POST', body: { intent: 'link' } });
   await startGoogle(e); const originalMarker = e.jar.get(googleKey(e));
-  await completeGoogle(e); e.jar.set(googleKey(e), originalMarker);
-  await completeGoogle(e); assert.equal((await acknowledgeGoogle(e)).status, 200);
+  await complete(e); e.jar.set(googleKey(e), originalMarker);
+  await complete(e); assert.equal((await acknowledgeGoogle(e)).status, 200);
   const logouts = calls.filter(call => call.url.endsWith('/logout'));
   assert.ok(logouts.length > 0); assert.ok(logouts.every(call => call.body.refresh_token === 'opaque-refresh-account'));
   assert.ok(logouts.every(call => call.body.refresh_token !== 'opaque-refresh-issued-google'));
@@ -112,7 +143,7 @@ test('delayed pre-logout context and Google marker cannot redeem using a fresh l
   const calls = backend(t, url => url.endsWith('/transactions') ? startResponse(id) : Response.json(tokens()));
   const e = event(); await startGoogle(e); const context = e.jar.get('__Host-nalana_context'), markerKey = googleKey(e), marker = e.jar.get(markerKey);
   clearSession(e); e.jar.set('__Host-nalana_context', context); e.jar.set(markerKey, marker);
-  assert.equal((await completeGoogle(e)).status, 400);
+  assert.equal((await complete(e)).status, 400);
   assert.equal(calls.filter(call => call.url.endsWith('/redemption')).length, 0);
   assert.equal(authorization(e), null);
 });

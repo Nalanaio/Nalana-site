@@ -1,25 +1,25 @@
 <script>
+  import { onMount } from 'svelte';
   import { cookieRequest } from '#lib/auth/cookieClient.js';
-  let busy = false, error = '';
-  async function finish() {
-    busy = true; error = '';
-    try {
-      const response = await cookieRequest('/api/auth/google/complete', { method: 'POST' });
-      const data = await response.json();
-      if (!response.ok || response.status === 202) { error = data.error ?? 'Sign-in is still awaiting confirmation.'; return; }
-      // A second request proves the browser received its HttpOnly session cookies
-      // before the backend destroys the recoverable redemption receipt.
-      const ack = await cookieRequest('/api/auth/google/acknowledge', { method: 'POST' });
-      if (!ack.ok) { error = 'Your sign-in was saved. Select Continue again to confirm.'; return; }
-      window.location.replace('/account');
-    } catch { error = 'Could not reach Nalana. Select Continue to retry safely.'; }
-    finally { busy = false; }
-  }
-  async function cancel() { busy = true; try { await cookieRequest('/api/auth/google/cancel', { method: 'POST' }); window.location.replace('/login'); } catch { error = 'Could not cancel. Please retry.'; busy = false; } }
+  import { createGoogleCompletion, takeGoogleReturn } from '#lib/auth/googleCompletion.js';
+  import { auth } from '#lib/stores/auth.js';
+  import AccountShell from '#lib/components/site/AccountShell.svelte';
+  let state = { phase: 'idle', error: '', confirmationStarted: false };
+  let completion;
+  onMount(() => {
+    completion = createGoogleCompletion({ request: cookieRequest, navigate: path => window.location.replace(path), epoch: () => auth.current.sessionEpoch, returned: takeGoogleReturn(window), changed: next => state = next });
+    void completion.mount();
+    return () => completion.dispose();
+  });
 </script>
-<svelte:head><title>Finish Google sign-in — Nalana</title></svelte:head>
-<main><h1>Finish signing in to Nalana</h1><p>Continue to save the account you confirmed with Google in this browser.</p>
-<button type="button" on:click={finish} disabled={busy}>{busy ? 'Finishing…' : 'Continue to Nalana'}</button>
-<button type="button" on:click={cancel} disabled={busy}>Cancel</button>
-{#if error}<p role="alert">{error}</p>{/if}<p><a href="/login">Return to password sign-in</a></p></main>
-<style>main { max-width: 32rem; margin: 8rem auto; padding: 1.5rem; color: #173653; } button { padding: .75rem 1rem; margin: 1rem .5rem 0 0; font: inherit; cursor: pointer; } p { line-height: 1.6; }</style>
+<svelte:head><title>Signing in — Nalana</title></svelte:head>
+<AccountShell>
+  <div class="acct-card signin-card">
+    <div class="signin-head"><h1>Signing you in</h1><p role="status" aria-live="polite">{state.phase === 'cancelling' ? 'Going back safely…' : state.error ? 'Your sign-in needs attention.' : state.confirmationStarted ? 'Confirming your saved sign-in…' : 'Saving your Google sign-in securely…'}</p></div>
+    {#if state.error}<p class="form-error" role="alert">{state.error}</p>{/if}
+    <div class="form-actions">
+      {#if state.phase === 'retry'}<button class="acct-primary" type="button" on:click={() => completion.retry()}>{state.confirmationStarted ? 'Retry confirmation' : 'Retry sign-in'}</button>{/if}
+      <button class="secondary-button" type="button" on:click={() => completion.goBack()} disabled={state.confirmationStarted || state.phase === 'idle' || state.phase === 'cancelling' || state.phase === 'done'}>Go back</button>
+    </div>
+  </div>
+</AccountShell>
