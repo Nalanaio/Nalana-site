@@ -20,10 +20,9 @@
 <section class="acct-card methods" aria-labelledby="methods-title">
 <h2 id="methods-title">Sign-in methods</h2>
 {#if methods}
-<p>Password: {methods.has_password ? 'Available' : 'Not set'}</p>
+<p>Password: {#if methods.has_password}Available{:else}Not set — <a href="/forgot-password">click here to set a password.</a>{/if}</p>
 <p>Google: {methods.google?.connected ? 'Connected' : 'Not connected'}</p>
 {#if methods.google?.connected}
-  {#if methods.google.email}<p>{methods.google.email}</p>{/if}
   {#if methods.google.email_mismatch}<p>Your Google email differs from your Nalana email. Your Nalana account stays the same.</p>{/if}
   {#if methods.has_password}
   <form on:submit|preventDefault={disconnect}>
