@@ -20,10 +20,9 @@
     }
 
     try {
-      const authHeader = auth.getAuthHeader();
+
       const res = await fetch('/api/dev/manifest', {
         headers: {
-          Authorization: authHeader || '',
         },
       });
 

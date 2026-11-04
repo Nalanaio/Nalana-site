@@ -1,3 +1,4 @@
+import { authorization } from './authSession.js';
 import { json } from '@sveltejs/kit';
 
 const NO_STORE = { 'cache-control': 'private, no-store' };
@@ -40,11 +41,11 @@ const fail = (status, error, code) => json(code ? { error, code } : { error }, {
 /**
  * Forwards one authenticated billing call. Card details never pass through the
  * site: checkout and the portal stay on Stripe-hosted pages.
- * @param {{ base: string|null, request: Request, path: string, method?: string, body?: unknown, idempotencyKey?: string|null, fetch?: typeof fetch }} options
+ * @param {{ base: string|null, request: Request, event?: any, path: string, method?: string, body?: unknown, idempotencyKey?: string|null, fetch?: typeof fetch }} options
  */
-export async function proxyBilling({ base, request, path, method = 'GET', body, idempotencyKey = null, fetch: fetcher = fetch }) {
+export async function proxyBilling({ base, request, event, path, method = 'GET', body, idempotencyKey = null, fetch: fetcher = fetch }) {
   if (!base) return fail(503, 'Billing is temporarily unavailable. Please try again shortly.');
-  const authHeader = request.headers.get('Authorization');
+  const authHeader = event ? authorization(event) : null;
   if (!authHeader?.startsWith('Bearer ') || authHeader.slice(7).startsWith('mock_jwt_')) {
     return fail(401, 'Please sign in to continue.');
   }

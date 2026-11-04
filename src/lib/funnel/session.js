@@ -2,11 +2,11 @@ import { createQueue } from './client.js';
 import { UUID } from './contract.js';
 const SESSION_KEY = 'nalana_usage_session_v1';
 export function createFunnelSession({ storage, request = fetch, uuid = () => crypto.randomUUID(), now = Date.now, broadcast = (_message) => {}, attribution = () => ({}) }) {
-  let state = null, granted = false, collecting = false, generation = 0, accountKey = null, accountToken = null, accountId = null, pending = Promise.resolve();
+  let state = null, granted = false, collecting = false, generation = 0, accountKey = null, accountSignedIn = null, accountId = null, pending = Promise.resolve();
   const queue = createQueue({ storage, now, request, binding: () => granted && collecting ? state : null });
   function persist() { try { if (state) storage?.setItem(SESSION_KEY, JSON.stringify(state)); else storage?.removeItem(SESSION_KEY); } catch {} }
-  async function call(path, body, token = null) {
-    const response = await request(path, { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) });
+  async function call(path, body, signedIn = false) {
+    const response = await request(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (!response.ok) throw new Error(`usage:${response.status}`);
     return response.status === 204 ? {} : response.json();
   }
@@ -16,10 +16,10 @@ export function createFunnelSession({ storage, request = fetch, uuid = () => cry
     if (generation !== version || !granted) return;
     state = { ...state, session_id: response.session_id, web_session_id: sessionId, association_epoch: 0 }; persist();
   }
-  async function associate(version, token) {
-    if (!state?.session_id || !token || state.association_epoch === 1) return;
+  async function associate(version, signedIn) {
+    if (!state?.session_id || !signedIn || state.association_epoch === 1) return;
     queue.purge();
-    const response = await call(`/api/funnel/enrollments/${state.enrollment_id}/associate`, { session_id: state.session_id }, token);
+    const response = await call(`/api/funnel/enrollments/${state.enrollment_id}/associate`, { session_id: state.session_id }, signedIn);
     if (generation !== version || !granted) return;
     if (response.association_epoch !== 1) throw new Error('Invalid association epoch.');
     state = { ...state, association_epoch: 1, account_id: accountId }; persist(); queue.resume();
@@ -73,7 +73,7 @@ export function createFunnelSession({ storage, request = fetch, uuid = () => cry
       state = { ...state, session_id: null, association_epoch: 0, account_id: null }; persist();
     }
     if (!state.session_id) await register(version);
-    if (accountToken) await associate(version, accountToken);
+    if (accountSignedIn) await associate(version, accountSignedIn);
     if (version === generation && granted && state?.session_id) { collecting = true; queue.resume(); }
   }
   function serialized(work) { pending = pending.catch(() => {}).then(work); return pending.catch(() => false); }
@@ -92,10 +92,10 @@ export function createFunnelSession({ storage, request = fetch, uuid = () => cry
       if (!remote) broadcast({ kind: 'revoke' });
       return serialized(() => old ? call(`/api/funnel/enrollments/${old.enrollment_id}/revoke`, {}) : call('/api/funnel/revoke', {}));
     },
-    authChanged(key, token, id = key?.split(':')[0] ?? null) {
+    authChanged(key, signedIn, id = key?.split(':')[0] ?? null) {
       accountId = id;
-      if (key === accountKey) { accountToken = token; return pending; }
-      const previous = accountKey; accountKey = key; accountToken = token; const version = ++generation;
+      if (key === accountKey) { accountSignedIn = signedIn; return pending; }
+      const previous = accountKey; accountKey = key; accountSignedIn = signedIn; const version = ++generation;
       collecting = false;
       if (granted) queue.purge();
       broadcast({ kind: 'session-close' });

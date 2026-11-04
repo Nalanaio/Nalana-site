@@ -1,4 +1,5 @@
 <script>
+  import SignInMethods from '#lib/components/SignInMethods.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
@@ -25,18 +26,19 @@
 
   async function verifySession(epoch) {
     verifying = true;
-    if (!auth.current.token) { goto('/login'); return; }
+    if (!auth.current.initialized) await auth.refreshSession();
+    if (!auth.current.signedIn) { goto('/login'); return; }
     const ok = await auth.refreshSession();
     if (!mounted || auth.current.sessionEpoch !== epoch) return;
     verifying = false;
     if (!ok) { goto('/login'); return; }
   }
 
-  function logout() {
+  async function logout() {
     // Clearing auth increments the epoch. Suppress this page's missing-session
     // redirect so it cannot race the user's intentional return to the homepage.
     loggingOut = true;
-    auth.logout();
+    await auth.logout();
     goto('/');
   }
   $: displayName = $currentUser?.display_name ?? $currentUser?.name ?? '';
@@ -72,7 +74,7 @@
       </dl>
       <a href="/account/edit" class="acct-primary edit-btn">Edit profile</a>
     </section>
-    {#key $auth.sessionEpoch}<WalletCard />{/key}
+    {#key $auth.sessionEpoch}<WalletCard /><SignInMethods />{/key}
     <button class="logout" type="button" on:click={logout}>Log out</button>
   {/if}
 </AccountShell>

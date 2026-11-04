@@ -14,7 +14,7 @@
       window.location.replace('/login?created=1');
     };
     const pending = consumeSignupMeasurement(window);
-    if (!pending || !auth.current.token || !auth.current.user || env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED !== 'true') { done(); return; }
+    if (!pending || !auth.current.signedIn || !auth.current.user || env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED !== 'true') { done(); return; }
     // A blocked tag must never hold up account creation. Never load vendors in
     // the credential document or render account data in this measurement page.
     const timer = setTimeout(done, 1200);

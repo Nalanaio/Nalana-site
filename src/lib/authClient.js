@@ -1,3 +1,4 @@
+import { cookieRequest } from './auth/cookieClient.js';
 import { EMAIL_NOT_VERIFIED_DETAIL, RESEND_SUCCESS_MESSAGE } from '#lib/auth/constants.js';
 
 export { RESEND_SUCCESS_MESSAGE };
@@ -70,11 +71,11 @@ export function authErrorMessage(status, data, mode = 'login') {
 }
 
 /** @param {string} email */
-export async function resendVerificationEmail(email, authHeader = null) {
-  const res = await fetch(authHeader ? '/api/auth/resend-verification/current' : '/api/auth/resend-verification', {
+export async function resendVerificationEmail(email, authenticated = false) {
+  const res = await cookieRequest(authenticated ? '/api/auth/resend-verification/current' : '/api/auth/resend-verification', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(authHeader ? { Authorization: authHeader } : {}) },
-    body: JSON.stringify(authHeader ? {} : { email }),
+    headers: { 'Content-Type': 'application/json',  },
+    body: JSON.stringify(authenticated ? {} : { email }),
     signal: AbortSignal.timeout(10000),
   });
   const data = await res.json().catch(() => ({}));

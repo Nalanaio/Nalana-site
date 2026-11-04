@@ -1,3 +1,4 @@
+import { authenticated, tokens } from './helpers/cookie-fixture.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { proxyBilling, billingError, checkoutBody, validIdempotencyKey, validPurchaseId } from '../src/lib/server/billingApi.js';
@@ -9,11 +10,11 @@ const backend = (status, body, seen = []) => async (url, init) => { seen.push({ 
 
 test('forwards bearer, idempotency key, and body to the backend', async () => {
   const seen = [];
-  const res = await proxyBilling({ base: 'https://api.test', request: req('/api/billing/checkouts', { method: 'POST' }), path: '/v1/billing/checkouts', method: 'POST',
+  const res = await proxyBilling({ event: authenticated('/api/billing/catalog'), base: 'https://api.test', request: req('/api/billing/checkouts', { method: 'POST' }), path: '/v1/billing/checkouts', method: 'POST',
     body: { product_key: 'pro_monthly', purchase_kind: 'subscription' }, idempotencyKey: 'web-abcdefghijklmnop', fetch: backend(200, { purchase_id: 'p', url: 'https://checkout.stripe.com/x', status: 'awaiting_payment' }, seen) });
   assert.equal(res.status, 200);
   assert.equal(seen[0].url, 'https://api.test/v1/billing/checkouts');
-  assert.equal(seen[0].init.headers.Authorization, 'Bearer tok');
+  assert.equal(seen[0].init.headers.Authorization, `Bearer ${tokens().access_token}`);
   assert.equal(seen[0].init.headers['Idempotency-Key'], 'web-abcdefghijklmnop');
   assert.deepEqual(JSON.parse(seen[0].init.body), { product_key: 'pro_monthly', purchase_kind: 'subscription' });
   assert.equal(res.headers.get('cache-control'), 'private, no-store');
@@ -24,13 +25,13 @@ test('rejects missing auth, cross-origin writes, and missing base without callin
   const f = backend(200, {}, seen);
   assert.equal((await proxyBilling({ base: 'https://api.test', request: req('/x', { auth: null }), path: '/v1/x', fetch: f })).status, 401);
   assert.equal((await proxyBilling({ base: 'https://api.test', request: req('/x', { auth: 'Bearer mock_jwt_1' }), path: '/v1/x', fetch: f })).status, 401);
-  assert.equal((await proxyBilling({ base: 'https://api.test', request: req('/x', { method: 'POST', origin: 'https://evil.io' }), path: '/v1/x', method: 'POST', fetch: f })).status, 403);
+  assert.equal((await proxyBilling({ event: authenticated('/api/billing/catalog'), base: 'https://api.test', request: req('/x', { method: 'POST', origin: 'https://evil.io' }), path: '/v1/x', method: 'POST', fetch: f })).status, 403);
   assert.equal((await proxyBilling({ base: null, request: req('/x'), path: '/v1/x', fetch: f })).status, 503);
   assert.equal(seen.length, 0);
 });
 
 test('FastAPI detail codes map to fixed customer messages', async () => {
-  const res = await proxyBilling({ base: 'https://api.test', request: req('/x'), path: '/v1/billing/portal-sessions',
+  const res = await proxyBilling({ event: authenticated('/api/billing/catalog'), base: 'https://api.test', request: req('/x'), path: '/v1/billing/portal-sessions',
     fetch: backend(404, { detail: { code: 'PAYMENT_CUSTOMER_NOT_FOUND', message: 'PAYMENT_CUSTOMER_NOT_FOUND' } }) });
   assert.equal(res.status, 404);
   assert.deepEqual(await res.json(), { error: 'There is no subscription to manage on this account yet.', code: 'PAYMENT_CUSTOMER_NOT_FOUND' });
@@ -39,7 +40,7 @@ test('FastAPI detail codes map to fixed customer messages', async () => {
 });
 
 test('network failure is a 503, not a leak', async () => {
-  const res = await proxyBilling({ base: 'https://api.test', request: req('/x'), path: '/v1/credits/balance', fetch: async () => { throw new Error('ECONNREFUSED secret'); } });
+  const res = await proxyBilling({ event: authenticated('/api/billing/catalog'), base: 'https://api.test', request: req('/x'), path: '/v1/credits/balance', fetch: async () => { throw new Error('ECONNREFUSED secret'); } });
   assert.equal(res.status, 503);
   assert.doesNotMatch(JSON.stringify(await res.json()), /secret/);
 });

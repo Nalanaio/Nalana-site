@@ -1,4 +1,6 @@
 <script>
+  import GoogleSignIn from '#lib/components/GoogleSignIn.svelte';
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { currentCampaign } from '#lib/campaigns/browser.js';
   import { onMount } from 'svelte';
   import { afterNavigate, goto } from '$app/navigation';
@@ -44,9 +46,10 @@
     } catch { return null; }
   }
 
-  onMount(() => {
+  onMount(async () => {
+    await auth.refreshSession();
     const session = get(auth);
-    if (session.token && session.user) {
+    if (session.signedIn && session.user) {
       if (page.url.searchParams.get('created') === '1') {
         email = session.user.email || '';
         mode = 'signup';
@@ -81,6 +84,7 @@
       return;
     }
 
+    const sessionEpoch = auth.current.sessionEpoch;
     loading = true;
     error = '';
     showUnverified = false;
@@ -89,12 +93,13 @@
     const endpoint = mode === 'signup' ? '/api/auth/register' : '/api/auth/login';
 
     try {
-      const res = await fetch(endpoint, {
+      const res = await cookieRequest(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, ...(mode === 'signup' && env.PUBLIC_CAMPAIGN_TOTALS_ENABLED === 'true' ? { campaign: currentCampaign(window) } : {}) }),
       });
       const data = await res.json();
+      if (auth.current.sessionEpoch !== sessionEpoch) return;
 
       if (!res.ok) {
         if (mode === 'login' && isEmailNotVerifiedError(res.status, data)) {
@@ -104,12 +109,12 @@
         return;
       }
 
-      if (!data.token || !data.user?.id) {
+      if (!data.user?.id) {
         error = 'Invalid response from server. Please try again.';
         return;
       }
 
-      auth.setSession(data.token, data.user, data.refresh_token);
+      auth.setSession(data.user, data.csrf_token);
       password = '';
 
       if (mode === 'signup') {
@@ -171,6 +176,8 @@
       {#if resetBanner && mode === 'login'}
         <p class="banner" role="status">Your password was reset. Log in with your new password.</p>
       {/if}
+      {#if $auth.legacyCleared}<p role="status">For improved account security, please sign in once again on the website.</p>{/if}
+      <GoogleSignIn />
       <form class="account-form" method="POST" on:submit|preventDefault={submit} aria-busy={loading}>
         <div class="signin-fields">
           <label class="field">

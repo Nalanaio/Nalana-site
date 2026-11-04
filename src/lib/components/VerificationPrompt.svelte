@@ -14,8 +14,8 @@
   let observedPolicy;
   $: if ($auth.user?.verification !== observedPolicy) { observedPolicy = $auth.user?.verification; receivedAt = mounted ? performance.now() : 0; elapsed = 0; }
   $: phase = verificationPhase($auth.user?.verification, elapsed);
-  $: if (mounted && $auth.token && claimVerificationPrompt($auth.sessionEpoch, phase)) open();
-  $: if (!$auth.token || phase === 'verified') visible = false;
+  $: if (mounted && $auth.signedIn && claimVerificationPrompt($auth.sessionEpoch, phase)) open();
+  $: if (!$auth.signedIn || phase === 'verified') visible = false;
   async function open() { previousFocus = document.activeElement; visible = true; await tick(); closeButton?.focus(); }
   function close() { visible = false; previousFocus?.focus?.(); }
   function keydown(event) {
@@ -33,7 +33,7 @@
     let lastCheck = 0;
     const timer = setInterval(() => {
       elapsed = Math.max(0, performance.now() - receivedAt);
-      if (document.visibilityState === 'visible' && performance.now() - lastCheck >= 60000 && $auth.token) { lastCheck = performance.now(); auth.refreshSession(); }
+      if (document.visibilityState === 'visible' && performance.now() - lastCheck >= 60000 && $auth.signedIn) { lastCheck = performance.now(); auth.refreshSession(); }
     }, 1000);
     return () => clearInterval(timer);
   });

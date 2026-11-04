@@ -7,6 +7,7 @@
   import AuthModal from '#lib/components/AuthModal.svelte';
   import VerificationPrompt from '#lib/components/VerificationPrompt.svelte';
   import AnalyticsConsent from '#lib/components/AnalyticsConsent.svelte';
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { auth } from '#lib/stores/auth.js';
   import { needsDocumentBoundary, sensitivePath, browserStorage } from '#lib/analytics/consent.js';
   import { loadAnalytics, trackPageView } from '#lib/analytics/loaders.js';
@@ -44,26 +45,16 @@
     document.addEventListener('auxclick', carryCampaign, true);
     vercelAnalytics = createVercelAnalytics({ window });
     const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('nalana-usage-v1') : null;
-    funnel = createFunnelSession({ storage: browserStorage(window), broadcast: message => channel?.postMessage(message), attribution: () => cleanAttribution(new URLSearchParams(window.location.search)) });
+    funnel = createFunnelSession({ request: cookieRequest, storage: browserStorage(window), broadcast: message => channel?.postMessage(message), attribution: () => cleanAttribution(new URLSearchParams(window.location.search)) });
     setActiveFunnel(funnel);
     if (channel) channel.onmessage = event => funnel.remoteChanged(event.data);
-    const unsubscribe = auth.subscribe(session => { void funnel.authChanged(session.user?.id ? `${session.user.id}:${session.sessionEpoch}` : null, session.token, session.user?.id ?? null); });
+    void auth.refreshSession();
+    const unsubscribe = auth.subscribe(session => { void funnel.authChanged(session.user?.id ? `${session.user.id}:${session.sessionEpoch}` : null, session.signedIn, session.user?.id ?? null); });
     if (choice) updateChoice(choice);
     const interval = setInterval(() => { void funnel.refresh(); void funnel.queue.flush(); }, 60000);
     const flush = () => { void funnel.queue.flush(); };
-    const accountStorage = event => {
-      if (event.key === 'nalana_session_v1') {
-        const identity = value => { try { const user = JSON.parse(value || 'null')?.user; return user ? `${user.id}:${user.email}` : null; } catch { return null; } };
-        if (identity(event.oldValue) === identity(event.newValue)) return;
-        funnel.remoteChanged({ kind: 'session-close' });
-        // A separate document must use the latest account state before it can
-        // resume an optional authenticated session or expose account controls.
-        window.location.replace(window.location.pathname);
-      }
-    };
     window.addEventListener('online', flush); window.addEventListener('focus', flush);
-    window.addEventListener('storage', accountStorage);
-    return () => { document.removeEventListener('click', carryCampaign, true); document.removeEventListener('auxclick', carryCampaign, true); unsubscribe(); clearInterval(interval); window.removeEventListener('online', flush); window.removeEventListener('focus', flush); window.removeEventListener('storage', accountStorage); channel?.close(); setActiveFunnel(null); };
+    return () => { document.removeEventListener('click', carryCampaign, true); document.removeEventListener('auxclick', carryCampaign, true); unsubscribe(); clearInterval(interval); window.removeEventListener('online', flush); window.removeEventListener('focus', flush); channel?.close(); setActiveFunnel(null); };
   });
 </script>
 
@@ -78,9 +69,14 @@
 {/if}
 
 <slot />
+{#if $auth.logoutPending}
+<aside class="logout-retry" role="status"><p>Sign-out revocation is pending. Retry when connected before signing in again.</p><button type="button" on:click={() => auth.logout()}>Retry sign-out</button></aside>
+{/if}
 {#if page.url.pathname !== '/signup-complete'}
 <AnalyticsConsent
   onChoice={updateChoice}
   autoPrompt={env.PUBLIC_NALANA_FUNNEL_ENABLED === 'true' || env.PUBLIC_NALANA_VENDOR_ANALYTICS_ENABLED === 'true'}
 />
 {/if}
+
+<style>.logout-retry { position: fixed; z-index: 10000; bottom: 24px; left: 24px; right: 24px; padding: 16px; background: #fff; color: #171717; border: 1px solid #747775; border-radius: 8px; box-shadow: 0 4px 24px #0002; } .logout-retry p { margin: 0 0 8px; } .logout-retry button { font: inherit; padding: 8px 16px; cursor: pointer; }</style>

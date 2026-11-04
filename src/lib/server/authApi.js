@@ -1,238 +1,68 @@
-import { json } from '@sveltejs/kit';
-import * as env from '$app/env/private';
-
-/**
- * Backend root URL — must match IDE NALANA_API_BASE exactly (no trailing slash).
- * Auth: POST /v1/auth/login, register, refresh, forgot-password, reset-password
- * Users: GET/PATCH /v1/users/me; GET /v1/usage/me
- *
- * Local: NALANA_API_BASE in .env (restart `npm run dev` after editing)
- * Vercel: same variable in project Environment Variables
- */
-export function getApiBase() {
-  const base =
-    env.NALANA_API_BASE ||
-    env.AZURE_API_URL ||
-    process.env.NALANA_API_BASE ||
-    process.env.AZURE_API_URL;
-  return base ? base.replace(/\/$/, '') : null;
-}
-
-export function apiUnavailable() {
-  return json(
-    {
-      error:
-        'Account service is unavailable. Please try again later.',
-    },
-    { status: 503 }
-  );
-}
-
-export { normalizeUser, normalizeAuthResponse, mapAuthError } from '../auth/projection.js';
 import { normalizeUser, normalizeAuthResponse, safeAuthError } from '../auth/projection.js';
-
+import { authorization, installSession, reply, tokenCookie, clearCredentials, credentialSid, discardPriorSession, readCookie, setCookie, deleteCookie, logoutGeneration } from './authSession.js';
+export { normalizeUser, normalizeAuthResponse, mapAuthError } from '../auth/projection.js';
+export function getApiBase() {
+  const base = process.env.NALANA_API_BASE;
+  if (!base) return null;
+  try { const url = new URL(base); const local = process.env.NODE_ENV !== 'production' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname); if (url.username || url.password || url.search || url.hash || (url.protocol !== 'https:' && !(local && url.protocol === 'http:'))) return null; return base.replace(/\/$/, ''); } catch { return null; }
+}
+export const apiUnavailable = () => reply({ error: 'Account service is unavailable. Please try again later.' }, 503);
+export async function backendRequest(path, body, options = {}) {
+  const base = getApiBase(); if (!base) return { status: 503, ok: false, data: {} };
+  try {
+    const response = await fetch(base + path, { method: options.method ?? 'POST', signal: AbortSignal.timeout(15000), redirect: 'error', headers: { 'Content-Type': 'application/json', ...(options.headers ?? {}) }, body: options.serializedBody ?? (body === undefined ? undefined : JSON.stringify(body)) });
+    return { status: response.status, ok: response.ok, data: await response.json().catch(() => ({})) };
+  } catch { return { status: 503, ok: false, data: {} }; }
+}
+export async function revokeSession(event) {
+  const retained = pendingLogout(event), sid = credentialSid(event);
+  if (retained) deleteCookie(event, `logout_revoke_${logoutGeneration(event)}`);
+  const stored = sid ? readCookie(event, `refresh_${sid}`) : null;
+  const token = retained?.refresh ?? tokenCookie(event, 'refresh');
+  if (!token) return { ok: true };
+  const pending = retained ?? { refresh: token, home: getApiBase(), until: Math.min(stored?.exp ?? Date.now(), Date.now() + 86400000) };
+  if (pending.home !== getApiBase()) return { ok: false, pending };
+  const result = await backendRequest('/v1/auth/logout', { refresh_token: token });
+  return result.status === 204 ? { ok: true } : { ok: false, pending };
+}
+export function pendingLogout(event) {
+  const value = readCookie(event, `logout_revoke_${logoutGeneration(event)}`);
+  return value && value.until > Date.now() && typeof value.refresh === 'string' ? value : null;
+}
+export function carryPendingLogout(event, pending) {
+  if (!pending || pending.until <= Date.now()) return;
+  setCookie(event, `logout_revoke_${logoutGeneration(event)}`, { refresh: pending.refresh, home: pending.home, until: pending.until }, Math.max(1, Math.floor((pending.until - Date.now()) / 1000)));
+}
+export async function sessionResponse(event, result, options = {}) {
+  if (!result.ok) { if (options.refresh && [400, 401, 403].includes(result.status)) clearCredentials(event); return reply(safeAuthError(result.status, result.data, options), result.status); }
+  try {
+    // Authentication success replaces/revokes the previous website family.
+    const oldRefresh = options.refresh ? null : tokenCookie(event, 'refresh');
+    const oldSid = options.refresh ? null : credentialSid(event);
+    const context = installSession(event, result.data, options);
+    discardPriorSession(event, oldSid);
+    if (oldRefresh) await backendRequest('/v1/auth/logout', { refresh_token: oldRefresh });
+    const normalized = normalizeAuthResponse(result.data);
+    return reply({ ...(normalized.user ? { user: normalized.user } : {}), ...(normalized.verification ? { verification: normalized.verification } : {}), csrf_token: context.csrf }, result.status);
+  } catch { return reply({ error: 'The sign-in response could not be saved. Please sign in again.' }, 502); }
+}
 export async function proxyAuth(path, body, options = {}) {
-  const base = getApiBase();
-  if (!base) {
-    console.error(`[auth] ${path} — NALANA_API_BASE not set (must match IDE)`);
-    return apiUnavailable();
-  }
-
-  const url = `${base}${path}`;
-
-  try {
-    const res = await fetch(url, {
-      method: options.method ?? 'POST',
-      signal: AbortSignal.timeout(10000),
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers ?? {}),
-      },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-
-    let data = {};
-    const text = await res.text();
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = {};
-      }
-    }
-
-    if (!res.ok) {
-      return json(
-        safeAuthError(res.status, data, options),
-        { status: res.status }
-      );
-    }
-
-    return json(normalizeAuthResponse(data), { status: res.status });
-  } catch (err) {
-    console.error('[auth] backend request failed');
-    return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
-  }
+  const result = await backendRequest(path, body, options);
+  return sessionResponse(options.event, result, options);
 }
-
-export async function proxyMe(authHeader) {
-  const base = getApiBase();
-  if (!base) return apiUnavailable();
-
-  if (!authHeader?.startsWith('Bearer ')) {
-    return json({ error: 'Missing or invalid authorization.' }, { status: 401 });
-  }
-
-  const token = authHeader.slice(7);
-  if (token.startsWith('mock_jwt_')) {
-    return json({ error: 'Invalid session. Please log in again.' }, { status: 401 });
-  }
-
-  const paths = ['/v1/users/me', '/users/me'];
-
-  for (const path of paths) {
-    try {
-      const res = await fetch(`${base}${path}`, {
-        method: 'GET',
-        signal: AbortSignal.timeout(10000),
-        headers: { Authorization: authHeader },
-      });
-
-      if (res.status === 404 && path !== paths[paths.length - 1]) continue;
-
-      let data = {};
-      const text = await res.text();
-      if (text) {
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = {};
-        }
-      }
-
-      if (!res.ok) {
-        return json(
-          safeAuthError(res.status, data),
-          { status: res.status }
-        );
-      }
-
-      const user = normalizeUser(data.user ?? data, data);
-      return json({ user, token }, { status: 200 });
-    } catch (err) {
-      console.error('[auth] account request failed');
-    }
-  }
-
-  return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
+export async function proxyMe(event) {
+  const auth = authorization(event); if (!auth) return reply({ error: 'Please sign in again.' }, 401);
+  const result = await backendRequest('/v1/users/me', undefined, { method: 'GET', headers: { Authorization: auth } });
+  return result.ok ? reply({ user: normalizeUser(result.data.user ?? result.data, result.data) }) : reply(safeAuthError(result.status, result.data), result.status);
 }
-
-/** Authenticated GET/PATCH (and other methods) to backend. */
-export async function proxyAuthenticated(path, request, options = {}) {
-  const base = getApiBase();
-  if (!base) return apiUnavailable();
-
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return json({ error: 'Missing or invalid authorization.' }, { status: 401 });
-  }
-
-  const token = authHeader.slice(7);
-  if (token.startsWith('mock_jwt_')) {
-    return json({ error: 'Invalid session. Please log in again.' }, { status: 401 });
-  }
-
-  const method = options.method ?? 'GET';
-  let body;
-  if (options.body !== undefined) {
-    body = JSON.stringify(options.body);
-  } else if (method !== 'GET' && method !== 'HEAD') {
-    try {
-      body = JSON.stringify(await request.json());
-    } catch {
-      body = undefined;
-    }
-  }
-
-  try {
-    const res = await fetch(`${base}${path}`, {
-      method,
-      signal: AbortSignal.timeout(10000),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: authHeader,
-      },
-      body,
-    });
-
-    let data = {};
-    const text = await res.text();
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = {};
-      }
-    }
-
-    if (!res.ok) {
-      return json(
-        safeAuthError(res.status, data, options),
-        { status: res.status }
-      );
-    }
-
-    if (path.includes('/users/me')) {
-      const user = normalizeUser(data.user ?? data, data);
-      return json({ user, token }, { status: res.status });
-    }
-
-    return json(options.authResponse ? normalizeAuthResponse(data) : data, { status: res.status });
-  } catch (err) {
-    console.error('[auth] authenticated request failed');
-    return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
-  }
+export async function proxyAuthenticated(path, event, options = {}) {
+  const auth = authorization(event); if (!auth) return reply({ error: 'Please sign in again.' }, 401);
+  const result = await backendRequest(path, options.body, { ...options, headers: { Authorization: auth } });
+  if (options.authResponse) return sessionResponse(event, result, options);
+  if (!result.ok) return reply(safeAuthError(result.status, result.data), result.status);
+  return reply(path.includes('/users/me') ? { user: normalizeUser(result.data.user ?? result.data, result.data) } : result.data, result.status);
 }
-
-/** Proxy JSON to backend without auth-response normalization. */
 export async function proxyBackend(path, body, options = {}) {
-  const base = getApiBase();
-  if (!base) {
-    console.error(`[auth] ${path} — NALANA_API_BASE not set (must match IDE)`);
-    return apiUnavailable();
-  }
-
-  try {
-    const res = await fetch(`${base}${path}`, {
-      method: options.method ?? 'POST',
-      signal: AbortSignal.timeout(10000),
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers ?? {}),
-      },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-
-    let data = {};
-    const text = await res.text();
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = {};
-      }
-    }
-
-    if (!res.ok) {
-      return json(
-        safeAuthError(res.status, data, options),
-        { status: res.status }
-      );
-    }
-
-    return json(data, { status: res.status });
-  } catch (err) {
-    console.error('[auth] backend request failed');
-    return json({ error: 'Service unavailable. Please try again.' }, { status: 503 });
-  }
+  const result = await backendRequest(path, body, options);
+  return reply(result.ok ? result.data : safeAuthError(result.status, result.data, options), result.status);
 }

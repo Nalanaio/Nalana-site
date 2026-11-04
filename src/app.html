@@ -2,6 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script>
+      // Capture before hydration, analytics, or any other application script.
+      if (window.location.pathname === '/auth/google/complete') {
+        let returned = null;
+        const fragment = window.location.hash;
+        if (fragment) {
+          window.history.replaceState(window.history.state, '', window.location.pathname);
+          if (fragment.length <= 1200) {
+            const fields = new URLSearchParams(fragment.slice(1));
+            const id = fields.get('transaction_id'), proof = fields.get('web_return_proof');
+            if ([...fields.keys()].length === 2 && fields.has('transaction_id') && fields.has('web_return_proof') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id || '') && /^[A-Za-z0-9_-]{32,1024}={0,2}$/.test(proof || '') && proof.length <= 1024) returned = { transaction_id: id, web_return_proof: proof };
+          }
+          if (!returned) returned = { invalid: true };
+        }
+        Object.defineProperty(window, '__nalanaTakeGoogleReturn', { configurable: true, value: () => { const value = returned; returned = null; delete window.__nalanaTakeGoogleReturn; return value; } });
+      }
+    </script>
     <link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="%sveltekit.assets%/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="%sveltekit.assets%/favicon-16x16.png" sizes="16x16" type="image/png">

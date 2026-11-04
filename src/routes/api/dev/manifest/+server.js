@@ -3,15 +3,11 @@ import { proxyMe } from '#lib/server/authApi.js';
 import { loadDevManifest } from '#lib/server/dev-release.js';
 import { isDevAllowedEmail } from '#lib/server/dev-access.js';
 
-export async function GET({ request, fetch, setHeaders }) {
+export async function GET(event) {
+  const { request, fetch, setHeaders } = event;
   setHeaders({ 'cache-control': 'no-store' });
 
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader) {
-    return json({ error: 'Sign in to access dev builds.' }, { status: 401 });
-  }
-
-  const meRes = await proxyMe(authHeader);
+  const meRes = await proxyMe(event);
   if (!meRes.ok) {
     return json({ error: 'Invalid or expired session. Please sign in again.' }, { status: 401 });
   }

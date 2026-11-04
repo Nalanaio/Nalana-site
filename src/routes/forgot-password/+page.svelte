@@ -1,4 +1,5 @@
 <script>
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { FORGOT_PASSWORD_SUCCESS } from '#lib/authClient.js';
   import AccountShell from '#lib/components/site/AccountShell.svelte';
 
@@ -18,7 +19,7 @@
     error = '';
 
     try {
-      const res = await fetch('/api/auth/forgot-password', {
+      const res = await cookieRequest('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

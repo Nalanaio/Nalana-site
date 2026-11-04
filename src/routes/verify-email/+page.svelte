@@ -34,7 +34,7 @@
     if (!result.ok) {
       state = 'error'; errorDetail = result.data.error ?? 'Invalid or expired verification token.'; return;
     }
-    if (auth.current.token) await auth.refreshSession();
+    if (auth.current.signedIn) await auth.refreshSession();
     state = 'success';
   }
   async function handleResend() {
@@ -66,7 +66,7 @@
       <button type="button" class="acct-primary" on:click={verify}>Verify my email</button>
     {:else if state === 'success'}
       <div class="signin-head"><span class="recovery-icon" aria-hidden="true">✦</span><h1>Email verified!</h1><p>Your email is verified. You can return to Nalana.</p></div>
-      <a href={auth.current.token ? '/account' : '/login'} class="acct-primary">Continue →</a>
+      <a href={auth.current.signedIn ? '/account' : '/login'} class="acct-primary">Continue →</a>
     {:else}
       <div class="signin-head">
         <h1>{state === 'resend' ? 'Resend verification email' : state === 'missing' ? 'Invalid link' : 'Verification failed'}</h1>

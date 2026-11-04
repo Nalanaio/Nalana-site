@@ -37,11 +37,12 @@
   async function load() {
     error = '';
     const publicPlans = loadPublic();
-    if (!auth.current.token) { await publicPlans; state = 'signed-out'; return; }
+    if (!auth.current.initialized) await auth.refreshSession();
+    if (!auth.current.signedIn) { await publicPlans; state = 'signed-out'; return; }
     state = 'loading';
     const ok = await auth.refreshSession();
     if (!mounted) return;
-    if (!ok || !auth.current.token) { await publicPlans; state = 'signed-out'; return; }
+    if (!ok || !auth.current.signedIn) { await publicPlans; state = 'signed-out'; return; }
     const [catalog, balance] = await Promise.all([
       billingRequest('/api/billing/catalog'),
       billingRequest('/api/credits/balance'),

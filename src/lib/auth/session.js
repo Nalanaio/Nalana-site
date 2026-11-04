@@ -1,101 +1,64 @@
-const SESSION_KEY = 'nalana_session_v1';
-const LEGACY_KEYS = ['nalana_token', 'nalana_refresh_token', 'nalana_user'];
-
-/** Injectable transport and storage allow deterministic race tests. */
+import { normalizeVerification } from '../verification/policy.js';
+import { cookieRequest, csrfToken, setCsrf, cancelAuthRequests, pendingRevocation, setPendingRevocation } from './cookieClient.js';
+import { clearLegacyAuth } from '../authMigration.js';
+/** Browser state contains metadata only. HttpOnly cookies own all credentials. */
 export function createSessionController(options = {}) {
   const fetcher = options.fetch ?? globalThis.fetch;
-  const storage = options.storage;
-  let state = { token: null, refreshToken: null, user: null, loading: false, error: null, sessionEpoch: 0 };
-  let version = 0;
-  let inFlight = null;
+  let version = 0, inFlight = null;
+  let state = { signedIn: false, user: null, loading: false, error: null, logoutPending: false, sessionEpoch: 0, initialized: false, legacyCleared: clearLegacyAuth(options.storage) };
   const listeners = new Set();
   const publish = () => { for (const listener of listeners) listener(state); };
-  function persist() {
-    if (!storage) return;
-    try {
-      if (state.token) storage.setItem(SESSION_KEY, JSON.stringify({ token: state.token, refreshToken: state.refreshToken, user: state.user }));
-      else storage.removeItem(SESSION_KEY);
-      for (const key of LEGACY_KEYS) storage.removeItem(key);
-    } catch {
-      try { storage.removeItem(SESSION_KEY); for (const key of LEGACY_KEYS) storage.removeItem(key); } catch { /* memory only */ }
-    }
-  }
-  try {
-    const stored = JSON.parse(storage?.getItem(SESSION_KEY) || 'null');
-    const token = stored?.token ?? storage?.getItem(LEGACY_KEYS[0]);
-    if (token && !token.startsWith('mock_jwt_')) {
-      const user = stored?.user ?? JSON.parse(storage?.getItem(LEGACY_KEYS[2]) || 'null');
-      // Persisted capabilities may be stale after sleep or a policy rollout.
-      state = { ...state, token, user: user ? { ...user, verification: null } : null, refreshToken: stored?.refreshToken ?? storage?.getItem(LEGACY_KEYS[1]) ?? null };
-    }
-  } catch { /* blocked or malformed storage */ }
-  function replace(token, user, refreshToken = null, internal = false) {
+  function replace(user, internal = false) {
     if (!internal) { version++; inFlight = null; }
-    state = { token, user, refreshToken, loading: false, error: null, sessionEpoch: version };
-    persist(); publish();
+    state = { ...state, user, signedIn: Boolean(user?.id), loading: false, error: null, initialized: true, sessionEpoch: version }; publish();
   }
   const controller = {
     get current() { return state; },
-    /** @param {(value: {token: string|null, refreshToken: string|null, user: any, loading: boolean, error: string|null, sessionEpoch: number}) => void} listener */
-    subscribe(listener) { listeners.add(listener); listener(state); return () => { listeners.delete(listener); }; },
-    setSession(token, user, refreshToken = null) { if (!token || token.startsWith('mock_jwt_')) { replace(null, null); return; } replace(token, user, refreshToken); },
-    updateUser(user, expectedEpoch = version) { if (version === expectedEpoch && user?.id === state.user?.id) replace(state.token, user, state.refreshToken, true); },
-    updateVerification(verification) { if (state.user) replace(state.token, { ...state.user, verification: normalizeVerification(verification) }, state.refreshToken, true); },
-    logout() {
-      replace(null, null);
-      // Browser-only request clears the independent private operator cookie too.
-      try { if (options.logout) Promise.resolve(options.logout()).catch(() => {}); } catch { /* logout must stay synchronous */ }
+    /** @param {(value: any) => void} listener */
+    subscribe(listener) { listeners.add(listener); listener(state); return () => listeners.delete(listener); },
+    setSession(user, csrf) { setCsrf(csrf); replace(user); options.broadcast?.(); },
+    updateUser(user, expectedEpoch = version) { if (version === expectedEpoch && user?.id === state.user?.id) replace(user, true); },
+    updateVerification(verification) { if (state.user) replace({ ...state.user, verification: normalizeVerification(verification) }, true); },
+    async logout() {
+      cancelAuthRequests(); replace(null); options.broadcast?.(); const observed = version;
+      try { const response = await cookieRequest('/api/auth/logout', { method: 'POST' }, fetcher); const data = await response.json(); if (version === observed) { setCsrf(data.csrf_token); setPendingRevocation(!response.ok || data.revocation_pending === true); state = { ...state, logoutPending: pendingRevocation() }; if (!response.ok) controller.setError('Signed out here. Remote session revocation could not be confirmed.'); else publish(); } }
+      catch { if (version === observed) { state = { ...state, logoutPending: true }; controller.setError('Sign-out could not reach the server. Retry before leaving a shared device.'); } }
+      options.broadcast?.();
+      try { await options.logout?.(); } catch { /* independent operator cookie */ }
     },
     setLoading(loading) { state = { ...state, loading }; publish(); },
     setError(error) { state = { ...state, error, loading: false }; publish(); },
-    getAuthHeader() { return state.token ? `Bearer ${state.token}` : null; },
-    canRestoreSession() {
-      try {
-        const saved = JSON.parse(storage?.getItem(SESSION_KEY) || 'null');
-        return Boolean(state.token && state.user?.id && saved?.token === state.token && saved?.user?.id === state.user.id);
-      } catch { return false; }
-    },
+    canRestoreSession() { return state.signedIn; },
     refreshSession() {
       if (inFlight) return inFlight;
-      if (!state.token) return Promise.resolve(false);
-      const observedVersion = version;
-      const current = () => version === observedVersion;
-      const original = state;
+      const observed = version;
+      const current = () => version === observed;
       controller.setLoading(true);
       inFlight = (async () => {
-        let activeToken = original.token;
-        let activeRefresh = original.refreshToken;
-        let activeUser = original.user;
         try {
-          let res = await fetcher('/api/auth/me', { headers: { Authorization: `Bearer ${activeToken}` }, signal: AbortSignal.timeout(10000) });
+          await csrfToken(fetcher);
+          if (current() && pendingRevocation()) { state = { ...state, logoutPending: true }; publish(); }
+          let response = await cookieRequest('/api/auth/me', {}, fetcher);
           if (!current()) return false;
-          if (res.status === 401 && activeRefresh) {
-            const refreshed = await fetcher('/api/auth/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: activeRefresh }), signal: AbortSignal.timeout(10000) });
+          if (response.status === 401) {
+            const refreshed = await cookieRequest('/api/auth/refresh', { method: 'POST' }, fetcher);
             const data = await refreshed.json().catch(() => ({}));
             if (!current()) return false;
             if (!refreshed.ok) {
-              if ([400, 401, 403].includes(refreshed.status)) { controller.logout(); return false; }
-              return true;
+              if ([400, 401, 403].includes(refreshed.status)) { replace(null, true); return false; }
+              controller.setError('Account status is unavailable. Retry when connected.'); return state.signedIn;
             }
-            if (!data.token) return true;
-            activeToken = data.token; activeRefresh = data.refresh_token ?? activeRefresh;
-            activeUser = data.user ?? activeUser;
-            if (data.verification && activeUser) activeUser = { ...activeUser, verification: data.verification };
-            replace(activeToken, activeUser, activeRefresh, true);
-            res = await fetcher('/api/auth/me', { headers: { Authorization: `Bearer ${activeToken}` }, signal: AbortSignal.timeout(10000) });
+            setCsrf(data.csrf_token);
+            response = await cookieRequest('/api/auth/me', {}, fetcher);
           }
-          const data = await res.json().catch(() => ({}));
+          const data = await response.json().catch(() => ({}));
           if (!current()) return false;
-          if (res.status === 401) { controller.logout(); return false; }
-          if (!res.ok) { controller.setError('Account status is unavailable. You can retry without signing out.'); return true; }
-          if (data.user?.id) replace(activeToken, data.user, activeRefresh, true);
-          return true;
-        } catch { if (current()) controller.setError('Account status is unavailable. Check your connection and retry.'); return current(); }
-        finally { if (current()) { inFlight = null; controller.setLoading(false); } }
-      })();
-      return inFlight;
+          if (response.status === 401) { replace(null, true); return false; }
+          if (!response.ok || !data.user?.id) { controller.setError('Account status is unavailable. You can retry without signing out.'); return state.signedIn; }
+          replace(data.user, true); return true;
+        } catch { if (current()) controller.setError('Account status is unavailable. Check your connection and retry.'); return current() && state.signedIn; }
+        finally { if (current()) { inFlight = null; state = { ...state, initialized: true }; controller.setLoading(false); } }
+      })(); return inFlight;
     },
-  };
-  return controller;
+  }; return controller;
 }
-import { normalizeVerification } from '../verification/policy.js';

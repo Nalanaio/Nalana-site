@@ -1,4 +1,5 @@
 <script>
+  import { cookieRequest } from '#lib/auth/cookieClient.js';
   import { onMount } from 'svelte';
   import { afterNavigate, goto } from '$app/navigation';
   import { page } from '$app/state';
@@ -42,7 +43,7 @@
     error = '';
 
     try {
-      const res = await fetch('/api/auth/reset-password', {
+      const res = await cookieRequest('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),

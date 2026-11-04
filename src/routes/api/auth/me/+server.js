@@ -5,11 +5,12 @@ import { proxyAuthenticated, proxyMe } from '#lib/server/authApi.js';
  * GET /api/auth/me — GET {NALANA_API_BASE}/v1/users/me
  * PATCH /api/auth/me — PATCH {NALANA_API_BASE}/v1/users/me
  */
-export async function GET({ request }) {
-  return proxyMe(request.headers.get('Authorization'));
+export async function GET(event) {
+  return proxyMe(event);
 }
 
-export async function PATCH({ request }) {
+export async function PATCH(event) {
+  const { request } = event;
   const body = await request.json().catch(() => ({}));
   const patch = {};
 
@@ -26,7 +27,7 @@ export async function PATCH({ request }) {
     return json({ error: 'Nothing to update.' }, { status: 400 });
   }
 
-  return proxyAuthenticated('/v1/users/me', request, {
+  return proxyAuthenticated('/v1/users/me', event, {
     method: 'PATCH',
     body: patch,
   });
