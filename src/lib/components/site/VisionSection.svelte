@@ -33,6 +33,6 @@
       </div>{/each}
       <div class="fc-dots" role="tablist" aria-label="Features">{#each features as feature,index}<button bind:this={tabs[index]} class="fc-dot" class:is-active={selected===index} role="tab" type="button" id={'feature-tab-'+index} aria-label={String(index+1).padStart(2,'0')+': '+feature.title} aria-controls={'feature-panel-'+index} aria-selected={selected===index} tabindex={selected===index?0:-1} on:click={()=>onSelect(index)} on:keydown={event=>key(event,index)}><i aria-hidden="true"></i></button>{/each}</div>
     </article>
-    <div class="vision-download"><DownloadActions {platform} /></div>
+    <div class="vision-download"><DownloadActions {platform} location="vision" /></div>
   </div></div>
 </section>

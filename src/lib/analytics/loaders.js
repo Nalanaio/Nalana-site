@@ -1,7 +1,16 @@
 import { sensitivePath } from './consent.js';
 import { campaignLabels, campaignParameters, campaignContext } from './attribution.js';
+import { SCROLL_MILESTONES } from './scroll-depth.js';
 const lastViewed = new WeakMap();
 const usageEnabled = new WeakMap();
+// Optional PostHog controller per document, registered by loadAnalytics.
+const posthogs = new WeakMap();
+const CTA_TOKEN = /^[a-z0-9_]{1,40}$/;
+
+/** The controller only while this document holds usage permission on a non-sensitive route. */
+function posthogFor(window) {
+  return usageEnabled.get(window) && !sensitivePath(window.location.pathname) ? posthogs.get(window) : undefined;
+}
 
 // Forward only bounded campaign labels, never arbitrary queries, click IDs,
 // recovery tokens, fragments or email addresses. Ad names must be non-personal.
@@ -12,16 +21,21 @@ function pageLocation(window, pathname) {
 }
 
 export function trackPageView({ window, choice, pathname, enabled = false }) {
-  if (!enabled || !choice?.usage || sensitivePath(pathname) || !window.gtag) return;
+  if (!enabled || !choice?.usage || sensitivePath(pathname)) return;
+  posthogs.get(window)?.pageview(pathname);
+  if (!window.gtag) return;
   const location = pageLocation(window, pathname);
   if (lastViewed.get(window) === location) return;
   lastViewed.set(window, location);
   window.gtag('event', 'page_view', { ...campaignParameters(window, choice), page_location: location, page_path: pathname, page_referrer: '' });
 }
 /** Load only after explicit choice, with approved campaign labels only. */
-export function loadAnalytics({ document, window, choice, pathname, enabled = false }) {
+export function loadAnalytics({ document, window, choice, pathname, enabled = false, posthog = undefined }) {
   usageEnabled.set(window, Boolean(enabled && choice?.usage && !sensitivePath(pathname)));
   if (enabled) campaignContext(window, choice);
+  // PostHog follows the same gate as GA4 (flag + usage choice + non-sensitive route).
+  // update() also removes its browser storage when the visitor has declined.
+  if (posthog) { posthogs.set(window, posthog); void posthog.update({ choice, enabled, pathname }); }
   if (!enabled || sensitivePath(pathname)) return;
   if (choice.usage && !document.getElementById('nalana-ga')) {
     window.dataLayer = window.dataLayer || [];
@@ -41,7 +55,9 @@ export function loadAnalytics({ document, window, choice, pathname, enabled = fa
 /** A CTA activation, never a completed transfer, installation or signup. */
 export function trackDownloadClick({ window, platform }) {
   const pathname = window.location.pathname;
-  if (!usageEnabled.get(window) || !window.gtag || sensitivePath(pathname) || !['windows', 'mac'].includes(platform)) return;
+  if (!usageEnabled.get(window) || sensitivePath(pathname) || !['windows', 'mac'].includes(platform)) return;
+  posthogFor(window)?.capture('download clicked', { platform });
+  if (!window.gtag) return;
   window.gtag('event', 'download_clicked', {
     download_platform: platform,
     ...campaignParameters(window, { usage: true }),
@@ -61,8 +77,41 @@ export function trackSignup({ window, done }) {
   });
 }
 
+/**
+ * A click on an element tagged data-cta-id (and data-cta-location). Elements that
+ * also carry data-auth-intent="signup|login" start that flow: the form itself lives
+ * on /login, where no vendor is allowed to load, so the intent is recorded here.
+ */
+export function trackCtaClick({ window, element }) {
+  const posthog = posthogFor(window);
+  const ctaId = element?.getAttribute?.('data-cta-id');
+  if (!posthog || !CTA_TOKEN.test(ctaId ?? '')) return;
+  const rawLocation = element.getAttribute('data-cta-location');
+  const location = CTA_TOKEN.test(rawLocation ?? '') ? rawLocation : 'unknown';
+  posthog.capture('cta clicked', { cta_id: ctaId, location });
+  const intent = element.getAttribute('data-auth-intent');
+  if (intent === 'signup') posthog.capture('signup started', { location });
+  else if (intent === 'login') posthog.capture('login started', { location });
+}
+
+export function trackScrollDepth({ window, depth }) {
+  if (SCROLL_MILESTONES.includes(depth)) posthogFor(window)?.capture('scroll depth', { depth });
+}
+
+/**
+ * In-app navigation only; leaving the document is reported by the SDK on pagehide.
+ * `to` is the navigation target: a link to a server endpoint (a download, for
+ * example) does not replace the page, so it is not a page leave.
+ * @param {{ window: any, to?: { route?: { id?: string | null } } | null }} options
+ */
+export function trackPageLeave({ window, to = null }) {
+  if (to?.route?.id?.startsWith('/api')) return;
+  posthogFor(window)?.pageleave();
+}
+
 export function stopAnalytics({ window, document }) {
   usageEnabled.set(window, false);
+  void posthogs.get(window)?.update({ choice: { usage: false, decided: true }, enabled: false });
   window.dataLayer?.splice(0);
   document.getElementById('nalana-ga')?.remove();
 }

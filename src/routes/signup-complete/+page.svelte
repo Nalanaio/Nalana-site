@@ -3,8 +3,9 @@
   import * as env from '$app/env/public';
   import { auth } from '#lib/stores/auth.js';
   import { browserStorage, readChoice, CONSENT_KEY } from '#lib/analytics/consent.js';
-  import { consumeSignupMeasurement, clearCampaign } from '#lib/analytics/attribution.js';
+  import { consumeSignupMeasurement, clearCampaign, campaignContext } from '#lib/analytics/attribution.js';
   import { loadAnalytics, trackSignup, stopAnalytics } from '#lib/analytics/loaders.js';
+  import { createPosthogAnalytics } from '#lib/analytics/posthog.js';
 
   onMount(() => {
     let finished = false;
@@ -28,9 +29,21 @@
       done();
     };
     window.addEventListener('storage', revoke);
+    // Leave only after both the GA4 event and the PostHog identify have been handed
+    // to the browser; the 1.2 s timer above still bounds the wait.
+    const waiting = new Set(['ga', 'posthog']);
+    const settle = name => { waiting.delete(name); if (!waiting.size) done(); };
     try {
-      loadAnalytics({ document, window, choice: { ...readChoice(browserStorage(window)), identification: false }, pathname: '/signup-complete', enabled: true });
-      trackSignup({ window, done });
+      const posthog = createPosthogAnalytics({
+        window,
+        key: env.PUBLIC_NALANA_POSTHOG_KEY || undefined,
+        host: env.PUBLIC_NALANA_POSTHOG_HOST || undefined,
+        labels: () => campaignContext(window, { usage: true })
+      });
+      loadAnalytics({ document, window, choice: { ...readChoice(browserStorage(window)), identification: false }, pathname: '/signup-complete', enabled: true, posthog });
+      // Internal account id only (never the email or name). A no-op unless usage analytics is allowed.
+      void posthog.syncAccount(auth.current.user.id).catch(() => false).then(() => settle('posthog'));
+      trackSignup({ window, done: () => settle('ga') });
     } catch { done(); }
     return () => { clearTimeout(timer); window.removeEventListener('storage', revoke); };
   });

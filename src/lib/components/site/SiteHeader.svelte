@@ -10,5 +10,5 @@
     <a class="nav-link" href="/pricing" style="--x:69.37%">Pricing</a>
   </nav>
   {#if $isLoggedIn}<a class="btn btn-sm" data-sveltekit-reload href="/account">Account</a>
-  {:else}<a class="header-login" data-sveltekit-reload href="/login">Log in</a><a class="btn btn-sm" data-sveltekit-reload href="/login?mode=signup">Sign Up</a>{/if}
+  {:else}<a class="header-login" data-sveltekit-reload href="/login" data-cta-id="header_login" data-cta-location="header" data-auth-intent="login">Log in</a><a class="btn btn-sm" data-sveltekit-reload href="/login?mode=signup" data-cta-id="header_signup" data-cta-location="header" data-auth-intent="signup">Sign Up</a>{/if}
 </header>
