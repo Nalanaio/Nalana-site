@@ -8,9 +8,10 @@ test('actual Svelte auth routes preserve recovery metadata and token-only refres
   const policy = { policy_version: 1, state: 'required', grace_started_at: '2026-10-12T18:00:00Z', grace_expires_at: '2026-10-14T18:00:00Z', server_time: '2026-10-14T18:00:00Z', enforcement_enabled: true, cloud_actions_allowed: false, next_reminder_at: null, resend_available_at: '2026-10-14T18:01:00Z' };
   const backend = createHttpServer(async (request, response) => {
     let text = ''; for await (const chunk of request) text += chunk;
-    calls.push({ path: request.url, body: JSON.parse(text || '{}'), auth: request.headers.authorization });
+    calls.push({ path: request.url, body: JSON.parse(text || '{}'), auth: request.headers.authorization, client: request.headers['x-nalana-client'] });
     response.setHeader('Content-Type', 'application/json');
-    if (request.url === '/v1/auth/refresh') response.end(JSON.stringify({ access_token: 'rotated', refresh_token: 'refresh-2', verification: policy }));
+    if (request.url === '/v1/auth/login' || request.url === '/v1/auth/register') response.end(JSON.stringify({ access_token: 'issued', refresh_token: 'refresh-1', user: { id: '0b7e2f9a-3c1d-4e5f-8a6b-7c8d9e0f1a2b', email: 'person@example.test', email_verified: false } }));
+    else if (request.url === '/v1/auth/refresh') response.end(JSON.stringify({ access_token: 'rotated', refresh_token: 'refresh-2', verification: policy }));
     else if (request.url === '/v1/auth/change-email') response.end(JSON.stringify({ access_token: 'replacement', refresh_token: 'replacement-refresh', user: { id: 'account', email: 'corrected@example.test', verification: policy } }));
     else if (request.url === '/v1/auth/resend-verification/current') { response.statusCode = 429; response.end(JSON.stringify({ detail: 'Please wait.', code: 'RATE_LIMITED', retry_after_seconds: 60, verification: policy, private_field: 'never echo' })); }
     else if (request.url === '/v1/auth/verify-email') response.end(JSON.stringify({ id: 'account', email_verified: true, verification: { ...policy, state: 'verified', cloud_actions_allowed: true } }));
@@ -28,6 +29,15 @@ test('actual Svelte auth routes preserve recovery metadata and token-only refres
   const refresh = await (await load('refresh')).POST({ request: request('refresh', { refresh_token: 'old' }) });
   const refreshed = await refresh.json();
   assert.equal(refreshed.token, 'rotated'); assert.equal(refreshed.user, undefined); assert.deepEqual(refreshed.verification, policy);
+  // Account creation and login tell the backend which client they came from; other calls do not.
+  assert.equal(calls.at(-1).client, undefined);
+  for (const [path, backendPath] of [['register', '/v1/auth/register'], ['login', '/v1/auth/login']]) {
+    const created = await (await load(path)).POST({ request: request(path, { email: 'person@example.test', password: 'test-password-1' }) });
+    assert.equal(created.status, 200, path);
+    assert.equal(calls.at(-1).path, backendPath);
+    assert.equal(calls.at(-1).client, 'site');
+    assert.deepEqual(calls.at(-1).body, { email: 'person@example.test', password: 'test-password-1' });
+  }
   const correctionRoute = await load('change-email');
   assert.equal((await correctionRoute.POST({ request: request('change-email', { new_email: 'corrected@example.test', current_password: 'test-password' }) })).status, 401);
   const correction = await correctionRoute.POST({ request: request('change-email', { new_email: 'corrected@example.test', current_password: 'test-password', injected: 'discard' }, 'Bearer current') });
