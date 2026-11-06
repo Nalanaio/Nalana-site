@@ -164,6 +164,26 @@ test('revoking after the SDK started stops it, opts out and clears storage', asy
   assert.deepEqual(Object.keys(s.window.sessionStorage), ['sveltekit:snapshot']);
 });
 
+test('re-grant restores the current account and SDK pageleave after revocation', async () => {
+  const s = surface();
+  await s.controller.syncAccount(ACCOUNT);
+  await s.controller.update(grant);
+  await s.controller.update(decline);
+  assert.notEqual(s.sdk.get_distinct_id(), ACCOUNT);
+  s.sdk.pagehide();
+  assert.deepEqual(s.events(), []);
+
+  await s.controller.update(grant);
+  assert.equal(s.sdk.get_distinct_id(), ACCOUNT);
+  s.sdk.pagehide();
+  assert.deepEqual(s.events(), ['$pageleave']);
+
+  await s.controller.update(decline);
+  assert.equal(await s.controller.syncAccount(null), false);
+  await s.controller.update(grant);
+  assert.notEqual(s.sdk.get_distinct_id(), ACCOUNT);
+});
+
 test('the SDK reports nothing from its own unload handler once consent is revoked', async () => {
   const s = surface();
   await s.controller.update(grant);

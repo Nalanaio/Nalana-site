@@ -136,7 +136,6 @@ export function createPosthogAnalytics({ window, load = () => import('posthog-js
 
   function stopClient() {
     queue = [];
-    wanted = undefined;
     lastPageview = undefined;
     booting = undefined;
     if (!client) return;
@@ -174,8 +173,11 @@ export function createPosthogAnalytics({ window, load = () => import('posthog-js
     // Consent or the route can change while the SDK chunk is loading.
     if (!permitted()) return;
     if (!client) {
-      if (sdk.__loaded && typeof sdk.opt_in_capturing === 'function') { sdk.opt_in_capturing(); client = sdk; }
-      else client = sdk.init(key, posthogConfig({ host, window, labels })) ?? sdk;
+      if (sdk.__loaded && typeof sdk.opt_in_capturing === 'function') {
+        sdk.opt_in_capturing();
+        sdk.set_config({ capture_pageleave: true });
+        client = sdk;
+      } else client = sdk.init(key, posthogConfig({ host, window, labels })) ?? sdk;
     }
     applyIdentity();
     const waiting = queue; queue = [];
