@@ -8,6 +8,13 @@ test('privacy explains accounts and optional tracking without false anonymous or
   for (const phrase of ['We do not collect personal information', 'not linked to your identity', 'all data is anonymized before transmission']) assert.equal(privacy.includes(phrase), false, phrase);
   assert.match(privacy, /revok[\w]*[\s\S]*historical/i);
 });
+test('privacy and cookie policies disclose PostHog under the usage analytics choice, with account-ID linking and no email or name', () => {
+  for (const page of [privacy, cookies]) assert.match(page, /Google Analytics, Vercel Web Analytics and PostHog/);
+  assert.match(privacy, /PostHog Cloud \(United States\)/);
+  assert.match(privacy, /internal account ID, not your email address or name/);
+  assert.match(privacy, /IP-based location lookup turned off/);
+  assert.match(cookies, /keys that begin with ph_/);
+});
 test('cookie policy explains bounded dedup, separate vendor choices and reachable controls', () => {
   for (const phrase of ['24 hours', 'non-sliding', 'HttpOnly', 'Google Analytics', 'Vercel Web Analytics', 'production website', 'RB2B', 'nalana:privacy-settings', 'separate', 'pairing', 'default off']) assert.ok(cookies.includes(phrase), phrase);
   assert.match(cookies, /not.*unique person/i);

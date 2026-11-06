@@ -27,6 +27,7 @@
   "dependencies": {
     "@vercel/analytics": "2.1.0-canary.5",
     "mssql": "12.7.10",
+    "posthog-js": "1.438.10",
     "three": "^0.160.0"
   },
   "overrides": {

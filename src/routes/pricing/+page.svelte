@@ -136,7 +136,7 @@
           <p class="plan-price">$0</p>
           <p class="plan-credits">{freeCredits} credits every month</p>
           <p class="plan-note">Refills to {freeCredits} each month. No card needed.</p>
-          <a class="acct-primary" href="/login?mode=signup">Create a free account</a>
+          <a class="acct-primary" href="/login?mode=signup" data-cta-id="pricing_signup" data-cta-location="pricing" data-auth-intent="signup">Create a free account</a>
         </section>
       {/if}
       {#each plans.subscriptions as plan (plan.product_key)}

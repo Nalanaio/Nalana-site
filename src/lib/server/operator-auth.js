@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes, timingSafeEqual } from 'node:crypto';
+import { clientLabelHeaders } from './client-label.js';
 
 export const OPERATOR_COOKIE = '__Host-nalana-operator';
 export const OPERATOR_CHALLENGE_COOKIE = '__Host-nalana-operator-login';
@@ -91,7 +92,7 @@ export function createOperatorService(config, { fetchImpl = globalThis.fetch, no
       if (attempts.size > 1000) for (const [key, value] of attempts) if (value.until <= now()) attempts.delete(key);
       if (attempts.size >= 2000 && !attempts.has(bucket)) throw new OperatorError(429, 'Too many attempts. Try again later.');
       attempts.set(bucket, !limit || now() >= limit.until ? { count: 1, until: now() + TTL } : { count: limit.count + 1, until: limit.until });
-      const data = await backend('/v1/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email.trim(), password }) });
+      const data = await backend('/v1/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json', ...clientLabelHeaders('/v1/auth/login') }, body: JSON.stringify({ email: email.trim(), password }) });
       checkUser(data.user);
       if (typeof data.access_token !== 'string' || !data.access_token || data.access_token.length > 2500) throw new OperatorError(503, 'Operator session could not be established.');
       const issuedAt = now();

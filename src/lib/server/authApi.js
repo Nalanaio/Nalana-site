@@ -30,6 +30,7 @@ export function apiUnavailable() {
 
 export { normalizeUser, normalizeAuthResponse, mapAuthError } from '../auth/projection.js';
 import { normalizeUser, normalizeAuthResponse, safeAuthError } from '../auth/projection.js';
+import { clientLabelHeaders } from './client-label.js';
 
 export async function proxyAuth(path, body, options = {}) {
   const base = getApiBase();
@@ -47,6 +48,8 @@ export async function proxyAuth(path, body, options = {}) {
       headers: {
         'Content-Type': 'application/json',
         ...(options.headers ?? {}),
+        // Register and login only (see client-label.js).
+        ...clientLabelHeaders(path),
       },
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
