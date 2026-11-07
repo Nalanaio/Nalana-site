@@ -1,6 +1,7 @@
 import { establishDownloadSubject, rememberDownload } from './download-cookie.js';
 import { createIntent, recordHandoff, flagEnabled } from './acquisition-api.js';
-import { loadStableManifest, resolveStableDownload } from './stable-release.js';
+import { loadStableManifest, resolveStableDownload, validateStableDownload } from './stable-release.js';
+import { WEBSITE_DOWNLOAD_OVERRIDE } from './website-download-release.js';
 import { notifyDownload } from './download-notification.js';
 import { measureDownload } from './campaign-measurement.js';
 import { allowedCampaigns, campaignFromUrl } from '../campaigns/labels.js';
@@ -9,12 +10,21 @@ export const downloadHeaders = { 'cache-control': 'no-store', 'referrer-policy':
 const redirectResponse = (target, status = 302) => new Response(null, { status, headers: { ...downloadHeaders, location: target } });
 
 /** The website observes a handoff only. Body writes are observed by the relay. */
-export async function handleDownload({ fetch, url, request, cookies, enrollment = null, env = process.env, measure = measureDownload }) {
+export async function handleDownload({ fetch, url, request, cookies, enrollment = null, env = process.env, measure = measureDownload, releaseOverride = WEBSITE_DOWNLOAD_OVERRIDE }) {
   const platform = url.searchParams.get('platform');
   if (!['mac','windows'].includes(platform)) return new Response('Unknown platform. Use ?platform=mac or ?platform=windows', { status: 400, headers: downloadHeaders });
   if (request.method === 'HEAD') return new Response(null, { status: 204, headers: downloadHeaders });
   const purpose = `${request.headers.get('purpose') || ''} ${request.headers.get('sec-purpose') || ''}`;
   if (/prefetch|preview|prerender/i.test(purpose)) return new Response(null, { status: 204, headers: downloadHeaders });
+  if (releaseOverride) {
+    const target = validateStableDownload(releaseOverride[platform], platform);
+    if (!target) return new Response('The latest Nalana download is temporarily unavailable.', { status: 503, headers: downloadHeaders });
+    // Stable relay tickets must never replace the explicitly selected beta.
+    // These remain request notifications, without a transfer-start claim.
+    await notifyDownload({ platform, request, fetch, env });
+    await measure({ url, request, platform, env });
+    return redirectResponse(target);
+  }
   let subject = null;
   if (flagEnabled(env.NALANA_ACQUISITION_RELAY)) {
     const established = establishDownloadSubject({ cookies, url, platform, env });

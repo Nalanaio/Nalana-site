@@ -7,7 +7,7 @@ const id = 'a9ee7444-6b85-4e86-8c6b-24684e20bdd4';
 const env = { NALANA_ACQUISITION_RELAY:'true', NALANA_API_BASE:'https://api.test', NALANA_WEBSITE_SERVICE_TOKEN:'private', NALANA_DOWNLOAD_RELAY_BASE:'https://relay.test', NALANA_ENVIRONMENT:'test', NALANA_DOWNLOAD_COOKIE_KEY_ID:'t', NALANA_DOWNLOAD_COOKIE_KEYS:JSON.stringify({t:'a'.repeat(40)}), NALANA_WIN_URL:'https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana.exe' };
 function event(options = {}) {
   const url = new URL(options.url || 'https://nalana.io/api/download?platform=windows');
-  return { url, request:new Request(url, options.request), cookies:{ get:()=>null, set:()=>{} }, fetch:()=>assert.fail('unexpected request'), env, ...options };
+  return { url, request:new Request(url, options.request), cookies:{ get:()=>null, set:()=>{} }, fetch:()=>assert.fail('unexpected request'), env, releaseOverride: null, ...options };
 }
 test('first GET makes exactly one same-origin cookie roundtrip without backend mail or intent', async () => {
   const response = await handleDownload(event());
