@@ -11,6 +11,7 @@ const priv = { schema: optional };
 export const variables = defineEnvVars({
   PUBLIC_CAMPAIGN_ALLOWED_LABELS: pub,
   PUBLIC_CAMPAIGN_TOTALS_ENABLED: pub,
+  PUBLIC_DEFAULT_DOWNLOAD_CHANNEL: pub,
   PUBLIC_NALANA_FUNNEL_ENABLED: pub,
   PUBLIC_NALANA_POSTHOG_HOST: pub,
   PUBLIC_NALANA_POSTHOG_KEY: pub,
