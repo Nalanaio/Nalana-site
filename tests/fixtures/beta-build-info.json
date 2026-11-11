@@ -1,0 +1,25 @@
+{
+  "channel": "beta",
+  "release_tag": "beta-latest",
+  "commit": "154b8f6fb7a52a65033a514a529103e367dee014",
+  "run_id": "42956467795",
+  "run_number": 19,
+  "workflow_url": "https://github.com/Nalanaio/Nalana-Fork-IDE/actions/runs/42956467795",
+  "created_at": "2026-11-10T20:00:47-08:00",
+  "builds": [
+    {
+      "platform": "macOS Apple Silicon",
+      "filename": "nalana-macos-arm64-beta-b19-154b8f6f.dmg",
+      "download_url": "https://github.com/Nalanaio/nalana-dev-builds/releases/download/beta-latest/nalana-macos-arm64-beta-b19-154b8f6f.dmg",
+      "size_bytes": 310126721,
+      "sha256": "0a29131891b12909e505b77c80ace331ef3f21571fb6ce1b86b1788b18f713d5"
+    },
+    {
+      "platform": "Windows x64",
+      "filename": "nalana-windows-x64-beta-b19-154b8f6f.exe",
+      "download_url": "https://github.com/Nalanaio/nalana-dev-builds/releases/download/beta-latest/nalana-windows-x64-beta-b19-154b8f6f.exe",
+      "size_bytes": 315679512,
+      "sha256": "024caba25b9098b8ede6d767f72a182899d9be8f30e84df12118d6f44096088a"
+    }
+  ]
+}

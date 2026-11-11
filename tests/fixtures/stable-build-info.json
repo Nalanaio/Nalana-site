@@ -1,0 +1,26 @@
+{
+  "channel": "stable",
+  "version": "2.1.0",
+  "release_tag": "stable-latest",
+  "commit": "69a28f776a6e56ec522b77726fbbdb5429d9e7cf",
+  "run_id": "42864836488",
+  "run_number": 33,
+  "workflow_url": "https://github.com/Nalanaio/Nalana-Fork-IDE/actions/runs/42864836488",
+  "created_at": "2026-11-10T09:25:36-08:00",
+  "builds": [
+    {
+      "platform": "macOS Apple Silicon",
+      "filename": "nalana-macos-arm64-stable-2.1.0-69a28f77-r33.1.dmg",
+      "download_url": "https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana-macos-arm64-stable-2.1.0-69a28f77-r33.1.dmg",
+      "size_bytes": 307421649,
+      "sha256": "7d8d78ca2b4872e3843bc183e6171630160bf5707d576f47c3b75d50fd772f58"
+    },
+    {
+      "platform": "Windows x64",
+      "filename": "nalana-windows-x64-stable-2.1.0-69a28f77-r33.1.exe",
+      "download_url": "https://github.com/Nalanaio/nalana-dev-builds/releases/download/stable-latest/nalana-windows-x64-stable-2.1.0-69a28f77-r33.1.exe",
+      "size_bytes": 227856976,
+      "sha256": "1aef1c79ae1ca647c60a25164411d9c614998718777941979bbee30ede7eeb1a"
+    }
+  ]
+}
