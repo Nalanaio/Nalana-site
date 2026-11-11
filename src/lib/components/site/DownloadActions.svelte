@@ -24,7 +24,8 @@
   $: target=effectiveChannel(channel,releases);
   $: fallback=target!==channel;
   $: down=DOWNLOAD_CHANNELS.filter(value=>releases?.[value]?.available===false);
-  $: betaNote=target==='beta'&&!fallback;
+  // Any Beta CTA, including one offered because Stable is down, carries the separate-account warning.
+  $: betaNote=target==='beta';
   $: described=betaNote||down.length>0;
   const os={mac:'Mac',windows:'Windows'};
   const label=(value,name)=>value==='beta'?`Download Beta for ${name}`:`Download for ${name}`;
