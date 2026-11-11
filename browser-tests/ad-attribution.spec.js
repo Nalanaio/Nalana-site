@@ -38,7 +38,7 @@ test('consented ad survives navigation and confirmed signup sends one clean conv
   await page.getByRole('link', { name: /back to home/i }).click();
   await expect(page.locator('.grace-site[data-motion]')).toBeAttached();
   await context.route('**/api/download?**', route => route.fulfill({ status: 200, headers: { 'content-disposition': 'attachment; filename="synthetic-download.txt"' }, contentType: 'application/octet-stream', body: 'Synthetic download fixture. No installer or production request.' }));
-  const download = page.getByRole('link', { name: /Download for (Windows|Mac)/i }).first();
+  const download = page.getByRole('link', { name: /Download (Beta )?for (Windows|Mac)/i }).first();
   const platform = (await download.innerText()).includes('Windows') ? 'windows' : 'mac';
   await Promise.all([page.waitForResponse(response => response.url().includes('/api/download?')), download.click({ noWaitAfter: true })]);
   const clicks = commands.filter(c => c.command[1] === 'download_clicked');
