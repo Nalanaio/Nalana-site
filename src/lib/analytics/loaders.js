@@ -1,6 +1,7 @@
 import { sensitivePath } from './consent.js';
 import { campaignLabels, campaignParameters, campaignContext } from './attribution.js';
 import { SCROLL_MILESTONES } from './scroll-depth.js';
+import { DOWNLOAD_CHANNELS } from '../download-channel.js';
 const lastViewed = new WeakMap();
 const usageEnabled = new WeakMap();
 // Optional PostHog controller per document, registered by loadAnalytics.
@@ -53,18 +54,26 @@ export function loadAnalytics({ document, window, choice, pathname, enabled = fa
 }
 
 /** A CTA activation, never a completed transfer, installation or signup. */
-export function trackDownloadClick({ window, platform }) {
+export function trackDownloadClick({ window, platform, channel = undefined }) {
   const pathname = window.location.pathname;
   if (!usageEnabled.get(window) || sensitivePath(pathname) || !['windows', 'mac'].includes(platform)) return;
-  posthogFor(window)?.capture('download clicked', { platform });
+  const known = DOWNLOAD_CHANNELS.includes(channel);
+  posthogFor(window)?.capture('download clicked', known ? { platform, channel } : { platform });
   if (!window.gtag) return;
   window.gtag('event', 'download_clicked', {
     download_platform: platform,
+    ...(known ? { download_channel: channel } : {}),
     ...campaignParameters(window, { usage: true }),
     page_location: pageLocation(window, pathname),
     page_referrer: '',
     transport_type: 'beacon'
   });
+}
+
+/** An explicit Stable/Beta choice on a download CTA; PostHog only, under the same gate. */
+export function trackChannelToggle({ window, channel, from, location }) {
+  if (!DOWNLOAD_CHANNELS.includes(channel) || !DOWNLOAD_CHANNELS.includes(from) || channel === from) return;
+  posthogFor(window)?.capture('download channel toggled', { channel, from, location: CTA_TOKEN.test(location ?? '') ? location : 'unknown' });
 }
 
 /** Invoked only in a fresh, credential-free completion document. */

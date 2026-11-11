@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { createPosthogAnalytics, posthogConfig, sanitizeEvent, accountDistinctId, POSTHOG_KEY, POSTHOG_HOST } from '../src/lib/analytics/posthog.js';
-import { loadAnalytics, stopAnalytics, trackCtaClick, trackDownloadClick, trackPageLeave, trackPageView, trackScrollDepth } from '../src/lib/analytics/loaders.js';
+import { loadAnalytics, stopAnalytics, trackChannelToggle, trackCtaClick, trackDownloadClick, trackPageLeave, trackPageView, trackScrollDepth } from '../src/lib/analytics/loaders.js';
 
 const grant = { choice: { version: 1, usage: true, identification: false, decided: true }, enabled: true };
 const decline = { choice: { version: 1, usage: false, identification: false, decided: true }, enabled: true };
@@ -432,4 +432,37 @@ test('PostHog is only ever imported dynamically, so it cannot load before consen
   assert.deepEqual(offenders, []);
   assert.match(readFileSync('src/lib/analytics/posthog.js', 'utf-8'), /import\('posthog-js'\)/);
   assert.equal(/posthog/i.test(readFileSync('src/app.html', 'utf-8')), false);
+});
+
+test('download channel toggles and channel-tagged download clicks follow the same consent gate', async () => {
+  for (const options of [{ enabled: false, choice: choiceOf(true) }, { enabled: true, choice: choiceOf(false, false) }, { enabled: true, choice: choiceOf(false) }]) {
+    const p = page();
+    loadAnalytics({ document: p.document, window: p.window, pathname: '/', posthog: p.posthog, ...options });
+    await settle();
+    trackChannelToggle({ window: p.window, channel: 'stable', from: 'beta', location: 'hero' });
+    trackDownloadClick({ window: p.window, platform: 'mac', channel: 'beta' });
+    assert.equal(p.loads(), 0);
+    assert.equal(p.events().length, 0);
+  }
+  const before = page();
+  trackChannelToggle({ window: before.window, channel: 'stable', from: 'beta', location: 'hero' });
+  assert.equal(before.events().length, 0);
+
+  const p = page();
+  loadAnalytics({ document: p.document, window: p.window, pathname: '/', enabled: true, choice: choiceOf(true), posthog: p.posthog });
+  await settle();
+  trackChannelToggle({ window: p.window, channel: 'stable', from: 'beta', location: 'hero' });
+  trackChannelToggle({ window: p.window, channel: 'beta', from: 'stable', location: 'Vision!' });
+  trackChannelToggle({ window: p.window, channel: 'beta', from: 'beta', location: 'hero' });
+  trackChannelToggle({ window: p.window, channel: 'nightly', from: 'beta', location: 'hero' });
+  trackDownloadClick({ window: p.window, platform: 'windows', channel: 'beta' });
+  trackDownloadClick({ window: p.window, platform: 'mac', channel: 'nightly' });
+  assert.deepEqual(p.events().map(([, name, props]) => [name, props]).filter(([name]) => name !== '$pageview'), [
+    ['download channel toggled', { channel: 'stable', from: 'beta', location: 'hero' }],
+    ['download channel toggled', { channel: 'beta', from: 'stable', location: 'unknown' }],
+    ['download clicked', { platform: 'windows', channel: 'beta' }],
+    ['download clicked', { platform: 'mac' }],
+  ]);
+  const gtag = p.window.dataLayer.map(item => Array.from(item)).filter(command => command[0] === 'event' && command[1] === 'download_clicked');
+  assert.deepEqual(gtag.map(command => command[2].download_channel), ['beta', undefined]);
 });
