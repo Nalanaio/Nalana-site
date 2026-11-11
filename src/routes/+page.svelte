@@ -6,9 +6,18 @@
   import VisionSection from '#lib/components/site/VisionSection.svelte';
   import SiteFooter from '#lib/components/site/SiteFooter.svelte';
   import { HERO_OBJECTS } from '#lib/animations/hero.js';
+  import { onMount } from 'svelte';
+  import { effectiveChannel, restoredChannel } from '#lib/download-channel.js';
   export let data;
   $: productLabel=data?.productLabel||'Nalana';
   $: downloadPlatform=data?.downloadPlatform||'both';
+  $: releases=data?.releases||{};
+  // The server picked ?channel= or the configured default; a remembered choice
+  // applies only when the URL names no channel.
+  let channel=data?.channel||'beta';
+  $: heroLabel=releases[effectiveChannel(channel,releases)]?.label||productLabel;
+  onMount(()=>{channel=restoredChannel(window,channel,releases)||channel;});
+  const chooseChannel=next=>channel=next;
   let workflowStep=0,workflowInteracting=false,featureIndex=0,material=null,userPaused=false,visuals;
   function chooseFeature(index){featureIndex=index;visuals?.selectFeature(index);}
   function chooseWorkflow(index){workflowStep=index;visuals?.selectWorkflow(index);}
@@ -30,12 +39,12 @@
         </div>
       </div>
       <div class="layer copy-layer"><h1 class="hero-title" aria-label="Create, iterate, and fine tune in one 3D workspace."><span aria-hidden="true"><span class="tw tw-create">Create,</span> <span class="tw tw-iterate">{#each [...'iterate,'] as character,index}<span class="ch" style={'--i:'+index}>{character}</span>{/each}</span> and <span class="tw tw-fine">{#each [...'fine tune'] as character,index}{#if character===' '}{' '}{:else}<span class="ch" style={'--i:'+index}><span class="s">{character}</span><span class="f">{character}</span></span>{/if}{/each}</span> in one <span class="amulya"><span class="tw tw-3d">3D<span class="title-overlay"></span></span> <span class="tw tw-ws">workspace.<span class="title-overlay"></span></span></span></span></h1></div>
-      <div class="layer cta-layer"><div class="hero-download"><DownloadActions platform={downloadPlatform} /></div><p class="hero-sub">{productLabel} is out now.</p>
+      <div class="layer cta-layer"><div class="hero-download"><DownloadActions platform={downloadPlatform} {channel} {releases} onChannel={chooseChannel} /><p class="hero-sub">{heroLabel} is out now.</p></div>
         <div class="trusted"><p class="trusted-label">Used by professionals at</p><img class="trusted-usc" src="/assets/site/logo-usc.png" alt="USC" /><span class="trusted-gda">GDA V</span><img class="trusted-wayfair" src="/assets/site/logo-wayfair.png" alt="Wayfair" /></div>
       </div>
     </section>
     <WorkflowSection selected={workflowStep} onSelect={chooseWorkflow} onInteraction={value=>workflowInteracting=value} {productLabel} paused={userPaused} />
-    <VisionSection selected={featureIndex} onSelect={chooseFeature} platform={downloadPlatform} paused={userPaused} />
+    <VisionSection selected={featureIndex} onSelect={chooseFeature} platform={downloadPlatform} paused={userPaused} {channel} {releases} onChannel={chooseChannel} />
     <SiteFooter {material} onMaterial={key=>material=key} />
   </main>
 </MarketingVisuals>
