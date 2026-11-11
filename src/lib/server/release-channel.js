@@ -87,3 +87,29 @@ export function channelLabel(channel, manifest) {
   if (!available || typeof manifest?.version !== 'string' || !/^\d+\.\d+\.\d+$/.test(manifest.version)) return 'Nalana';
   return `Nalana ${manifest.version.replace(/\.0$/, '')}`;
 }
+
+/** Both channels' labels and availability for the homepage toggle, fetched in parallel. */
+export async function loadReleases(fetch, env = process.env) {
+  const channels = Object.keys(CHANNELS);
+  const manifests = await Promise.all(channels.map((channel) => loadChannelManifest(channel, fetch)));
+  const fallbackUrls = { mac: env?.NALANA_MAC_URL, windows: env?.NALANA_WIN_URL };
+  return Object.fromEntries(channels.map((channel, index) => {
+    const manifest = manifests[index];
+    // Same resolution as /api/download: stable may use its configured fallbacks, beta never.
+    const available = ['mac', 'windows'].every((platform) => Boolean(resolveChannelDownload({ channel, platform, manifest, fallbackUrls })));
+    return [channel, { label: channelLabel(channel, manifest), available }];
+  }));
+}
+
+/** `?channel=` on the page URL wins (shareable, works without JS); otherwise the configured default. */
+export function pageChannel(url, env = process.env) {
+  const requested = url.searchParams.get('channel');
+  return isChannel(requested) ? requested : defaultChannel(env);
+}
+
+/** The homepage's download data: the selected channel, both releases, and the selected label. */
+export async function homepageDownloads({ fetch, url, env = process.env }) {
+  const channel = pageChannel(url, env);
+  const releases = await loadReleases(fetch, env);
+  return { channel, releases, productLabel: releases[channel].label };
+}
