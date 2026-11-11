@@ -3,8 +3,9 @@ import { trackDownloadClick } from './analytics/loaders.js';
 import { decorateCampaignLink } from './campaigns/browser.js';
 
 // Per CTA: the href the page rendered and the href this module last assigned.
-// Page-set query params (channel, utm labels) survive; params added on a
-// previous activation are reset. A re-rendered href becomes the new base.
+// Page-set query params (channel) survive; params added on a previous
+// activation are reset. A re-rendered href becomes the new base. Campaign
+// labels are owned by decorateCampaignLink so they expire with its context.
 const activatedHrefs = new WeakMap();
 const RELATIVE_BASE = 'https://relative.invalid';
 
@@ -17,6 +18,7 @@ function downloadHref(rendered, platform, clickId) {
   const url = new URL(rendered, RELATIVE_BASE);
   url.searchParams.set('platform', platform);
   url.searchParams.delete('click_id');
+  for (const key of ['utm_source', 'utm_medium', 'utm_campaign']) url.searchParams.delete(key);
   if (clickId) url.searchParams.set('click_id', clickId);
   return url.origin === RELATIVE_BASE ? `${url.pathname}${url.search}${url.hash}` : url.href;
 }
