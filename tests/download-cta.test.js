@@ -15,3 +15,31 @@ test('every public OS CTA uses canonical no-JS download entry without invented c
   assert.match(landing,/<DownloadActions\s+platform=/);
   assert.match(vision,/<DownloadActions\s+\{platform\}/);
 });
+
+test('click handler keeps the rendered query (channel, utm) and resets only what it added', t => {
+  const previousWindow = globalThis.window, previousAnchor = globalThis.HTMLAnchorElement;
+  t.after(() => {
+    if (previousWindow === undefined) delete globalThis.window; else globalThis.window = previousWindow;
+    if (previousAnchor === undefined) delete globalThis.HTMLAnchorElement; else globalThis.HTMLAnchorElement = previousAnchor;
+  });
+  Object.assign(globalThis, { window: { location: { pathname: '/', href: 'https://nalana.io/' } }, HTMLAnchorElement: class { href = ''; } });
+  const anchor = new globalThis.HTMLAnchorElement();
+  anchor.href = '/api/download?platform=windows&channel=beta&utm_source=newsletter';
+  observeDownloadClick('windows', { currentTarget: anchor });
+  assert.equal(anchor.href, '/api/download?platform=windows&channel=beta&utm_source=newsletter');
+  // A stale click id from a previous activation is dropped; the channel is not.
+  anchor.href += '&click_id=stale';
+  observeDownloadClick('windows', { currentTarget: anchor });
+  assert.doesNotMatch(anchor.href, /click_id/);
+  observeDownloadClick('windows', { currentTarget: anchor });
+  assert.equal(anchor.href, '/api/download?platform=windows&channel=beta&utm_source=newsletter');
+  // An href re-rendered by the page (e.g. a channel switch) becomes the new base.
+  anchor.href = '/api/download?platform=mac&channel=stable';
+  observeDownloadClick('mac', { currentTarget: anchor });
+  assert.equal(anchor.href, '/api/download?platform=mac&channel=stable');
+  // Absolute hrefs, as real anchors report them, stay absolute.
+  const absolute = new globalThis.HTMLAnchorElement();
+  absolute.href = 'https://nalana.io/api/download?platform=mac&channel=beta';
+  observeDownloadClick('mac', { currentTarget: absolute });
+  assert.equal(absolute.href, 'https://nalana.io/api/download?platform=mac&channel=beta');
+});
