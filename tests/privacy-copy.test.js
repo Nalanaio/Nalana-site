@@ -20,3 +20,7 @@ test('cookie policy explains bounded dedup, separate vendor choices and reachabl
   assert.match(cookies, /not.*unique person/i);
   assert.equal(cookies.includes('Google Analytics is the only third-party'), false);
 });
+test('cookie policy discloses the remembered download channel preference', () => {
+  assert.match(cookies, /local storage under nalana\.download_channel/);
+  assert.match(cookies, /only the channel name, no identifier/);
+});

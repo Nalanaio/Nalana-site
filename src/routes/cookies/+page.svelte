@@ -12,7 +12,7 @@
 <div class="container">
   <div class="legal-header">
     <h1>Cookie Policy</h1>
-    <p class="updated">Last updated: October 19, 2026</p>
+    <p class="updated">Last updated: November 11, 2026</p>
   </div>
 
   <div class="legal-body">
@@ -21,6 +21,7 @@
     <h2>Operational storage</h2>
     <p>Website account sessions and security controls use browser storage and private cookies as needed for authentication, recovery and restricted operator access. Operator cookies are HttpOnly, Secure and SameSite Strict, and expire after 15 minutes. Private backend credentials are not exposed to the browser.</p>
     <p>The download deduplication cookie is a signed random first-party value with a non-sliding lifetime of 24 hours. It is HttpOnly, Secure and SameSite Lax. It suppresses repeated notifications for the same browser, platform and release; it does not identify a unique person. Expiry, deletion, cookie blocking or another browser can produce a new identity. Cookies are not proof that a download finished or the application was installed.</p>
+    <p>If you pick Stable or Beta above a download button, this browser remembers that choice in local storage under nalana.download_channel. It holds only the channel name, no identifier, and you can clear it with your browser's site data.</p>
     <h2>Optional analytics and visitor identification</h2>
     <p>Google Analytics, Vercel Web Analytics and PostHog measure permitted website activity under the usage analytics choice. Vercel Web Analytics runs only on our production website, with URL queries and fragments removed. PostHog keeps a random browser ID, session values and, once you sign in, your internal account ID in this browser's local and session storage under keys that begin with ph_. It does this only after you allow usage analytics and clears them when you decline or revoke. RB2B is a separate visitor-identification integration and requires its own permission. An analytics or app usage grant does not silently enable RB2B. Vendor storage and retention depend on the vendor and configured service. We do not promise that vendor data is anonymous or that revocation erases information already sent.</p>
     <p>With usage permission, campaign labels from tagged links are kept in this tab's session storage for up to 30 minutes after the latest tagged visit, so permitted download-button clicks and successful website registrations can be attributed to that campaign. A new tagged visit replaces the previous campaign. A registration measurement marker expires after one minute and is consumed once. These values contain no account identifier, email, password or advertising click ID. Revoking usage permission clears them. Before permission, campaign labels are held only in the current document's memory.</p>
