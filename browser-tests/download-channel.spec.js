@@ -88,8 +88,8 @@ test('the beta note is a polite live hint linked from the CTA', async ({ page })
   expect(hintId).toBeTruthy();
   const hint = page.locator(`#${hintId}`);
   await expect(hint).toHaveAttribute('aria-live', 'polite');
-  await expect(hint).toHaveText("Beta may be unstable. It uses a separate beta account, so your stable sign-in won't carry over.");
-  await expect(cta).toHaveAccessibleDescription(/separate beta account/);
+  await expect(hint).toHaveText('Beta may be unstable.');
+  await expect(cta).toHaveAccessibleDescription('Beta may be unstable.');
   await expect(hint).toBeVisible();
 });
 
@@ -136,14 +136,14 @@ test.describe('beta manifest down', () => {
 test.describe('stable manifest down', () => {
   test.use({ extraHTTPHeaders: { 'x-qa-manifest-down': 'stable' } });
 
-  test('a Beta CTA offered in place of Stable still carries the separate-account warning', async ({ page }) => {
+  test('a Beta CTA offered in place of Stable still carries the beta warning', async ({ page }) => {
     await visit(page, '/?channel=stable');
     await expect(radio(page, 'Stable')).toHaveAttribute('aria-checked', 'true');
     await expect(radio(page, 'Stable')).toHaveAttribute('aria-disabled', 'true');
     await expect(ctas(page).first()).toHaveAccessibleName(/^Download Beta for (Mac|Windows)$/);
     expect(new Set(await channels(page))).toEqual(new Set(['beta']));
-    await expect(page.locator('#hero-channel-hint .beta-note')).toHaveText("Beta may be unstable. It uses a separate beta account, so your stable sign-in won't carry over.");
-    await expect(ctas(page).first()).toHaveAccessibleDescription(/separate beta account/);
+    await expect(page.locator('#hero-channel-hint .beta-note')).toHaveText('Beta may be unstable.');
+    await expect(ctas(page).first()).toHaveAccessibleDescription(/^Beta may be unstable\. Stable builds are temporarily unavailable/);
   });
 });
 
