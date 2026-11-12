@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { observeDownloadClick } from '../src/lib/download.js';
+import { decorateCampaignLink, enableCampaignTotals } from '../src/lib/campaigns/browser.js';
 test('download activation signal is server-safe and never blocks native links',()=>{assert.doesNotThrow(()=>observeDownloadClick('windows'));});
 test('every public OS CTA uses canonical no-JS download entry without invented completion',async()=>{
   for(const path of ['src/lib/components/site/DownloadActions.svelte','src/lib/components/Nav.svelte']) {
@@ -14,4 +15,57 @@ test('every public OS CTA uses canonical no-JS download entry without invented c
   const vision=await readFile(new URL('../src/lib/components/site/VisionSection.svelte',import.meta.url),'utf8');
   assert.match(landing,/<DownloadActions\s+platform=/);
   assert.match(vision,/<DownloadActions\s+\{platform\}/);
+});
+
+test('click handler keeps the rendered channel and resets what it or campaign decoration added', t => {
+  const previousWindow = globalThis.window, previousAnchor = globalThis.HTMLAnchorElement;
+  t.after(() => {
+    if (previousWindow === undefined) delete globalThis.window; else globalThis.window = previousWindow;
+    if (previousAnchor === undefined) delete globalThis.HTMLAnchorElement; else globalThis.HTMLAnchorElement = previousAnchor;
+  });
+  Object.assign(globalThis, { window: { location: { pathname: '/', href: 'https://nalana.io/' } }, HTMLAnchorElement: class { href = ''; } });
+  const anchor = new globalThis.HTMLAnchorElement();
+  anchor.href = '/api/download?platform=windows&channel=beta&utm_source=newsletter';
+  observeDownloadClick('windows', { currentTarget: anchor });
+  // Campaign labels are re-applied by decorateCampaignLink only while still current.
+  assert.equal(anchor.href, '/api/download?platform=windows&channel=beta');
+  // A stale click id from a previous activation is dropped; the channel is not.
+  anchor.href += '&click_id=stale';
+  observeDownloadClick('windows', { currentTarget: anchor });
+  assert.doesNotMatch(anchor.href, /click_id/);
+  observeDownloadClick('windows', { currentTarget: anchor });
+  assert.equal(anchor.href, '/api/download?platform=windows&channel=beta');
+  // An href re-rendered by the page (e.g. a channel switch) becomes the new base.
+  anchor.href = '/api/download?platform=mac&channel=stable';
+  observeDownloadClick('mac', { currentTarget: anchor });
+  assert.equal(anchor.href, '/api/download?platform=mac&channel=stable');
+  // Absolute hrefs, as real anchors report them, stay absolute.
+  const absolute = new globalThis.HTMLAnchorElement();
+  absolute.href = 'https://nalana.io/api/download?platform=mac&channel=beta';
+  observeDownloadClick('mac', { currentTarget: absolute });
+  assert.equal(absolute.href, 'https://nalana.io/api/download?platform=mac&channel=beta');
+});
+
+test('campaign labels on a download CTA expire with the document campaign context', t => {
+  const previousWindow = globalThis.window, previousAnchor = globalThis.HTMLAnchorElement;
+  t.after(() => {
+    if (previousWindow === undefined) delete globalThis.window; else globalThis.window = previousWindow;
+    if (previousAnchor === undefined) delete globalThis.HTMLAnchorElement; else globalThis.HTMLAnchorElement = previousAnchor;
+  });
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  const href = 'https://nalana.io/?utm_source=facebook&utm_medium=paid_social&utm_campaign=Autumn+Creators';
+  const win = { location: { pathname: '/', origin: 'https://nalana.io', href }, document: { referrer: '' } };
+  Object.assign(globalThis, { window: win, HTMLAnchorElement: class { href = ''; hasAttribute() { return false; } } });
+  enableCampaignTotals(win, '[{"source":"facebook","medium":"paid_social","campaign":"Autumn Creators"}]');
+  const anchor = new globalThis.HTMLAnchorElement();
+  anchor.href = 'https://nalana.io/api/download?platform=mac&channel=beta';
+  // The layout's capture listener decorates first, then the CTA's own handler runs.
+  const click = () => { decorateCampaignLink(anchor, win); observeDownloadClick('mac', { currentTarget: anchor }); };
+  click();
+  assert.equal(new URL(anchor.href).searchParams.get('utm_campaign'), 'Autumn Creators');
+  t.mock.timers.tick(31 * 60_000);
+  click();
+  const after = new URL(anchor.href);
+  assert.equal(after.searchParams.get('channel'), 'beta');
+  for (const key of ['utm_source', 'utm_medium', 'utm_campaign']) assert.equal(after.searchParams.has(key), false, key);
 });

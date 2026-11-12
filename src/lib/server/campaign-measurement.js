@@ -25,7 +25,8 @@ export async function handleCampaignPageView({ request, url, env, record = recor
   return response(recorded ? 204 : 503);
 }
 
-export async function measureDownload({ url, request, platform, env, record = recordCampaign }) {
+// `channel` is accepted from the download route; campaign totals are not split by channel yet.
+export async function measureDownload({ url, request, platform, channel = 'stable', env, record = recordCampaign }) {
   if (request.method !== 'GET' || !eligibleTraffic(request)) return;
   // Referrers are inspected transiently, never stored. Keep only group campaign labels.
   const allowed = allowedCampaigns(env?.PUBLIC_CAMPAIGN_ALLOWED_LABELS);
