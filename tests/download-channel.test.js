@@ -78,7 +78,8 @@ test('the toggle markup is an accessible radiogroup with a no-JS link fallback a
   for (const key of ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End']) assert.ok(toggle.includes(`'${key}'`), key);
   assert.match(actions, /aria-live="polite"/);
   assert.match(actions, /aria-describedby=\{described\?hintId:undefined\}/);
-  assert.ok(actions.includes("<strong>Beta may be unstable.</strong> It uses a separate beta account, so your stable sign-in won't carry over."));
+  assert.ok(actions.includes("<strong>Beta may be unstable.</strong></p>"));
+  assert.doesNotMatch(actions, /separate beta account/);
   assert.doesNotMatch(actions, /SmartScreen/);
   assert.ok(actions.includes('builds are temporarily unavailable. Try again shortly.'));
 });

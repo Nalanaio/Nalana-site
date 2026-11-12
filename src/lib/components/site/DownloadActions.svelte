@@ -24,7 +24,7 @@
   $: target=effectiveChannel(channel,releases);
   $: fallback=target!==channel;
   $: down=DOWNLOAD_CHANNELS.filter(value=>releases?.[value]?.available===false);
-  // Any Beta CTA, including one offered because Stable is down, carries the separate-account warning.
+  // Any Beta CTA, including one offered because Stable is down, carries the beta warning.
   $: betaNote=target==='beta';
   $: described=betaNote||down.length>0;
   const os={mac:'Mac',windows:'Windows'};
@@ -45,5 +45,5 @@
   {#each ['mac','windows'] as value (value)}{#if platform===value||platform==='both'}<a class="btn btn-lg download-{value}" class:secondary={value==='windows'&&platform==='both'} data-sveltekit-reload
     href={downloadHref(value,target)} data-cta-id="download_{value}" data-cta-location={location} data-channel={target} aria-describedby={described?hintId:undefined}
     on:click={event=>observeDownloadClick(value,event,target)} on:auxclick={event=>event.button===1&&observeDownloadClick(value,event,target)}><span class="cta-labels">{#each labels(os[value]) as candidate}<span class:is-current={candidate===text(os[value])} aria-hidden={candidate===text(os[value])?undefined:'true'}>{candidate}</span>{/each}</span></a>{/if}{/each}
-  <div class="channel-hint" id={hintId} aria-live="polite">{#if betaNote}<p class="beta-note"><strong>Beta may be unstable.</strong> It uses a separate beta account, so your stable sign-in won't carry over.</p>{/if}{#each down as value}<p class="channel-unavailable">{CHANNEL_NAMES[value]} builds are temporarily unavailable. Try again shortly.{#if value===channel&&fallback}{' '}You can download {CHANNEL_NAMES[target]} instead.{/if}</p>{/each}</div>
+  <div class="channel-hint" id={hintId} aria-live="polite">{#if betaNote}<p class="beta-note"><strong>Beta may be unstable.</strong></p>{/if}{#each down as value}<p class="channel-unavailable">{CHANNEL_NAMES[value]} builds are temporarily unavailable. Try again shortly.{#if value===channel&&fallback}{' '}You can download {CHANNEL_NAMES[target]} instead.{/if}</p>{/each}</div>
 </div>
