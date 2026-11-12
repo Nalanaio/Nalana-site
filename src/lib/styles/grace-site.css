@@ -426,12 +426,13 @@
 .grace-site #workflow,.grace-site #vision,.grace-site #contact {scroll-margin-top:80px}
 .grace-site .hero-sub {max-width:none;font-weight:400;margin:0;font-size:16px;line-height:normal}
 .grace-site .hero-download,.grace-site .vision-download {width:max-content;height:auto}
-.grace-site .download-actions {display:flex;flex-direction:column;gap:10px;pointer-events:auto;align-items:flex-start}
-.grace-site .download-actions a {width:222px;height:49px;padding:0 14px;font-size:18px;white-space:nowrap;color:#fff}
+.grace-site .download-actions {display:inline-flex;flex-direction:column;gap:10px;pointer-events:auto;align-items:stretch}
+.grace-site .download-actions .btn {min-width:222px;height:49px;padding:0 18px;font-size:18px;white-space:nowrap;color:#fff}
 .grace-site .download-actions .secondary {background:rgba(255,255,255,.92);border:1px solid #8a6cc7;color:#6849a2;height:34px;font-size:14px}
 .grace-site .download-actions.windows-primary .download-windows {order:-1}
-.grace-site .hero-sub {top:475px}
-.grace-site .vision-download .download-actions {align-items:center}
+.grace-site .hero-download {top:342px}
+.grace-site .hero-download .hero-sub {position:static;width:auto;max-width:300px;margin:14px 0 0 5px}
+.grace-site .vision-download {left:720px;top:850px;transform:translateX(-50%)}
 .grace-site .river-static,.grace-site .hero-caustic-host,.grace-site .hero-caustic-host canvas {position:absolute;inset:0;width:100%;height:100%}
 .grace-site .river {background:#b8e8fc}
 .grace-site .river-static {object-fit:fill}
@@ -470,6 +471,26 @@
 .grace-site.is-static .cursor {display:none!important}
 .grace-site.is-static .feature-card [role=tabpanel]:not([hidden]) {animation:none!important;opacity:1;transform:none}
 .grace-site.is-static .fc-exit {display:none}
+/* Release channel: a Stable | Beta radiogroup as wide as the download column. */
+.grace-site .channel-toggle {order:-2;position:relative;display:grid;grid-template-columns:1fr 1fr;height:34px;padding:3px;border-radius:17px;background:rgba(255,255,255,.92);border:1px solid #8a6cc7}
+.grace-site .channel-toggle::before {content:'';position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:14px;background:var(--lav-soft);transition:transform .3s var(--ease-out),background-color .3s ease}
+.grace-site .channel-toggle[data-channel=beta]::before {transform:translateX(100%);background:var(--sun)}
+.grace-site .channel-option {position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:14px;font-size:14px;font-weight:500;line-height:1;color:#6849a2;cursor:pointer;user-select:none}
+.grace-site .channel-option[aria-checked=true] {color:#000;font-weight:600}
+.grace-site .channel-option[aria-disabled=true] {color:#595959;cursor:not-allowed}
+.grace-site .channel-toggle.is-unavailable::before {opacity:.4}
+.grace-site .channel-dot {width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.35}
+.grace-site .channel-option[aria-checked=true] .channel-dot {opacity:1}
+.grace-site .channel-option[data-channel-option=beta][aria-checked=true] .channel-dot {background:var(--coral)}
+.grace-site .download-actions.is-beta .btn:not(.secondary) {background:var(--lav-deep)}
+.grace-site .cta-labels {display:grid;justify-items:center}
+.grace-site .cta-labels > span {grid-area:1/1}
+.grace-site .cta-labels > span:not(.is-current) {visibility:hidden}
+/* The hint never widens the column; it wraps inside it. */
+.grace-site .channel-hint {contain:inline-size;margin-top:-10px;text-align:left}
+.grace-site .channel-hint p {margin:10px 0 0;padding:9px 12px;border-radius:12px;font-size:12.5px;line-height:1.4;color:#3b2f0b;background:#fff7df;border:1px solid var(--gold)}
+.grace-site .channel-hint strong {font-weight:600}
+.grace-site .channel-hint .channel-unavailable {color:#000;background:rgba(255,255,255,.92);border-color:#8a6cc7}
 @media(max-width:820px){
  .grace-site .nav-links {display:none}
  .grace-site .hero {height:auto;display:flex;padding-top:67px}
@@ -483,7 +504,7 @@
  .grace-site .workflow-description {position:relative;left:0;top:0;width:auto;padding:24px 4px 0}
  .grace-site .workflow-description h3 {font-size:20px}
  .grace-site .workflow-description p {font-size:16px}
- .grace-site .vision-download {position:relative;left:0;top:0;width:auto;margin:28px auto 0}
+ .grace-site .vision-download {position:relative;left:0;top:0;width:max-content;max-width:100%;margin:28px auto 0;transform:none}
  .grace-site .feature-card {height:auto;min-height:400px}
  .grace-site .fc-slide {min-height:330px;padding:36px 28px 24px}
  .grace-site .feature-card [role=tabpanel] {position:relative;inset:auto}

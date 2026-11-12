@@ -96,7 +96,7 @@ test('canonical downloads remain native, click intent is single and tracking fai
   await visit(page, '/');
   await expect(page.locator('#nalana-ga')).toHaveCount(1);
   for (const platform of ['mac', 'windows']) {
-    const link = page.locator(`a[href="/api/download?platform=${platform}"]`).first();
+    const link = page.locator(`a[href^="/api/download?platform=${platform}&channel="]`).first();
     await expect(link).toHaveAttribute('data-sveltekit-reload', '');
     const download = page.waitForEvent('download');
     await link.click();
@@ -107,10 +107,12 @@ test('canonical downloads remain native, click intent is single and tracking fai
   let events = await page.evaluate(() => (window.dataLayer || []).map(item => Array.from(item)).filter(command => command[0] === 'event' && command[1] === 'download_clicked'));
   expect(events).toHaveLength(2);
   expect(events.map(command => command[2].download_platform).sort()).toEqual(['mac', 'windows']);
+  // The CTA's selected channel (the configured default, beta when unset) is reported with the click.
+  expect(events.map(command => command[2].download_channel)).toEqual(['beta', 'beta']);
   // A throwing optional analytics implementation cannot cancel the native anchor.
   await page.evaluate(() => { window.gtag = () => { throw new Error('synthetic analytics failure'); }; });
   const download = page.waitForEvent('download');
-  await page.locator('a[href="/api/download?platform=mac"]').first().press('Enter');
+  await page.locator('a[href^="/api/download?platform=mac&channel="]').first().press('Enter');
   await (await download).cancel();
 });
 

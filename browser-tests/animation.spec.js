@@ -6,7 +6,7 @@ test('server HTML retains the design, content and both native download links wit
   try {
     await page.goto(baseURL);
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Create/);
-    for (const platform of ['mac', 'windows']) await expect(page.locator(`a[href="/api/download?platform=${platform}"]`).first()).toBeVisible();
+    for (const platform of ['mac', 'windows']) await expect(page.locator(`a[href^="/api/download?platform=${platform}&channel="]`).first()).toBeVisible();
     for (const route of ['terms', 'privacy', 'eula', 'refund', 'cookies', 'open-source']) await expect(page.locator(`a[href="/${route}"]`).first()).toBeAttached();
     await noOverflow(page);
     // Playwright also waits for fonts internally while taking a screenshot.
