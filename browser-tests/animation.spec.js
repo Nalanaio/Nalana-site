@@ -5,8 +5,10 @@ test('server HTML retains the design, content and both native download links wit
   const page = await context.newPage();
   try {
     await page.goto(baseURL);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(/Create/);
-    for (const platform of ['mac', 'windows']) await expect(page.locator(`a[href^="/api/download?platform=${platform}&channel="]`).first()).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(/agentic/);
+    // Phones are not offered a desktop installer.
+    await expect(page.locator('a[href^="/api/download?"]')).toHaveCount(0);
+    await expect(page.locator('.hero-sub')).toHaveText('Nalana is its own software, built on Blender.');
     for (const route of ['terms', 'privacy', 'eula', 'refund', 'cookies', 'open-source']) await expect(page.locator(`a[href="/${route}"]`).first()).toBeAttached();
     await noOverflow(page);
     // Playwright also waits for fonts internally while taking a screenshot.
@@ -15,18 +17,20 @@ test('server HTML retains the design, content and both native download links wit
   } finally { await context.close(); }
 });
 
-test('workflow keyboard selection, feature controls and pause work with runtime reduced motion', async ({ page }, testInfo) => {
+test('workflow video captions follow playback, feature controls and pause work with runtime reduced motion', async ({ page }, testInfo) => {
   await visit(page, '/');
-  const workflow = page.getByRole('tablist', { name: /workflow/i });
-  const create = workflow.getByRole('tab', { name: /create/i });
-  await create.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(workflow.getByRole('tab', { name: /iterate/i })).toBeFocused();
-  await expect(workflow.getByRole('tab', { name: /iterate/i })).toHaveAttribute('aria-selected', 'true');
-  await page.keyboard.press('End');
-  await expect(workflow.getByRole('tab', { name: /fine tune/i })).toHaveAttribute('aria-selected', 'true');
-  const panel = page.locator(`#${await workflow.getByRole('tab', { name: /fine tune/i }).getAttribute('aria-controls')}`);
-  await expect(panel).toContainText(/material|refine|fine|scene/i);
+  const video = page.locator('.wf-video');
+  const caption = page.locator('.wf-caption');
+  await video.scrollIntoViewIfNeeded();
+  await expect(video).toHaveAttribute('loop', '');
+  await expect.poll(() => video.evaluate(v => v.readyState)).toBeGreaterThan(0);
+  for (const [time, text] of [[1, /imagination run wild/], [10, /Generate your project/], [16, /Make edits with AI/]]) {
+    await video.evaluate((v, t) => new Promise(done => { v.pause(); v.addEventListener('seeked', done, { once: true }); v.currentTime = t; }), time);
+    await expect(caption).toContainText(text);
+  }
+  const fill = await page.locator('.wf-fill').evaluate(el => new DOMMatrix(getComputedStyle(el).transform).a);
+  expect(fill).toBeGreaterThan(.75);
+  expect(fill).toBeLessThan(.85);
   const pause = page.getByRole('button', { name: /pause.*motion|pause.*animation/i }).first();
   await pause.click();
   await expect(page.getByRole('button', { name: /resume.*motion|resume.*animation/i }).first()).toBeVisible();
@@ -38,8 +42,6 @@ test('workflow keyboard selection, feature controls and pause work with runtime 
   await expect(selectedPanel).toHaveCSS('opacity', '1');
   await expect(selectedPanel).toBeVisible();
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await workflow.getByRole('tab', { name: /create/i }).click();
-  await expect(create).toHaveAttribute('aria-selected', 'true');
   await featureTabs.nth(2).click();
   await expect(featureTabs.nth(2)).toHaveAttribute('aria-selected', 'true');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -47,33 +49,26 @@ test('workflow keyboard selection, feature controls and pause work with runtime 
   await screenshot(page, testInfo, 'landing-controls');
 });
 
-test('footer material controls work without ambient animation and asset failures retain the base art', async ({ context, page }, testInfo) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+test('footer N flashes every material for 120ms on hover, then stays white; leaving stops it', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'touch', 'Hover is a fine-pointer interaction');
   await visit(page, '/');
-  const controls = page.getByRole('group', { name: /balloon materials/i });
-  const glAvailable = await page.evaluate(() => {
-    const gl = document.createElement('canvas').getContext('webgl2');
-    const available = !!gl;
-    gl?.getExtension('WEBGL_lose_context')?.loseContext();
-    return available;
-  });
-  await controls.getByRole('button', { name: 'sky', exact: true }).click();
-  await expect(controls.getByRole('button', { name: 'sky', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.fn-balloon')).toBeAttached();
-  if (glAvailable) {
-    await expect(page.locator('.fn-balloon')).toHaveCSS('opacity', '0.15');
-    await expect(page.locator('.fn-texture')).toBeVisible();
-    await screenshot(page, testInfo, 'footer-static-sky-material');
-  }
-  await controls.getByRole('button', { name: 'Original', exact: true }).click();
-  await expect(controls.getByRole('button', { name: 'Original', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.fn-balloon')).toHaveCSS('opacity', '1');
-  await context.route('**/assets/site/materials/**', route => route.fulfill({ status: 404, body: 'Synthetic asset failure' }));
-  await page.reload();
-  await page.locator('.grace-site[data-motion]').waitFor({ state: 'attached' });
-  await controls.getByRole('button', { name: 'forest', exact: true }).click();
-  await expect(page.locator('.fn-balloon')).toBeVisible();
-  await screenshot(page, testInfo, 'footer-static-asset-fallback');
+  const mark = page.locator('.footer-n');
+  await mark.scrollIntoViewIfNeeded();
+  await expect(mark).toHaveAttribute('data-material', 'white');
+  await page.evaluate(() => { const el = document.querySelector('.footer-n'); window.__materials = [];
+    new MutationObserver(() => window.__materials.push(el.dataset.material)).observe(el, { attributes: true, attributeFilter: ['data-material'] }); });
+  await mark.hover();
+  await expect.poll(() => page.evaluate(() => window.__materials.at(-1)), { timeout: 3000 }).toBe('white');
+  const run = await page.evaluate(() => window.__materials);
+  expect(run).toEqual(['flowers', 'graffiti', 'foil balloon', 'gummy bears', 'kiwi', 'bubblegum', 'stained glass', 'rusted steel', 'moss', 'white']);
+  await page.waitForTimeout(400);
+  await expect(mark).toHaveAttribute('data-material', 'white');
+  await page.mouse.move(5, 5);
+  await mark.hover();
+  await expect(mark).not.toHaveAttribute('data-material', 'white');
+  await page.mouse.move(5, 5);
+  await expect(mark).toHaveAttribute('data-material', 'white');
+  await screenshot(page, testInfo, 'footer-n');
 });
 
 test('actual WebGL context loss leaves the static river and controls usable', async ({ context, page }, testInfo) => {
@@ -97,8 +92,7 @@ test('actual WebGL context loss leaves the static river and controls usable', as
   test.skip(!supported, 'Browser does not expose an actual WebGL context-loss extension');
   await expect(page.locator('.hero-caustic-host canvas')).toHaveCount(0);
   await expect(page.locator('.hero .river-static')).toBeVisible();
-  await page.getByRole('tablist', { name: /workflow/i }).getByRole('tab', { name: /iterate/i }).click();
-  await expect(page.locator('a[href^="/api/download?platform="]').first()).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
 test('real legal links unmount and remount in one document; sensitive login replaces it', async ({ page }) => {
@@ -126,7 +120,7 @@ test('real legal links unmount and remount in one document; sensitive login repl
     expect(await page.evaluate(() => window.__documentIdentity)).toBe('same-document-marker');
     await page.getByRole('link', { name: /back to|nalana|home/i }).first().click();
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(/Create/);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(/agentic/);
     expect(await page.evaluate(() => window.__documentIdentity)).toBe('same-document-marker');
     await expect(page.locator('.objects-layer')).toHaveCount(1);
     expect(await page.evaluate(() => window.__visualDraws.detached)).toBe(0);
@@ -183,9 +177,8 @@ test('GPU and observer unavailability preserve tabs, content and native download
   await expect(page).toHaveURL(/\/privacy$/);
   await page.getByRole('link', { name: /back to home/i }).click();
   await expect(page.locator('.grace-site[data-motion]')).toBeAttached();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(/Create/);
-  await page.getByRole('tablist', { name: /workflow/i }).getByRole('tab', { name: /iterate/i }).click();
-  await expect(page.locator('a[href^="/api/download?platform="]').first()).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(/agentic/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
 test('actual Svelte teardown disposes a late result and does not stop another root', async ({ page }) => {

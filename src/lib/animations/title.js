@@ -94,13 +94,16 @@ export async function createTitleEffects(root, options = {}) {
         width: `${(item.w + item.pad * 2) * sx}px`, height: `${(item.h + item.pad * 2) * sy}px` });
     }
   } };
-  if (!alive() || !host3d || !hostWs) return handle;
+  // Each word effect is optional, so a headline may carry either or both.
+  if (!alive() || (!host3d && !hostWs)) return handle;
   options.signal?.addEventListener('abort', destroy, { once: true });
   let fontAbort;
+  // The hover block traces the headline's own glyphs, whatever family the title uses.
+  const titleFont = String((span3d && doc.defaultView?.getComputedStyle?.(span3d)?.fontFamily) || '').split(',')[0].trim().replace(/['"]/g, '') || 'Amulya';
   try {
     const platform = options.platform || {};
     const fontReady = typeof platform.fontsReady === 'function' ? platform.fontsReady() : platform.fontsReady;
-    const loaded = platform.loadFonts ? platform.loadFonts('700 56px Amulya') : doc.fonts?.load('700 56px Amulya');
+    const loaded = platform.loadFonts ? platform.loadFonts(`700 56px ${titleFont}`) : doc.fonts?.load(`700 56px ${titleFont}`);
     const fonts = Promise.all([loaded, fontReady ?? doc.fonts?.ready]);
     const abort = new Promise((resolve) => {
       fontAbort = () => resolve(null);
@@ -108,14 +111,14 @@ export async function createTitleEffects(root, options = {}) {
     });
     await Promise.race([fonts, abort]);
     if (!alive()) return handle;
-    const computed = doc.defaultView?.getComputedStyle(span3d);
+    const computed = span3d && doc.defaultView?.getComputedStyle(span3d);
     const size = Number.parseFloat(computed?.fontSize || '56') || 56;
     const pad = 14;
-    const w = span3d.offsetWidth, h = span3d.offsetHeight;
-    if (w > 0 && h > 0) {
+    const w = span3d?.offsetWidth || 0, h = span3d?.offsetHeight || 0;
+    if (host3d && w > 0 && h > 0) {
       try {
         glossy = createGlossyRenderer({ platform: { ...platform, document: doc }, signal: options.signal });
-        const mask = glossy?.glyphMask({ text: '3D', font: 'Amulya', size, W: w + pad * 2, H: h + pad * 2, puff: 0 });
+        const mask = glossy?.glyphMask({ text: '3D', font: titleFont, size, W: w + pad * 2, H: h + pad * 2, puff: 0 });
         const face = mask && glossy.renderGlossy(mask, '#d35fe6', { bevel: 4.2 });
         if (face && alive()) {
           const block = doc.createElement('canvas');
@@ -138,7 +141,7 @@ export async function createTitleEffects(root, options = {}) {
       } catch { /* A failed scratch renderer leaves the semantic word visible. */ }
       finally { glossy?.destroy(); glossy = null; }
     }
-    if (!alive()) return handle;
+    if (!alive() || !hostWs) return handle;
     const text = options.workspaceText || ws.getAttribute('data-word') || 'workspace.';
     const W = ws.offsetWidth, H = ws.offsetHeight, P = 6;
     if (!(W > 0 && H > 0)) return handle;
