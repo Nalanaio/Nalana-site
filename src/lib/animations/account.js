@@ -13,7 +13,7 @@ export function mountAccountVisuals(root,options={}) {
     const ripple=createRipple(canvas,{width:BOX.w,height:BOX.h,stage:water,scale:()=>scale,maxK:1,ambient:1.6,signal:life.signal,platform,rotate:{a:BOX.deg*Math.PI/180,cx:0,cy:0}});
     ripple.local=(x,y)=>inverse?inverse.transformPoint(new window.DOMPoint(x,y)):{x:-10000,y:-10000};
     life.own(()=>ripple.destroy());
-    life.adopt(createCaustic(root.querySelector('.acct-caustic'),{platform,signal:life.signal,params:{maxWidth:1400,center:{x:50,y:50},scale:3.5,playhead:71.45,intensity:1,highlightColor:{r:.804,g:.961,b:1,a:1},waterColor:{r:.062745,g:.521568,b:.937254,a:1}}}),value=>value.destroy()).then(value=>{if(!life.alive)return;renderer=value;resize();invalidate();});
+    life.adopt(createCaustic(root.querySelector('.acct-caustic'),{platform,signal:life.signal,params:{maxWidth:1400,center:{x:50,y:50},scale:3.5,playhead:71.45,intensity:1,highlightColor:{r:.062745101749897,g:.5215686559677124,b:.9372549057006836,a:1},waterColor:{r:.05000012367963791,g:0,b:1,a:1}}}),value=>value.destroy()).then(value=>{if(!life.alive)return;renderer=value;resize();invalidate();});
     function resize(){
       const vw=window.innerWidth,vh=window.innerHeight,dpr=Math.min(window.devicePixelRatio||1,2);
       scale=Math.max(vw/1440,vh/945);

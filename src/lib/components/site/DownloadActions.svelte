@@ -1,49 +1,43 @@
 <script>
   import { onMount } from 'svelte';
-  import { replaceState } from '$app/navigation';
-  import { page } from '$app/state';
   import { observeDownloadClick } from '#lib/download.js';
   import { downloadPlatform } from '#lib/download-platform.js';
-  import { trackChannelToggle } from '#lib/analytics/loaders.js';
-  import { CHANNEL_NAMES, DOWNLOAD_CHANNELS, downloadHref, effectiveChannel, rememberChannel } from '#lib/download-channel.js';
-  import ChannelToggle from './ChannelToggle.svelte';
+  import { CHANNEL_NAMES, downloadHref, effectiveChannel } from '#lib/download-channel.js';
+  /** 'mac', 'windows', 'mobile' (phones and tablets: no download) or 'both' (other desktops, e.g. Linux: Mac button plus a Windows link). */
   export let platform='both';
   /** Where on the page this block sits; reported with the CTA click. */
   export let location='hero';
-  export let channel='stable';
   export let releases={};
-  /** Called after an explicit choice, so every CTA on the page follows it. */
-  export let onChannel=(_channel)=>{};
-  const hintId=`${location}-channel-hint`;
+  /** Figma writes "Download For Mac" in the hero and "Download for Mac" lower down. */
+  export let joiner='for';
+  /** Show the "Download Beta (unstable)" link after the slot (the hero, in Figma). */
+  export let betaLink=false;
+  const hintId=`${location}-download-hint`;
   onMount(()=>{
     const browser=/** @type {Navigator & {userAgentData?:{platform?:string,mobile?:boolean}}} */(navigator);
     platform=downloadPlatform({userAgent:browser.userAgent,platform:browser.userAgentData?.platform||browser.platform,
       mobile:browser.userAgentData?.mobile,maxTouchPoints:browser.maxTouchPoints});
   });
-  // Never swap silently: when the selected channel is down the CTA names the other one.
-  $: target=effectiveChannel(channel,releases);
-  $: fallback=target!==channel;
-  $: down=DOWNLOAD_CHANNELS.filter(value=>releases?.[value]?.available===false);
-  // Any Beta CTA, including one offered because Stable is down, carries the beta warning.
-  $: betaNote=target==='beta';
-  $: described=betaNote||down.length>0;
   const os={mac:'Mac',windows:'Windows'};
-  const label=(value,name)=>value==='beta'?`Download Beta for ${name}`:`Download for ${name}`;
-  $: text=name=>fallback?`Download ${CHANNEL_NAMES[target]} for ${name}`:label(target,name);
-  // Each button reserves the width of its longest label, so switching never resizes the column.
-  $: labels=name=>[...new Set([label('stable',name),label('beta',name),text(name)])];
-  function select(next){
-    const from=channel;
-    rememberChannel(window,next,href=>replaceState(href,page.state));
-    try{trackChannelToggle({window,channel:next,from,location});}catch{/* Optional analytics. */}
-    onChannel(next);
-  }
+  $: value=platform==='windows'?'windows':'mac';
+  // The button is the Stable build. If Stable is down it says so and offers Beta rather than swapping silently.
+  $: target=effectiveChannel('stable',releases);
+  $: stableDown=releases?.stable?.available===false;
+  $: betaAvailable=releases?.beta?.available!==false;
+  $: phone=platform==='mobile';
+  // Linux and other desktops get the Mac button plus a plain Windows link.
+  $: otherDesktop=platform==='both';
+  $: label=target==='beta'?`Download Beta ${joiner} ${os[value]}`:`Download ${joiner} ${os[value]}`;
 </script>
 
-<div class="download-actions" class:windows-primary={platform==='windows'} class:is-beta={target==='beta'}>
-  <ChannelToggle {channel} {releases} {hintId} onSelect={select} />
-  {#each ['mac','windows'] as value (value)}{#if platform===value||platform==='both'}<a class="btn btn-lg download-{value}" class:secondary={value==='windows'&&platform==='both'} data-sveltekit-reload
-    href={downloadHref(value,target)} data-cta-id="download_{value}" data-cta-location={location} data-channel={target} aria-describedby={described?hintId:undefined}
-    on:click={event=>observeDownloadClick(value,event,target)} on:auxclick={event=>event.button===1&&observeDownloadClick(value,event,target)}><span class="cta-labels">{#each labels(os[value]) as candidate}<span class:is-current={candidate===text(os[value])} aria-hidden={candidate===text(os[value])?undefined:'true'}>{candidate}</span>{/each}</span></a>{/if}{/each}
-  <div class="channel-hint" id={hintId} aria-live="polite">{#if betaNote}<p class="beta-note"><strong>Beta may be unstable.</strong></p>{/if}{#each down as value}<p class="channel-unavailable">{CHANNEL_NAMES[value]} builds are temporarily unavailable. Try again shortly.{#if value===channel&&fallback}{' '}You can download {CHANNEL_NAMES[target]} instead.{/if}</p>{/each}</div>
+<div class="download-actions" class:is-phone={phone}>
+  {#if !phone}<a class="btn btn-lg download-{value}" data-sveltekit-reload href={downloadHref(value,target)} data-cta-id="download_{value}" data-cta-location={location}
+    data-channel={target} aria-describedby={stableDown?hintId:undefined}
+    on:click={event=>observeDownloadClick(value,event,target)} on:auxclick={event=>event.button===1&&observeDownloadClick(value,event,target)}>{label}</a>
+  {#if otherDesktop}<a class="windows-link" data-sveltekit-reload href={downloadHref('windows',target)} data-cta-id="download_windows" data-cta-location={location}
+    data-channel={target} on:click={event=>observeDownloadClick('windows',event,target)} on:auxclick={event=>event.button===1&&observeDownloadClick('windows',event,target)}>{target==='beta'?'Download Beta':'Download'} for Windows</a>{/if}
+  {#if stableDown}<p class="channel-unavailable" id={hintId}>{CHANNEL_NAMES.stable} builds are temporarily unavailable. Try again shortly.</p>{/if}{/if}
+  <slot />
+  {#if !phone&&betaLink&&betaAvailable&&target!=='beta'}<a class="beta-link" data-sveltekit-reload href={downloadHref(value,'beta')} data-cta-id="download_{value}_beta" data-cta-location={location}
+    data-channel="beta" on:click={event=>observeDownloadClick(value,event,'beta')} on:auxclick={event=>event.button===1&&observeDownloadClick(value,event,'beta')}>Download Beta (unstable)</a>{/if}
 </div>

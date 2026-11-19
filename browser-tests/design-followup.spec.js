@@ -31,52 +31,21 @@ for(const device of devices)test.describe(device.name,()=>{
   });
 });
 
-test('workflow reuses the live 3D demo, pauses playback and stops drawing after navigation',async({context,page})=>{
-  await context.addInitScript(()=>{
-    window.__demoDraws={active:0,detached:0};const seen=new WeakSet();
-    for(const api of [window.WebGLRenderingContext,window.WebGL2RenderingContext]){
-      if(!api)continue;const original=api.prototype.drawElements;
-      api.prototype.drawElements=function(...args){
-        if(this.canvas.closest('.wf-shot')){seen.add(this.canvas);window.__demoDraws.active++;}
-        else if(seen.has(this.canvas))window.__demoDraws.detached++;
-        return original.apply(this,args);
-      };
-    }
-  });
-  await visit(page,'/');
-  const demo=page.locator('.wf-shot');await demo.scrollIntoViewIfNeeded();
-  await expect(demo.locator('.viewport canvas')).toHaveCount(1);
-  await expect(demo).toContainText('Blocked out the full vacuum',{timeout:20000});
-  await expect.poll(()=>page.evaluate(()=>window.__demoDraws.active)).toBeGreaterThan(2);
+test('workflow demo video pauses with motion controls and fits the narrow layout',async({page},testInfo)=>{
+  await page.setViewportSize({width:375,height:900});await visit(page,'/');
+  const video=page.locator('.wf-video');await video.scrollIntoViewIfNeeded();
+  await expect.poll(()=>video.evaluate(v=>!v.paused)).toBe(true);
   await page.getByRole('button',{name:'Pause motion',exact:true}).click();
-  await page.waitForTimeout(150);
-  const paused=await demo.innerText();const draws=await page.evaluate(()=>window.__demoDraws.active);
-  await page.waitForTimeout(700);expect(await demo.innerText()).toBe(paused);expect(await page.evaluate(()=>window.__demoDraws.active)).toBe(draws);
+  await expect.poll(()=>video.evaluate(v=>v.paused)).toBe(true);
   await page.getByRole('button',{name:'Resume motion',exact:true}).click();
-  await expect.poll(()=>page.evaluate(()=>window.__demoDraws.active)).toBeGreaterThan(draws);
-  await page.locator('a[href="/privacy"]').first().click();
-  await expect(page).toHaveURL(/\/privacy$/);await page.waitForTimeout(250);
-  expect(await page.evaluate(()=>window.__demoDraws.detached)).toBe(0);
-});
-
-test('reduced motion retains a completed demo and fits the narrow layout',async({page},testInfo)=>{
-  await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:375,height:900});
-  await visit(page,'/');await page.locator('.wf-shot').scrollIntoViewIfNeeded();
-  await expect(page.locator('.wf-shot .viewport canvas')).toHaveCount(1);
-  await expect(page.locator('.wf-shot .statusbar')).toContainText('34,614');
+  await expect.poll(()=>video.evaluate(v=>!v.paused)).toBe(true);
   await noOverflow(page);
-  await page.locator('.wf-shot').screenshot({path:testInfo.outputPath('live-demo-mobile.png')});
+  await video.screenshot({path:testInfo.outputPath('workflow-video-mobile.png')});
 });
 
-test('laptop contains the five-app collapse frame from production and obeys pause',async({page},testInfo)=>{
+test('laptop screen shows the Figma gradient and white N',async({page})=>{
   await page.setViewportSize({width:1440,height:900});await visit(page,'/');
-  const frame=page.locator('.macbook .workspace-collapse');await frame.scrollIntoViewIfNeeded();
-  await expect(frame.locator('.appwin')).toHaveCount(5);
-  expect(await frame.locator('.appwin').allTextContents()).toEqual(['Modeler','Sculpt','UV','Render','Texture']);
-  await expect(frame).toHaveClass(/is-playing/);
-  await page.getByRole('button',{name:'Pause motion',exact:true}).click();
-  await expect(frame.locator('.appwin').first()).toHaveCSS('animation-play-state','paused');
-  await page.locator('.macbook').screenshot({path:testInfo.outputPath('laptop-production-frame.png')});
-  await page.emulateMedia({reducedMotion:'reduce'});
-  await expect(frame.locator('.appwin').first()).toHaveCSS('animation-name','none');
+  const screen=page.locator('.macbook .mb-figma-screen');await screen.scrollIntoViewIfNeeded();
+  await expect(screen).toHaveCSS('background-image',/linear-gradient\(90deg, rgb\(193, 30, 225\), rgb\(115, 86, 234\)\)/);
+  await expect(screen.locator('img[src="/assets/site/figma-laptop-n.svg"]')).toBeVisible();
 });

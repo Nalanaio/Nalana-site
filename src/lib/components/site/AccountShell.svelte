@@ -9,7 +9,7 @@
   <AccountVisuals />
   <header class="account-nav">
     <a class="account-logo" href="/" aria-label="Nalana home">
-      <img src="/assets/site/logo.svg" width="30" height="36" alt="Nalana" />
+      <img src="/assets/site/figma-logo-nav.svg" width="39" height="39" alt="Nalana" />
     </a>
     <a class="account-home" href="/">Home</a>
   </header>

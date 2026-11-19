@@ -8,14 +8,14 @@ test('desktop installers follow the operating system',()=>{
   assert.equal(downloadPlatform({userAgent:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}),'mac');
   assert.equal(downloadPlatform({platform:'macOS'}),'mac');
 });
-test('mobile and tablets take priority over their desktop-like user agents',()=>{
+test('phones and tablets are recognised before their desktop-like user agents',()=>{
   for(const device of [
     {userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'},
     {userAgent:'Mozilla/5.0 (Linux; Android 15; Pixel 9)'},
     {userAgent:'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X)'},
     {platform:'MacIntel',maxTouchPoints:5,userAgent:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'},
     {platform:'Windows',mobile:true},
-  ])assert.equal(downloadPlatform(device),'both');
+  ])assert.equal(downloadPlatform(device),'mobile');
 });
 test('unknown operating systems retain useful native choices',()=>{
   assert.equal(downloadPlatform(),'both');

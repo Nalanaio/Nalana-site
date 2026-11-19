@@ -1,40 +1,44 @@
 <script>
+  import { onMount } from 'svelte';
   import HeadingLetters from './HeadingLetters.svelte';
-  import NalanaDemo from '#lib/components/NalanaDemo.svelte';
-  export let productLabel='Nalana';
+  import { WORKFLOW_DEMO_SECONDS, workflowStepAt, workflowProgressAt } from './workflow-steps.js';
   export let paused=false;
-  export let selected=0;
-  export let onSelect=(_index)=>{};
-  export let onInteraction=(_active)=>{};
-  const steps=[
-    {label:'CREATE',color:'#1085ef',title:'Start with your idea',body:'Describe the model you want to create and build it in an editable 3D workspace.'},
-    {label:'ITERATE',color:'#f8d06c',title:'Make a meaningful revision',body:'Keep working in the same scene. Refine proportions, shape and details through conversation or direct editing.'},
-    {label:'FINE TUNE',color:'#ff8c69',title:'Refine materials and your scene',body:'Develop the materials and assemble your scene while keeping the model available for your next edit.'}
-  ];
-  let tabs=[];let hovered=false,focused=false;
-  $: onInteraction(hovered||focused);
-  function select(index){onSelect(index);}
-  function key(event,index){const delta=event.key==='ArrowRight'?1:event.key==='ArrowLeft'?-1:0;
-    const next=event.key==='Home'?0:event.key==='End'?2:delta?(index+delta+3)%3:null;
-    if(next===null)return;event.preventDefault();select(next);tabs[next]?.focus();}
+
+  const captions=['Let your imagination run wild','Generate your project','Make edits with AI or directly in blender.'];
+  let video,fill,step=0,visible=false,reducedMotion=false,raf=0;
+
+  // MediaRecorder-style WebM files can report an Infinity duration, so fall
+  // back to the known length of the demo cut.
+  const duration=()=>Number.isFinite(video?.duration)&&video.duration>0?video.duration:WORKFLOW_DEMO_SECONDS;
+  function paint(){
+    if(!video||!fill)return;
+    const time=video.currentTime;
+    fill.style.transform=`scaleX(${workflowProgressAt(time,duration())})`;
+    const next=workflowStepAt(time);
+    if(next!==step)step=next;
+  }
+  function loop(){paint();raf=video&&!video.paused?requestAnimationFrame(loop):0;}
+  function start(){if(!raf)raf=requestAnimationFrame(loop);}
+  $: shouldPlay=visible&&!paused&&!reducedMotion;
+  $: if(video){if(shouldPlay)video.play()?.catch(()=>{});else video.pause();}
+
+  onMount(()=>{
+    const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotion=()=>reducedMotion=motion.matches;syncMotion();motion.addEventListener('change',syncMotion);
+    const observer=new IntersectionObserver(([entry])=>visible=entry.isIntersecting,{threshold:.15});observer.observe(video);
+    return ()=>{motion.removeEventListener('change',syncMotion);observer.disconnect();cancelAnimationFrame(raf);};
+  });
 </script>
-<section class="dsec workflow" id="workflow" style="--h:1150" aria-labelledby="workflow-title">
+<section class="dsec workflow" id="workflow" style="--h:998" aria-labelledby="workflow-title">
   <div class="dstage">
     <h2 class="subhead wf-title" id="workflow-title" aria-label="The Nalana Workflow"><HeadingLetters text="The Nalana Workflow" /></h2>
-    <div class="wf-tabs" role="tablist" tabindex="-1" aria-label="Workflow steps" on:mouseenter={()=>hovered=true} on:mouseleave={()=>hovered=false}
-      on:focusin={()=>focused=true} on:focusout={event=>{if(!event.currentTarget.contains(/** @type {Node} */(event.relatedTarget)))focused=false;}}>
-      {#each steps as step,index}
-        <button bind:this={tabs[index]} class="wf-tab" class:is-active={selected===index} type="button" role="tab" id={'workflow-tab-'+index}
-          aria-selected={selected===index} aria-controls={'workflow-panel-'+index} tabindex={selected===index?0:-1}
-          style={'--x:'+index*34.26+'%;--tab:'+step.color} on:click={()=>select(index)} on:keydown={event=>key(event,index)}>
-          <span>{step.label}</span><i class="wf-bar" aria-hidden="true"></i>
-        </button>
-      {/each}
-    </div>
-    <div class="wf-card" aria-hidden="true"></div>
-    <div class="wf-shot"><NalanaDemo {productLabel} {paused} /></div>
-    <div class="workflow-description">
-      {#each steps as step,index}<div role="tabpanel" id={'workflow-panel-'+index} aria-labelledby={'workflow-tab-'+index} hidden={selected!==index} tabindex="0"><h3>{step.title}</h3><p>{step.body}</p></div>{/each}
+    <div class="wf-player">
+      <div class="wf-track" aria-hidden="true"><i class="wf-fill" bind:this={fill}></i></div>
+      <p class="wf-caption">{captions[step]}</p>
+      <!-- svelte-ignore a11y_media_has_caption -->
+      <video class="wf-video" bind:this={video} src="/assets/site/workflow-demo.webm" muted loop playsinline preload="auto" controls={reducedMotion}
+        aria-label="Nalana demo: describe an idea, generate the project, then make edits with AI or directly in Blender"
+        on:play={start} on:seeked={paint} on:timeupdate={paint} on:loadedmetadata={paint}></video>
     </div>
   </div>
 </section>

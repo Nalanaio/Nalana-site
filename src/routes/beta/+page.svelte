@@ -125,11 +125,11 @@
   :global(code) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
   .shell { width: min(960px, 90vw); margin: 0 auto; padding: 38px 0 96px; }
-  .wordmark { color: var(--primary); font-family: 'KonkhmerSleokchher', sans-serif; font-size: 20px; text-decoration: none; }
+  .wordmark { color: var(--primary); font-family: 'Rethink Sans', sans-serif; font-weight: 800; font-size: 20px; text-decoration: none; }
   .intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin: 100px 0 42px; }
   .eyebrow { color: var(--primary); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-  h1 { max-width: 680px; margin-top: 12px; color: var(--ink-deep); font-family: 'Amulya', sans-serif; font-size: clamp(34px, 6vw, 66px); letter-spacing: -.035em; line-height: 1.02; }
-  h2 { color: var(--ink-deep); font-family: 'Amulya', sans-serif; font-size: 20px; line-height: 1.2; }
+  h1 { max-width: 680px; margin-top: 12px; color: var(--ink-deep); font-family: 'Rethink Sans', sans-serif; font-size: clamp(34px, 6vw, 66px); letter-spacing: -.035em; line-height: 1.02; }
+  h2 { color: var(--ink-deep); font-family: 'Rethink Sans', sans-serif; font-size: 20px; line-height: 1.2; }
   p { color: var(--muted); line-height: 1.6; }
   .lede { margin-top: 18px; font-size: 16px; }
   .card { border: 1px solid rgba(20, 30, 50, .09); border-radius: 22px; background: rgba(255, 255, 255, .8); box-shadow: 0 14px 40px rgba(27, 36, 58, .07); }
