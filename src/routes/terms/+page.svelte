@@ -4,7 +4,7 @@
 
 <nav>
   <div class="glass nav-inner">
-    <a href="/" class="nav-logo">Nalana</a>
+    <a href="/" class="nav-logo" aria-label="Nalana home"><img src="/assets/site/figma-logo-nav.svg" width="32" height="32" alt="Nalana" style="display:block" /></a>
     <a href="/" class="nav-back">← Back to home</a>
   </div>
 </nav>
@@ -122,6 +122,7 @@
 
   nav {
     position: sticky; top: 0; z-index: 100;
+    left: auto; transform: none; width: auto; max-width: none; display: block; pointer-events: auto;
     padding: 16px 5%;
     background: rgba(250,250,250,0.85);
     backdrop-filter: blur(16px);
@@ -135,7 +136,7 @@
   }
   .nav-inner::before { display: none; }
   .nav-logo {
-    font-family: 'KonkhmerSleokchher', sans-serif;
+    font-family: 'Rethink Sans', sans-serif; font-weight: 800;
     font-size: 18px; color: var(--primary); text-decoration: none;
   }
   .nav-back {
@@ -151,17 +152,17 @@
 
   .legal-header { margin-bottom: 48px; }
   .legal-header h1 {
-    font-family: 'Amulya', sans-serif;
+    font-family: 'Rethink Sans', sans-serif;
     font-size: clamp(32px, 5vw, 52px);
-    font-weight: 700; color: var(--ink-deep);
+    font-weight: 800; color: var(--ink-deep);
     letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px;
   }
   .updated { font-size: 13px; color: var(--muted); }
 
   .legal-body { font-size: 15px; line-height: 1.8; color: #333; }
   .legal-body h2 {
-    font-family: 'Amulya', sans-serif;
-    font-size: 20px; font-weight: 700; color: var(--ink-deep);
+    font-family: 'Rethink Sans', sans-serif;
+    font-size: 20px; font-weight: 800; color: var(--ink-deep);
     margin: 40px 0 12px; letter-spacing: -0.01em;
   }
   .legal-body h3 { font-size: 15px; font-weight: 600; color: var(--ink); margin: 24px 0 8px; }
@@ -179,7 +180,7 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 20px 32px; border-radius: 24px; gap: 16px; flex-wrap: wrap;
   }
-  .footer-wordmark { font-family: 'KonkhmerSleokchher', sans-serif; font-size: 18px; color: var(--primary); }
+  .footer-wordmark { font-family: 'Rethink Sans', sans-serif; font-weight: 800; font-size: 18px; color: var(--primary); }
   .footer-links { display: flex; gap: 24px; }
   .footer-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color .15s; }
   .footer-links a:hover { color: var(--ink-deep); }

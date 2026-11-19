@@ -41,7 +41,7 @@
 </script>
 
 <section class="acct-card wallet-card" aria-labelledby="wallet-label" aria-busy={state === 'loading'}>
-  <p class="acct-label" id="wallet-label">WALLET</p>
+  <p class="acct-label" id="wallet-label">PLAN &amp; CREDITS</p>
   {#if notice}<p class="banner-ok" role="status">{notice}</p>{/if}
   {#if state === 'loading'}
     <p class="usage-status" role="status">Loading credit balance…</p>
@@ -49,17 +49,8 @@
     <p class="usage-status" role="status">Credit balance is unavailable right now.</p>
     <button class="secondary-button" type="button" on:click={refresh}>Try again</button>
   {:else}
-    {#if wallet.total !== null}
-      <p class="wallet-total"><strong class="credits">{wallet.total}</strong><span>credits available</span></p>
-    {/if}
-    <dl class="details">
-      <div><dt>Subscription credits</dt><dd>{wallet.subscription}</dd></div>
-      <div><dt>Top-up credits</dt><dd>{wallet.topUp}</dd></div>
-      {#if wallet.free && wallet.free !== '0'}<div><dt>Free monthly credits</dt><dd>{wallet.free}</dd></div>{/if}
-      {#if wallet.activeCycle && wallet.cycleEnd}
-        <div><dt>Current cycle ends</dt><dd>{dateFormat.format(wallet.cycleEnd)}</dd></div>
-      {/if}
-    </dl>
+    <p class="plan-badge">{wallet.activeCycle ? 'SUBSCRIBED' : 'FREE'}</p>
+    {#if wallet.total !== null}<p class="credits">{wallet.total} credits remaining</p>{/if}
     {#if wallet.needsVerification}
       <p class="plan-note" role="status">Verify your email to get your free monthly credits. <a href="/account#verify-email">Resend the link</a></p>
     {/if}

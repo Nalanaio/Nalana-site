@@ -12,8 +12,9 @@
 <style>
  .account-decoration{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
  .acct-river{position:absolute;inset:0;overflow:hidden;pointer-events:none}
- .acct-water{position:absolute;left:0;top:0;width:2345.08px;height:1775.82px;transform-origin:0 0;transform:translate(-473.6px,-265px) rotate(-122.85deg);mask:url('/assets/site/river-signin-mask.svg') 0 0/100% 100% no-repeat;background:#b8e8fc}
+ .acct-water{position:absolute;left:0;top:0;width:2345.08px;height:1775.82px;transform-origin:0 0;transform:translate(-473.6px,-265px) rotate(-122.85deg);mask:url('/assets/site/river-signin-mask.svg') 0 0/100% 100% no-repeat;background:#0d00ff}
  .acct-static,.acct-caustic,.acct-ripples{position:absolute;inset:0;width:100%;height:100%}
  .acct-caustic :global(canvas){display:block;width:100%;height:100%}
+ .account-motion-toggle:not(:focus-visible){position:fixed;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
  .account-motion-toggle{position:fixed;bottom:18px;right:18px;z-index:60;border:1px solid #8a6cc7;background:#fff;color:#6849a2;padding:9px 14px;border-radius:24px;font:500 12px Inter,sans-serif;cursor:pointer}
 </style>

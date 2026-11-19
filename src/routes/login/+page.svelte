@@ -18,7 +18,7 @@
     MIN_PASSWORD_LENGTH,
   } from '#lib/authClient.js';
 
-  let mode = 'login';
+  let mode = page.url.searchParams.get('mode') === 'signup' ? 'signup' : 'login';
   let email = '';
   let password = '';
   let loading = false;
@@ -180,7 +180,7 @@
           <div class="field">
             <label for="account-password">Password</label>
             <span class="field-pw">
-            <input id="account-password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Password (min {MIN_PASSWORD_LENGTH} characters)" bind:value={password} autocomplete={mode === 'signup' ? 'new-password' : 'current-password'} disabled={loading} required />
+            <input id="account-password" name="password" type={showPassword ? 'text' : 'password'} placeholder={mode === 'signup' ? `Password (min ${MIN_PASSWORD_LENGTH} characters)` : 'Enter your password'} bind:value={password} autocomplete={mode === 'signup' ? 'new-password' : 'current-password'} disabled={loading} required />
             <button type="button" class="pw-toggle" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} on:click={() => showPassword = !showPassword} disabled={loading}>
               <img src="/assets/site/icon-eye.svg" width="20" height="19" alt="" />
             </button>

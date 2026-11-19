@@ -146,7 +146,7 @@
     background: linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(244, 247, 255, 0.88));
     border: 1px solid rgba(255, 255, 255, 0.85);
     box-shadow: 0 18px 44px -24px rgba(20, 30, 80, 0.4);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lexend', sans-serif;
   }
   .glow-overlay {
     position: absolute;

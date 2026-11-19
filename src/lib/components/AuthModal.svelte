@@ -164,7 +164,7 @@
     position: relative;
   }
   .close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 18px; color: #bbb; cursor: pointer; }
-  .card-title { font-family: 'Amulya', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .card-title { font-family: 'Rethink Sans', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
   .card-sub { font-size: 14px; color: #888; margin-bottom: 28px; line-height: 1.55; }
   .field { display: block; width: 100%; padding: 13px 18px; border-radius: 100px; border: 1.5px solid rgba(228,228,231,0.8); background: #fafafa; font-size: 15px; margin-bottom: 10px; box-sizing: border-box; }
   .forgot-link { text-align: right; margin: -4px 0 8px; font-size: 13px; }

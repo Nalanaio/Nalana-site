@@ -112,3 +112,37 @@
   .grace-account-page h1 { font-size: 32px; }
 }
 @media (prefers-reduced-motion: reduce) { .grace-account-page *, .grace-account-page *::before, .grace-account-page *::after { animation: none !important; transition: none !important; } }
+
+/* Figma fidelity: TL x Nalana frames "sign in" (671:3692) and "profile" (671:3719). */
+@font-face { font-family: 'GraceAccountLexend'; src: url('/assets/site/fonts/Lexend%5Bwght%5D.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'GraceAccountRethink'; src: url('/assets/site/fonts/RethinkSans%5Bwght%5D.ttf') format('truetype'); font-weight: 400 800; font-display: swap; }
+.grace-account-page { font-family: 'GraceAccountLexend', 'Lexend', sans-serif; line-height: normal; }
+.grace-account-page .account-logo { left: 22px; top: 14px; }
+.grace-account-page .account-logo img { width: 39px; height: 39px; }
+.grace-account-page .account-home { right: 22px; background: #924bdf; font: 400 16px/normal 'GraceAccountLexend', sans-serif; }
+.grace-account-page .account-home:hover { background: #6849a2; }
+.grace-account-page .signin-card { padding: 40px; }
+.grace-account-page h1, .grace-account-page .identity h1, .grace-account-page .return-card h1 { font-family: 'GraceAccountRethink', sans-serif; font-weight: 800; line-height: normal; }
+.grace-account-page .signin-head p { line-height: normal; }
+.grace-account-page .field input { font-family: 'GraceAccountLexend', sans-serif; }
+.grace-account-page .forgot a { color: #1085ef; font-size: 16px; }
+.grace-account-page .signin-btn { min-height: 52px; height: 52px; padding: 0; font: 800 24px/normal 'GraceAccountRethink', sans-serif; }
+.grace-account-page .switch-link { padding-left: 2px; font-weight: 400; text-decoration: none; }
+.grace-account-page .acct-label { font: 400 12px/normal 'GraceAccountLexend', sans-serif; letter-spacing: 1.44px; color: #777; }
+.grace-account-page .avatar { font: 800 36px/1 'GraceAccountRethink', sans-serif; }
+.grace-account-page .identity-id { color: #777; line-height: normal; }
+.grace-account-page .details dd { font-weight: 400; }
+.grace-account-page .acct-primary { font-weight: 400; }
+.grace-account-page .edit-btn { height: 52px; padding: 0 28px; font-size: 16px; }
+.grace-account-page .plan-badge { margin: 0; padding: 6px 12px; border-radius: 6px; background: #dbccf9; color: #6849a2; font-size: 12px; line-height: normal; letter-spacing: .96px; }
+.grace-account-page .credits { font: 800 36px/normal 'GraceAccountRethink', sans-serif; color: #1085ef; }
+.grace-account-page .logout { height: 52px; padding: 0 24px; }
+.grace-account-page .acct-primary.signin-btn { font-weight: 800; }
+.grace-account-page .identity { align-items: flex-start; text-align: left; }
+
+/* Pricing: copy that sits directly on the river is black so it stays legible over the blue. */
+.grace-account-page .pricing-head p, .grace-account-page .fine-print, .grace-account-page .fine-print a { color: #000; }
+.grace-account-page .fine-print a { text-decoration: underline; }
+.grace-account-page .plan-option h2, .grace-account-page .plan-price { font-family: 'GraceAccountRethink', sans-serif; font-weight: 800; }
+.grace-account-page .plan-price span { font-family: 'GraceAccountLexend', sans-serif; font-weight: 400; }
+.grace-account-page .plan-credits { font-weight: 400; }

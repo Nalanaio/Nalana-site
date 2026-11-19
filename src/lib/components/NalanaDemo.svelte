@@ -521,7 +521,7 @@
 <style>
   .ide {
     display: flex; flex-direction: column; width: 100%; height: 100%;
-    border-radius: 12px; overflow: hidden; font-family: 'Inter', sans-serif;
+    border-radius: 12px; overflow: hidden; font-family: 'Lexend', sans-serif;
     background: #1d1d1d; border: 1px solid rgba(0, 0, 0, 0.4);
     box-shadow: 0 30px 70px -20px rgba(8, 15, 40, 0.5), 0 8px 24px rgba(8, 15, 40, 0.25);
   }
@@ -620,7 +620,7 @@
     box-shadow: 0 1px 4px rgba(10, 15, 40, 0.06);
   }
   .input-line { flex: 1; display: flex; align-items: center; }
-  .input-line input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Inter', sans-serif; font-size: 13px; color: #1a1a1a; }
+  .input-line input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Lexend', sans-serif; font-size: 13px; color: #1a1a1a; }
   .caret { width: 1.5px; height: 15px; background: #1085ef; margin-left: -2px; animation: ndCaret 0.9s steps(1) infinite; }
   .send { width: 34px; height: 34px; border-radius: 50%; border: none; background: #1085ef; box-shadow: 0 2px 10px rgba(16, 133, 239, 0.45); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
   .bridge { display: flex; align-items: center; gap: 6px; margin-top: 9px; justify-content: flex-end; }

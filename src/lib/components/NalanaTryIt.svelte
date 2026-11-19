@@ -266,7 +266,7 @@
     background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(244, 247, 255, 0.9));
     border: 1px solid rgba(255, 255, 255, 0.85);
     box-shadow: 0 18px 44px -24px rgba(20, 30, 80, 0.28);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lexend', sans-serif;
   }
   .grid-overlay {
     position: absolute;
@@ -324,7 +324,7 @@
   }
   .input input {
     flex: 1; background: transparent; border: none; outline: none;
-    font-family: 'Inter', sans-serif; font-size: 11.5px; color: #1a1a1a; min-width: 0;
+    font-family: 'Lexend', sans-serif; font-size: 11.5px; color: #1a1a1a; min-width: 0;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .send {

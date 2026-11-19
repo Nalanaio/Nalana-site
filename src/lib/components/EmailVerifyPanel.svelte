@@ -81,7 +81,7 @@
     vertical-align: middle;
   }
   .title {
-    font-family: 'Amulya', sans-serif;
+    font-family: 'Rethink Sans', sans-serif;
     font-size: 22px;
     font-weight: 700;
     color: #0a0a0a;
@@ -111,7 +111,7 @@
     border: 1.5px solid rgba(16, 133, 239, 0.4);
     background: #fff;
     color: #1085ef;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
