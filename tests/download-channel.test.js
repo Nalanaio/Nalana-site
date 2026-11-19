@@ -66,20 +66,11 @@ test('an unavailable selected channel is offered explicitly as the other one, ne
   assert.equal(effectiveChannel('beta', {}), 'beta');
 });
 
-test('the toggle markup is an accessible radiogroup with a no-JS link fallback and a linked live hint', async () => {
-  const toggle = await readFile(new URL('../src/lib/components/site/ChannelToggle.svelte', import.meta.url), 'utf8');
+test('the download CTA matches the Figma: one Stable button, an optional beta link, and an outage hint', async () => {
   const actions = await readFile(new URL('../src/lib/components/site/DownloadActions.svelte', import.meta.url), 'utf8');
-  assert.match(toggle, /role="radiogroup" aria-label="Release channel"/);
-  assert.match(toggle, /role="radio"/);
-  assert.match(toggle, /aria-checked=\{channel===value\}/);
-  assert.match(toggle, /tabindex=\{channel===value\?0:-1\}/);
-  assert.match(toggle, /aria-disabled=\{unavailable\(value\)\?'true':undefined\}/);
-  assert.match(toggle, /href=\{unavailable\(value\)\?undefined:channelPageHref\(page\.url,value\)\}/);
-  for (const key of ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End']) assert.ok(toggle.includes(`'${key}'`), key);
-  assert.match(actions, /aria-live="polite"/);
-  assert.match(actions, /aria-describedby=\{described\?hintId:undefined\}/);
-  assert.ok(actions.includes("<strong>Beta may be unstable.</strong></p>"));
-  assert.doesNotMatch(actions, /separate beta account/);
-  assert.doesNotMatch(actions, /SmartScreen/);
+  assert.doesNotMatch(actions, /ChannelToggle/);
+  assert.ok(actions.includes("effectiveChannel('stable',releases)"));
+  assert.ok(actions.includes('>Download Beta (unstable)</a>'));
+  assert.ok(actions.includes('aria-describedby={stableDown?hintId:undefined}'));
   assert.ok(actions.includes('builds are temporarily unavailable. Try again shortly.'));
 });
