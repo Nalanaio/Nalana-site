@@ -501,7 +501,7 @@
 .grace-site .btn:hover,.grace-site .btn:active {background:var(--figma-purple-hover);transform:none;box-shadow:none}
 .grace-site .download-actions {display:flex;flex-direction:column;align-items:flex-start;gap:0}
 .grace-site .download-actions .btn {min-width:0;width:auto;height:49px;padding:0 19px;font-size:20px;white-space:nowrap}
-.grace-site .vision-download .download-actions .btn {width:222px;justify-content:flex-start;padding:0 22px}
+.grace-site .vision-download .download-actions .btn {min-width:222px;width:auto;justify-content:flex-start;padding:0 22px}
 .grace-site .download-actions .channel-unavailable {margin:10px 0 0;padding:9px 12px;border-radius:12px;font-size:12.5px;line-height:1.4;background:rgba(255,255,255,.92);border:1px solid var(--figma-purple)}
 .grace-site .beta-link {margin-top:9px;font-size:12px;line-height:normal;color:#000;text-decoration:underline;text-underline-position:from-font}
 .grace-site .beta-link:hover {color:var(--figma-purple)}
