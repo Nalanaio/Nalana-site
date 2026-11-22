@@ -25,7 +25,7 @@
   onMount(()=>{
     const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
     const syncMotion=()=>reducedMotion=motion.matches;syncMotion();motion.addEventListener('change',syncMotion);
-    const observer=new IntersectionObserver(([entry])=>visible=entry.isIntersecting,{threshold:.15});observer.observe(video);
+    const observer=new IntersectionObserver(([entry])=>visible=entry.isIntersecting,{rootMargin:'300px 0px',threshold:0});observer.observe(video);
     return ()=>{motion.removeEventListener('change',syncMotion);observer.disconnect();cancelAnimationFrame(raf);};
   });
 </script>
@@ -36,7 +36,7 @@
       <div class="wf-track" aria-hidden="true"><i class="wf-fill" bind:this={fill}></i></div>
       <p class="wf-caption">{captions[step]}</p>
       <!-- svelte-ignore a11y_media_has_caption -->
-      <video class="wf-video" bind:this={video} src="/assets/site/workflow-demo.webm" muted loop playsinline preload="auto" controls={reducedMotion}
+      <video class="wf-video" bind:this={video} src="/assets/site/workflow-demo.webm" poster="/assets/site/workflow-demo-poster.jpg" muted loop playsinline preload="auto" controls={reducedMotion}
         aria-label="Nalana demo: describe an idea, generate the project, then make edits with AI or directly in Blender"
         on:play={start} on:seeked={paint} on:timeupdate={paint} on:loadedmetadata={paint}></video>
     </div>
