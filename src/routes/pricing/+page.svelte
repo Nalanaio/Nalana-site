@@ -158,7 +158,7 @@
         <a class="acct-primary" href={TEAMS_CONTACT}>Contact us</a>
       </section>
     </div>
-    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled.{freeCredits ? ` Unused free credits roll over but never exceed ${freeCredits}.` : ''} See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
+    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled.{freeCredits ? ` Free credits refill to ${freeCredits} each month.` : ''} See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
   {:else if state === 'error'}
     <section class="acct-card return-card">
       <p class="form-error" role="alert">{error}</p>
@@ -230,6 +230,6 @@
         {/each}
       </div>
     {/if}
-    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled.{freeCredits ? ` Free credits refill monthly up to ${freeCredits}.` : ''} See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
+    <p class="fine-print">Prices in USD. Subscriptions renew monthly until canceled.{freeCredits ? ` Free credits refill to ${freeCredits} each month.` : ''} See the <a href="/refund">refund policy</a> and <a href="/terms">terms</a>.</p>
   {/if}
 </AccountShell>
