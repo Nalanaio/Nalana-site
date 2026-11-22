@@ -139,11 +139,10 @@
 }
 .grace-site .trusted-label { position: absolute; left: 0; right: 0; top: 22px; margin: 0; font-size: 24px; line-height: normal; text-align: center; }
 .grace-site .trusted-usc { position: absolute; left: 180px; top: 83px; width: 144px; height: 47px; object-fit: contain; }
-.grace-site .trusted-gda { position: absolute; left: 522px; top: 84px; transform: translateX(-50%); font-weight: 700; font-size: 36px; line-height: normal; color: #777; white-space: nowrap; }
+.grace-site .trusted-gda { position: absolute; left: 447px; top: 87px; width: 150px; height: 39px; object-fit: contain; }
 .grace-site .trusted-wayfair { position: absolute; left: 725px; top: 69px; width: 234px; height: 75px; object-fit: contain; }
 .grace-site .trusted img, .grace-site .trusted-gda { transition: transform .35s var(--ease-out), filter .35s; }
 .grace-site .trusted img:hover, .grace-site .trusted-gda:hover { transform: translateY(-3px); filter: drop-shadow(0 6px 6px rgba(0,0,0,.18)); }
-.grace-site .trusted-gda:hover { transform: translateX(-50%) translateY(-3px); }
 
 /* Title word effects */
 .grace-site .tw { display: inline-block; position: relative; }
@@ -318,8 +317,7 @@
   .grace-site .trusted-usc, .grace-site .trusted-wayfair, .grace-site .trusted-gda { position: static; transform: none; width: auto; height: auto; max-width: 100%; }
   .grace-site .trusted-usc { height: 34px; }
   .grace-site .trusted-wayfair { height: 40px; }
-  .grace-site .trusted-gda { font-size: clamp(18px, 6vw, 28px); }
-  .grace-site .trusted-gda:hover { transform: translateY(-3px); }
+  .grace-site .trusted-gda { height: 24px; }
   .grace-site .vision-download { position: relative; left: 0; top: 0; margin: 28px auto 0; display: flex; }
 
   .grace-site .dsec, .grace-site .vision { height: auto; }
@@ -522,7 +520,6 @@
 /* Trusted by: Figma 671:3813 */
 .grace-site .trusted {background:rgba(222,234,255,.9)}
 .grace-site .trusted-label {font:400 24px/normal Lexend,sans-serif}
-.grace-site .trusted-gda {font-family:GraceInter,Inter,sans-serif;font-weight:700}
 
 /* Workflow track on the home instance of Component 5 */
 .grace-site .wf-track {background:#ebebd8}
@@ -557,7 +554,7 @@
   .grace-site .hero-title {left:106px;top:133px;width:518px}
   .grace-site .hero-download {left:106px;top:358px;width:auto;height:auto}
   .grace-site .trusted-usc {left:145.5px;top:83px;width:141.72px;height:47px}
-  .grace-site .trusted-gda {left:487.5px;top:84px}
+  .grace-site .trusted-gda {left:412.5px;top:87px}
   .grace-site .trusted-wayfair {left:690.5px;top:69px;width:234px;height:75px}
   .grace-site .vision-title {left:306px;top:96px;width:828px}
   .grace-site .vision-sub {left:419px;top:180px;width:602px}

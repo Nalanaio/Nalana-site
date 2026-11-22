@@ -30,7 +30,7 @@
       </div>
       <div class="layer copy-layer"><h1 class="hero-title" aria-label="The agentic workspace for 3D artists."><span aria-hidden="true">The <span class="tw tw-create">agentic</span> workspace for <span class="amulya"><span class="tw tw-3d">3D<span class="title-overlay"></span></span></span> artists.</span></h1></div>
       <div class="layer cta-layer"><div class="hero-download"><DownloadActions platform={downloadPlatform} {releases} joiner="For" betaLink><p class="hero-sub">Nalana is its own software, built on Blender.</p></DownloadActions></div>
-        <div class="trusted"><p class="trusted-label">Used by professionals at</p><img class="trusted-usc" src="/assets/site/logo-usc.png" alt="USC" /><span class="trusted-gda">GDA V</span><img class="trusted-wayfair" src="/assets/site/logo-wayfair.png" alt="Wayfair" /></div>
+        <div class="trusted"><p class="trusted-label">Used by professionals at</p><img class="trusted-usc" src="/assets/site/logo-usc.png" alt="USC" /><img class="trusted-gda" src="/assets/site/logo-gda-v.svg" alt="GDA-V" /><img class="trusted-wayfair" src="/assets/site/logo-wayfair.png" alt="Wayfair" /></div>
       </div>
     </section>
     <WorkflowSection paused={userPaused} />
