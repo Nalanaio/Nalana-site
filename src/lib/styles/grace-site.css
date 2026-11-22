@@ -373,7 +373,7 @@
 .grace-site .footer-legal {position:absolute;left:106px;top:193px;display:flex;gap:13px;padding:0;justify-content:flex-start;align-items:center;font-size:12px}
 .grace-site .footer-legal button {border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-decoration:underline}
 .grace-site a:focus-visible,.grace-site button:focus-visible {outline:3px solid #6849a2;outline-offset:4px}
-.grace-site #workflow,.grace-site #vision,.grace-site #contact {scroll-margin-top:80px}
+.grace-site #workflow,.grace-site #features,.grace-site #vision,.grace-site #contact {scroll-margin-top:80px}
 .grace-site .hero-sub {max-width:none;font-weight:400;margin:0;font-size:16px;line-height:normal}
 .grace-site .hero-download,.grace-site .vision-download {width:max-content;height:auto}
 .grace-site .download-actions {display:inline-flex;flex-direction:column;gap:10px;pointer-events:auto;align-items:stretch}
