@@ -19,7 +19,9 @@
   function key(event,index){let next=event.key==='ArrowRight'?(index+1)%4:event.key==='ArrowLeft'?(index+3)%4:event.key==='Home'?0:event.key==='End'?3:null;
     if(next===null)return;event.preventDefault();onSelect(next);tabs[next]?.focus();}
 </script>
-<section class="dsec vision" id="vision" style="--h:1040" aria-labelledby="vision-title">
+<section class="dsec vision" id="features" style="--h:1040" aria-labelledby="vision-title">
+  <!-- Old links used /#vision; keep that hash landing here. -->
+  <span id="vision" aria-hidden="true"></span>
   <div class="vision-pin"><div class="dstage vision-stage">
     <div class="vision-river" aria-hidden="true"><img src="/assets/site/river-laptop.svg" alt="" /><div class="vision-caustic"></div><canvas class="vision-ripples"></canvas></div>
     <h2 class="subhead vision-title" id="vision-title" aria-label="Your Vision, High-End Craft"><HeadingLetters text="Your Vision, High-End Craft" /></h2>
