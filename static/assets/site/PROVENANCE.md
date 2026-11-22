@@ -8,3 +8,5 @@ Water-caustic, glossy-text, title contours, object lanes and material rendering 
 
 Workflow demo video (workflow-demo.webm) is the owner-supplied Nalana demo recording. The footer N (footer-n-white.svg) and the material N sheets in logo-materials/ were exported from the TL x Nalana Figma file (frames "Group 96", "NALANA Emblem Material Showcase 1–3" and "Seven tactile NALANA logo material studies 1–6"); each material is shown with that frame's exact crop. Rethink Sans was fetched from the official google/fonts repository; its SIL Open Font License is included beside it.
 The nav/footer logos (figma-logo-nav.svg, figma-logo-footer.svg), the laptop-screen N (figma-laptop-n.svg) and the footer river (figma-river-footer.png, Figma's own render of "Vector 8" as clipped by the River Concept frame) were exported from the same Figma file. Lexend was fetched from the official google/fonts repository; its SIL Open Font License is included beside it.
+
+The GDA-V wordmark (logo-gda-v.svg) is the inline SVG from the header of https://www.gda-v.com/ (fetched 2026-11-22), recolored from currentColor to #3c3c3c.
